@@ -1,0 +1,52 @@
+%!TEX root=main.tex
+\section{Summary}
+
+\noindent Increasing application memory footprints and growing
+thread-level parallelism on die has resurfaced TLB performance as an
+important problem. This is because existing page walk caching
+mechanisms used to accelerate TLB misses are unable to accommodate the
+growing application memory footprint. As a result, last-level TLB
+(LLT) misses suffer long latency due to multiple memory accesses to
+the page table. When LLT misses are frequent, applications desire high
+memory bandwidth and low latency for address translation.
+
+This paper proposes to accelerate address translations using stacked
+memory. We propose two mechanisms to improve the penalty of LLT
+misses. Our first mechanism, a software-only proposal, distributes the
+page table in a hybrid memory system to minimize interference between
+multiples accesses to the page table. Specifically, we propose {\em
+Distributed Page Table Placement} where the first-level of a
+hierarchical page table is always placed in stacked memory while
+remaining levels are all placed in system memory. We show that
+distributing page tables across the hybrid memory system provides
+lower latency and higher bandwidth for address translation. We show an
+average performance improvement of 28\% (up to 80\%) across a set of
+memory intensive GPU workloads. We show that these improvements can be
+realized without any hardware changes and can significantly reduce the
+performance gap between small pages and large pages.
+
+% This is because it still requires multiple requests to the page table
+% for retrieving the address translation.
+
+While page table placement improves performance, it does not decrease
+address translation bandwidth. Thus, we propose {\em Stacked-TLB}, a
+hardware proposal that extends the coverage of the on-chip TLB
+hierarchy. Stacked-TLB serves as the next larger level in the TLB
+hierarchy and can be arbitrarily configured to increase TLB coverage.
+In the common case, Stacked-TLB avoids multiple page table accesses
+and provides address translation using a single stacked memory access.
+Consequently, Stacked-TLB is a low latency high bandwidth alternative
+to walking the page table on a last-level TLB miss. Our studies with a
+Stacked-TLB that provides 32GB coverage (using 4KB pages) improves
+performance by 44\% on average (up to 2X). The storage overhead for
+Stacked-TLB is 128MB, which is roughly 3\% the capacity of a 4GB
+stacked memory system. Again, Stacked-TLB also reduces the significant
+performance gap between small pages and large pages.
+
+% \newpage
+% We have shown that emerging stacked memory technologies have now
+% enabled a new TLB architecture previously was not practical with
+% commodity DRAM. Since Stacked-TLBs enable high TLB coverage, we hope
+% that they can spur future research directions in areas where
+% extracting TLB performance has been challenging (e.g. virtualization).
+% 

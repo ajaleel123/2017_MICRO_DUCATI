@@ -1,0 +1,116 @@
+% !TEX root = main.tex
+% \newpage
+
+\section{Background and Motivation} 
+\label{sec:background}
+
+\noindent Virtual memory is ubiquitous in nearly all computing systems
+today and is responsible for translating virtual addresses to physical
+addresses. Address translation is performed by maintaining an
+application {\em page table} in system memory.
+Figure~\ref{fig:page_table} shows a typical four-level
+hierarchical page table commonly used in computing systems today. Each
+node in the page table is 4KB in size and contains 512 8-byte entries
+that point to the next node in the page table. The leaf node contains
+the physical address mapping. Generally, the page table is sparsely
+populated and new nodes are created only when data is referenced. As
+such, the typical in-memory storage space for the application page
+table is roughly 0.2\% of the total memory footprint (8 bytes of
+storage overhead when using 4KB pages).
+
+% Modern processors provide hardware support for address translation
+% using the Memory Management Unit (MMU) and Input/Output MMU (IOMMU).
+% The MMU handles CPU requests while the IOMMU handles device requests
+% (e.g. GPU). 
+
+Figure~\ref{fig:page_table} illustrates a {\em page walk} for a
+four-level page table. The Memory Management Unit (MMU) (or page
+walker) first consults a predetermined register (e.g. CR3 register on
+x86 systems) to determine the physical address for Page Map Level 4
+(PML4) or root node of the page table. The MMU indexes PML4 to fetch
+the Page Directory Pointer (PDP) or third-level page table (first
+memory reference). Next, the MMU indexes the PDP to fetch the Page
+Directory (PD) or second-level page table (second memory reference).
+Next, the MMU indexes the PD to fetch the first-level of the Page
+Table (PT) (third memory reference). Finally, the MMU indexes the PT
+(fourth memory reference) to fetch the physical address mapped to the
+virtual address.
+
+% \footnote{\noindent \small{In a virtualized environment, a
+% page walk by the guest operating system may require up to 16 memory
+% references}}.
+
+% \begin{figure}[t] 
+% \vspace{0. in}
+% \centering
+% \centerline{\psfig{file=GRAPHS/motivation_perf_mpki,angle=-90,width=\columnwidth}}
+% 
+% 	\caption{\small Workloads incur significant performance
+% 	overhead due to frequent LLT misses. \normalsize}
+% 
+% \label{fig:llt_missrate} 
+% \vspace{-0.15 in}
+% \end{figure}
+
+\begin{figure}[t] 
+\vspace{0. in}
+\centering
+\centerline{\psfig{file=GRAPHS/tlb_sensitivity,angle=-90,width=\columnwidth}}
+
+	\caption{\small Performance Sensitivity to LLT Entries. \normalsize}
+
+\label{fig:tlb_sensitivity} 
+\vspace{-0.15 in}
+\end{figure}
+
+To reduce page table accesses on an LLT miss, commercial processors
+employ Page Walk Caches (PWC) for each page table level. PWCs exploit
+temporal and spatial locality in the page table access stream and
+avoid memory accesses on PWC hits. Consequently, the frequency of TLB
+misses and PWC hit rate impacts address translation performance.
+
+Figure~\ref{fig:tlb_sensitivity} presents sensitivity to LLT size
+averaged across several memory intensive workloads (see
+Table~\ref{table:bench_char}) simulated on a GPU with a 1024-entry
+shared LLT (details on simulation methodology are in the next
+section). The x-axis illustrates the different TLB sizes while the
+y-axis illustrates the performance relative to the baseline 1024-entry
+LLT for three different page sizes (4KB, 64KB, and 2MB pages).
+
+\input{workloads}
+
+Figure~\ref{fig:tlb_sensitivity} shows that the workloads under study
+are highly sensitive to the number of LLT entries (especially when
+using smaller page sizes). On average, a 2 million entry LLT improves
+performance by 2X with 4KB page size. Similarly, a 256 thousand entry
+LLT improves performance by 60\% with 64KB page size. Finally an 8
+thousand entry LLT improves performance by 10\% with 2MB page size.
+Assuming 8-bytes of storage requirement per TLB entry, processor
+architects would need to budge 16MB, 2MB, and 64KB of area overhead
+for 4KB, 64KB, and 2MB pages respectively. Note that the LLT storage
+overhead for 4KB and 64KB pages is prohibitively large. While the
+storage overhead with 2MB pages is not substantial, unrestricted use
+of large pages can have intended OS performance overheads as discussed
+earlier. As such, it would be desirable to increase on-die TLB
+coverage with small page sizes without high storage overhead.
+
+Table~\ref{table:bench_char} shows that the workloads under study
+incur frequent LLT misses when using 4KB pages. To make things worse,
+each LLT miss requires more than one memory access to the page table
+(maximum of 2 in some cases). Consequently, these workloads experience
+significant performance overheads due to TLB misses. This clearly
+motivates architecture support for not only improving LLT coverage,
+but also reducing the number of memory accesses on an LLT miss. Before
+we describe our solutions to address both these problems, we first
+provide details on our experimental methodology.
+
+\begin{figure}[t]
+\vspace{0. in}
+\centering
+\centerline{\psfig{file=FIGURES/config,scale=0.4,angle=-90}}
+
+        \caption{\small Baseline System. \normalsize}
+
+\label{fig:config}
+\vspace{-0.15 in}
+\end{figure}

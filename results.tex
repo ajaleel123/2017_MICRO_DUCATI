@@ -1,0 +1,130 @@
+% !TEX root = main.tex
+
+% \input{table_perf_summary.tex}
+
+\section{Results and Analysis} 
+\label{sec:result}
+
+\subsection{Results Summary}
+
+\noindent Table~\ref{table:results_summary} summarizes several
+performance metrics relative to the baseline system. Both Distributed
+Placement and Stacked-TLB reduce LLT miss latency by 33\% and 49\%
+respectively. The reduction in LLT miss latency improves performance
+by 28\% and 44\% respectively. Stacked-TLB is best at reducing LLT
+miss latency because the average page table accesses per LLT miss
+reduce from 1.75 to a single Stacked-TLB access.
+
+The table also shows that the different proposals tend to increase the
+LLC miss latency by 7-10\%. This occurs because Distributed Placement
+and Stacked-TLB both increase the traffic to stacked memory.
+Consequently, the queuing delays in stacked memory increase. However,
+the increase in LLC miss latency has minimal performance impact since
+the large amount of memory-level parallelism present in these
+workloads effectively hides the cache miss latency~\cite{bwa},
+
+Figure~\ref{fig:summary_4k_pages} presents the per workload
+performance behavior of Distributed Placement and Stacked-TLB relative
+to a system with perfect LLT. The figure shows that distributed
+placement bridges 30\% of the performance gap between the baseline
+system and a perfect LLT while Stacked-TLB bridges 50\% of the
+performance gap. In fact, for TLB-sensitive workloads like $CoMD$,
+$BH$, $AMG\_2$, and $NEKBONE$ Stacked-TLB performs within 15\% of a
+perfect LLT while using small page sizes.
+
+\begin{figure}[tp] 
+\vspace{-0 in} \centering
+\centerline{\psfig{file=GRAPHS/4KB_pages_perf,angle=-90,width=\columnwidth}}
+
+\caption{\small Performance with 4KB page size.\normalsize}
+\label{fig:summary_4k_pages} 
+\vspace{-0. in}
+\end{figure}
+
+\subsection{Sensitivity to Page Size}
+
+\noindent We now present the performance of our schemes using 64KB
+page size. For our 1024-entry baseline LLT size, using 64KB pages
+increases the TLB coverage to 64MB (up to 256MB because of
+~\cite{COLT}). In doing so, the LLT miss frequency reduces for
+workloads that have high spatial locality in the virtual address
+space. Table~\ref{table:results_summary} summarizes the different
+performance metrics relative to the baseline system. With 64KB page
+size, Distributed Placement and Stacked-TLB reduce LLT miss latency by
+15\% and 39\% respectively. In turn, they improve performance by 4\%
+and 12\% respectively.
+
+With 64KB page size, Figure~\ref{fig:summary_64k_pages} presents the
+per workload performance behavior of our baseline system, Distributed
+Placement and Stacked-TLB relative to a perfect LLT system. We observe
+that workloads with high spatial locality within a 64KB page tend to
+observe fewer LLT misses. Consequently, the baseline system itself is
+within 30\% of a perfect LLT (as opposed to 50\% for the 4KB page size
+system). However, there is still opportunity to improve performance of
+workloads that are TLB-sensitive with 64KB pages (e.g. $HPGMG$, $DMR$,
+and $XSBENCH$). For these workloads, Distributed Placement and
+Stacked-TLB proposals improve performance by 27-45\%. Overall,
+Stacked-TLB bridges 30\% of the performance gap between the baseline
+system and a perfect LLT.
+
+
+% However, for workloads with limited
+% spatial locality in a 64KB page (e.g. HPGMG, DMR) still benefit from
+% our proposals.
+% 
+% We show that that distributed pagetable placement improves performance
+% by 4\% while DRAM-TLBs and Stacked-TLBs improve performance by 14\%
+% and 11\% respectively. We find the performance benefits from
+% distributed page table placement diminishing with increasing page
+% size. This is beacause fewer LLT misses cause the average number of
+% memory requests to the memory system to increase. Since the majority
+% of requests are serviced by the stacked memory, increasing queuing
+% delays take away any benefit realized from page table placement. 
+% 
+% We note that it is exactly for this reason that DRAM-TLBs also
+% outperform Stacked-TLBs at times. Since the majority of requests are
+% serviced by stacked memory, average stacked memory access latency can
+% be longer than the average system memory access latency (at least
+% until system memory bandwidth saturates).
+
+\begin{figure}[tp] 
+\vspace{0. in} \centering
+\centerline{\psfig{file=GRAPHS/64KB_pages_perf,angle=-90,width=\columnwidth}}
+
+\caption{\small Performance with 64KB page size.\normalsize}
+
+\label{fig:summary_64k_pages} 
+\vspace{-0. in}
+\end{figure}
+
+\subsection{Sensitivity to Stacked DRAM Bandwidth}
+
+\noindent Figure~\ref{fig:stack_bw_sense} illustrates the sensitivity
+of our proposals to stacked memory bandwidth. We evaluate four
+additional systems with 0.25X, 0.5X, 2X, and 4X the stacked memory
+bandwidth of the baseline system (we do not vary the system memory
+bandwidth). We increased the bandwidth by increasing the number of
+channels in the stacked memory system. The y-axis illustrates the
+average performance relative to the baseline system across all
+workloads in the study.
+
+The figure shows that when the stacked memory bandwidth is plentiful,
+our proposals continue to improve performance. However, when the
+stacked memory bandwidth becomes a bottleneck, the memory queuing
+delays limit the performance of Distributed Placement. Under such
+scenarios, Stacked-TLBs still improve performance since they reduce
+the number of memory references. In general, our proposals efficiently
+utilize the spare bandwidth available in the stacked memory system.
+When the available bandwidth is high, performance improvements are
+high. When the available bandwidth is low, performance improvements
+are low.
+
+\begin{figure}[t] 
+\vspace{0.1 in} \centering
+\centerline{\psfig{file=GRAPHS/sensitivity_stack_bw,angle=-90,width=\columnwidth}}
+
+\caption{\small Sensitivity to stacked memory bandwidth. \normalsize}
+\label{fig:stack_bw_sense} 
+\vspace{-0 in}
+\end{figure}
+

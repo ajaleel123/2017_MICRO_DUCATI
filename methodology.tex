@@ -1,0 +1,97 @@
+% \begin{figure*}[tp] 
+% \vspace{-0. in}
+% \centering
+% \centerline{\psfig{file=FIGURES/pagetable_placement,scale=0.80,angle=-90,width=\textwidth}}
+% \caption{\small Different page table placement policies in a hybrid
+% 	memory system. \normalsize}
+% \label{fig:pagetable_placement} 
+% \vspace{-0.0in}
+% \end{figure*}
+
+%\newpage
+\section{Experimental Methodology}
+\label{sec:method}
+
+\noindent We assume a CPU-GPU heterogeneous system with a single CPU
+and a single GPU supporting shared virtual memory~\cite{intelgen9,
+amdzen} where the operating system and address translation services
+are handled by the MMU and IOMMU respectively (see
+Figure~\ref{fig:config}).
+
+\input{configuration}
+
+\subsection{System Configuration}
+
+\noindent We use an industry proprietary event-driven performance
+simulator to simulate a GPU (Table~\ref{table:method_system}) with
+memory hierarchy that is loosely based on the NVIDIA Maxwell GPU
+system~\cite{gpu_maxwell}. We model 128 Streaming Multiprocessors (SM)
+that support 64 warps each. A simple round-robin warp scheduler
+selects warp instructions each cycle. The baseline GPU memory system
+consists of a two-level cache and TLB hierarchy. The first-level cache
+and TLB are private to each SM while the last-level cache (LLC) and
+last-level TLB (LLT) are shared by all the SMs. All caches use 128B
+cache line size with 32B sectors. Our baseline also incorporates a
+highly-threaded hardware page table walker for address
+translation~\cite{power2014supporting, pichaigpu}.
+
+% Each TLB supports compressing up to four contiguous TLB
+% entries into a single entry~\cite{COLT}. 
+
+We model a hybrid memory subsystem consisting of 16GB of stacked DRAM
+(referred to as stacked memory) using High Bandwidth Memory (HBM)
+technology~\cite{hbm-spec} and 256GB of commodity DRAM (referred to as
+system memory) using conventional DDR4 technology~\cite{ddr4-spec}.
+The stacked memory has 8X the bandwidth of system memory with similar
+random access latency. The CPU and GPU have similar interconnect
+latency to the system memory controller and stacked memory controller
+(50ns in both cases). The memory controller supports 128-entry read
+and write queues for each memory channel, open-page policy, minimalist
+address mapping policy~\cite{minimalist} and FR-FCFS scheduling policy
+(prioritizing reads over writes). Writes are issued in batches when
+the write queue starts to fill up. 
+
+% This isolates our performance studies to the bandwidth capability of
+% the two memory systems rather than the latency to and from each
+% individual memory system. We discuss performance implications with
+% different interconnect latency (e.g. discrete CPU/GPU systems) in
+% Section~\ref{sec:implications}.
+
+We model a virtual memory system that maps virtual addresses to
+physical addresses using random page replacement.  Our baseline
+assumes 4KB page size, however we also study sensitivity to larger
+page size (i.e. 64KB). To ensure full utilization of the total
+available system bandwidth, physical pages are allocated based on the
+bandwidth ratio of the hybrid memory system~\cite{bwa,batman}. In
+doing so, both system memory and stacked memory satisfy memory
+requests.
+
+We model a four-level hierarchical page table~\cite{SkipPT}: Page Map
+Level 4 (PML4), Page Directory Pointer (PDP), Page Directory (PD), and
+Page Table (PT). All pages tables are initially allocated in low
+bandwidth system memory in our baseline system. To speed up address
+translation, we also model on-chip Page Walk Caches
+(PWCs)~\cite{SkipPT, MMUcaches} for each page table level. The PWCs
+are indexed by portions of the virtual address and are co-located with
+the MMUs~\cite{MMUcaches}. We model a 16-entry PML4-cache, 16-entry
+PDP-cache, a 16-entry PD-cache, and a 16-entry
+PT-cache\cite{MMUcaches}. Note that PWCs tend to be relatively small
+since they are power hungry, fully associative hardware structures.
+
+\subsection{Workloads and Metric of Interest}
+
+\noindent Our workloads consist of CUDA-based high performance
+computing applications from the CORAL~\cite{CORAL},
+Mantevo~\cite{mantevo}, and LoneStar~\cite{lonestar} suites (see
+Table~\ref{table:bench_char}). The workloads are run with large inputs
+to stress the hybrid memory system. We collected representative
+program regions and warm up the caches, TLBs, and PWCs by
+executing four billion warp instructions. After functional warmup, we
+enable detailed timing simulation for two billion warp instructions.
+
+Reduction in total execution time is our primary metric for
+performance. We also report average TLB miss latency to correlate the
+change in performance.
+
+% collect average LLT miss latency. The reduction in LLT miss latency
+% directly correlates with performance improvements, we

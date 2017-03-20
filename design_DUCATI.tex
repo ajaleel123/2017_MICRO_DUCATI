@@ -1,0 +1,14 @@
+\section{DUCATI: Combining DRAM-TLBs \newline and UCAT}
+\label{sec:DUCATI}
+
+\boldheadingpara{Combining with Page Table Placement} Page Table
+Placement and DRAM-TLBs can both be combined. However, the performance
+contributions from each mechanism depends on the DRAM-TLB coverage. If
+the DRAM-TLB fully covers the application memory footprint, then Page
+Table Placement has minimal performance contribution. However, if the
+application memory footprint exceeds the DRAM-TLB coverage or when the
+application suffers from frequent compulsory misses, there is
+opportunity from combining our two proposals. In our studies, DRAM-TLB
+provides full TLB coverage with less than 0.2\% compulsory misses. As
+such, DRAM-TLBs provide the bulk of the performance improvements.
+

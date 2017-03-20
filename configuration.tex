@@ -1,0 +1,44 @@
+\begin {table}[h]
+\begin{center} 
+\vspace{-0.1in}
+\caption{Baseline System Configuration}
+\vspace{-0. in}
+\begin{tabular}{|c|c|}
+\hline
+     \multicolumn{2}{|c|}{Streaming Multiprocessor (SM)}               \\ \hline
+     Frequency            &  1 GHz                                    \\ 
+     Number of SMs        &  128                                        \\ \hline
+     \multicolumn{2}{|c|}{Baseline TLB and Cache Hierarchy}            \\ \hline
+     L1 TLB   (private)   &  32-entry, 4-way                \\ 
+     L2 TLB   (shared)    &  1024-entry, 8-way            \\ \hline
+     L1 cache (private)   &  128KB,  4-way, 128B linesize  \\ 
+     L2 Cache (shared)    &  8MB, 16-way, 128B linesize \\
+     MSHRs for Mem Reqs   &  128 per memory channel  \\ \hline
+     \multicolumn{2}{|c|}{Stacked Memory (HBM)}            \\ \hline
+     Capacity             &  16GB (4 stacks)          \\
+     Bus Frequency        &  1 GHz     \\ 
+     Channels / Banks    &  32  / 16 per rank        \\
+     Bus Width            &  128-bits per channel    \\ 
+     Row Buffer Size      &  2048 Bytes              \\
+     \small{tCAS-tRCD-tRP-tRAS}   &  14-14-14-33     \\ 
+     Total Bandwidth      &  1024 GB/s              \\ \hline
+     \multicolumn{2}{|c|}{Main Memory (DDR4)}               \\ \hline
+     Capacity             &  256GB                   \\
+     Bus Frequency        &  1600MHz (DDR 3.2GHz)    \\ 
+     Channels / Banks    &  8  / 16 per rank        \\
+     Bus Width            &  64 bits per channel     \\ 
+     Row Buffer Size      &  2048 Bytes              \\
+     \small{tCAS-tRCD-tRP-tRAS}   &  14-14-14-35     \\ 
+     Total Bandwidth      &  204.8 GB/s               \\ \hline
+     \multicolumn{2}{|c|}{Virtual Memory Configuration}     \\ \hline
+%      ATS Lookup Latency   &  50 ns (oneway) \\
+     Page Allocation      &  BW-aware Placement~\cite{batman,bwa}  \\ 
+     Page Table (PT)      &  4-level hierarchical    \\ 
+     Page Walk Caches     &  16 entries per PT level       \\ \hline
+
+\end{tabular}
+\label{table:method_system}
+\vspace{-0.3in}
+\end{center}
+\normalsize
+\end{table}

@@ -1,0 +1,28 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Background and Motivation}{}% 2
+\BOOKMARK [1][-]{section.3}{Experimental Methodology}{}% 3
+\BOOKMARK [2][-]{subsection.3.1}{System Configuration}{section.3}% 4
+\BOOKMARK [2][-]{subsection.3.2}{Workloads and Metric of Interest}{section.3}% 5
+\BOOKMARK [1][-]{section.4}{Unifying Caches and TLBs}{}% 6
+\BOOKMARK [2][-]{subsection.4.1}{UCAT Architecture}{section.4}% 7
+\BOOKMARK [2][-]{subsection.4.2}{UCAT Allocation and Management}{section.4}% 8
+\BOOKMARK [2][-]{subsection.4.3}{UCAT Optimizations}{section.4}% 9
+\BOOKMARK [1][-]{section.5}{Architecting TLBs in DRAM }{}% 10
+\BOOKMARK [2][-]{subsection.5.1}{DRAM-TLB Architecture}{section.5}% 11
+\BOOKMARK [3][-]{subsubsection.5.1.1}{DRAM-TLB Organization}{subsection.5.1}% 12
+\BOOKMARK [3][-]{subsubsection.5.1.2}{DRAM-TLB Lookups}{subsection.5.1}% 13
+\BOOKMARK [3][-]{subsubsection.5.1.3}{DRAM-TLB Insertions and Updates}{subsection.5.1}% 14
+\BOOKMARK [2][-]{subsection.5.2}{Performance Analysis}{section.5}% 15
+\BOOKMARK [2][-]{subsection.5.3}{DRAM-TLB Implementation}{section.5}% 16
+\BOOKMARK [2][-]{subsection.5.4}{DRAM-TLB Example}{section.5}% 17
+\BOOKMARK [2][-]{subsection.5.5}{DRAM-TLB Discussion}{section.5}% 18
+\BOOKMARK [1][-]{section.6}{DUCATI: Combining DRAM-TLBs and UCAT}{}% 19
+\BOOKMARK [1][-]{section.7}{Results and Analysis}{}% 20
+\BOOKMARK [2][-]{subsection.7.1}{Results Summary}{section.7}% 21
+\BOOKMARK [2][-]{subsection.7.2}{Sensitivity to Page Size}{section.7}% 22
+\BOOKMARK [2][-]{subsection.7.3}{Sensitivity to Stacked DRAM Bandwidth}{section.7}% 23
+\BOOKMARK [1][-]{section.8}{Discussion on Stacked Memory Based Address Translation}{}% 24
+\BOOKMARK [2][-]{subsection.8.1}{Performance Impact On CPUs}{section.8}% 25
+\BOOKMARK [2][-]{subsection.8.2}{Performance Impact on VM Operations}{section.8}% 26
+\BOOKMARK [1][-]{section.9}{Related Work}{}% 27
+\BOOKMARK [1][-]{section.10}{Summary}{}% 28

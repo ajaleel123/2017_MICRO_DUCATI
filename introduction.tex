@@ -1,0 +1,194 @@
+% !TEX root = main.tex
+
+\section{Introduction}
+
+\noindent Heterogeneous computing systems composed of latency
+optimized cores (e.g. CPUs) and throughput optimized cores (e.g. GPUs,
+MIC~\cite{MIC}) are becoming the defacto technologies for future high
+performance computing systems. Such systems typically consist of a
+hybrid memory system~\cite{hbm_intel,hbm_amd,hbm_nvidia} that is
+composed of commodity DRAM~\cite{ddr4-spec} and stacked
+DRAM~\cite{hbm-spec,hmc_spec}. Furthermore, such systems are expected
+to support {\em Shared Virtual Memory}~\cite{HSA,UVM} where both CPUs
+and GPUs can access the entire hybrid memory address space using a
+unified virtual address space. Consequently, the performance of
+emerging heterogeneous systems is dependent on hardware support for
+virtual memory.% and efficient
+% utilization of the hybrid memory system.
+
+Under the virtual memory framework, programs operate on virtual
+addresses that must be dynamically translated to physical addresses.
+The operating system (OS) maintains a {\em page table} in memory that
+maps application virtual addresses to physical addresses. Depending on
+the page table implementation, address translation requires one or
+more page table accesses~\cite{Bhargava2008}. To avoid the long memory
+access latency, processor architects cache recent address translations
+using an on-chip multi-level translation look-aside buffer (TLB)
+hierarchy. Therefore, virtual memory performance is dependent on the
+performance of the {\em Last-Level TLB (LLT)}.
+
+Growing application memory footprints continue to stress the on-chip
+LLT~\cite{spectlb, Basu2013, SharedLLT, COLT}. LLT misses are latency
+sensitive operations that require one or more serial accesses to the
+page table. Reducing LLT miss latency enables instructions depending
+on the missing TLB entry to make faster forward progress. A simple
+solution to improve LLT miss latency would be to increase the LLT size
+to cover the entire application memory footprint. Unfortunately,
+on-die area limitations prohibit increasing the LLT size.
+
+To improve TLB coverage, recent studies have investigated using large
+pages. This is because a single large page (e.g. 2MB) TLB entry can
+span hundreds of contiguous small page (e.g. 4KB) TLB entries.
+Unfortunately, unrestricted use of large pages can create unintended
+OS performance overheads ~\cite{SuperPageProblem, TwoPageSize} due to
+memory imbalance~\cite{numa-harmful}, memory fragmentation,
+paging~\cite{cameo}, page creation, and page
+splitting~\cite{largepagevm}. Consequently, the use of large pages
+have traditionally been limited to complex server systems that have
+their own run-time systems to manage memory (e.g. Oracle
+DBMS~\cite{oracle_dbms}, SAP~\cite{sap}). Off the shelf modern
+operating systems typically avoid using large pages unless explicitly
+requested by the expert programmer.
+
+Alternatively, TLB coverage can be improved through the use of direct
+segments~\cite{Basu2013}. While high performing, from a practical
+implementation perspective, direct segments require non-negligible
+hardware and software changes to the baseline address translation
+system. Furthermore, direct segments can also suffer from problems
+similar to those of large pages.
+
+Several studies have also focused on practical solutions to improve
+LLT performance. These proposals reorganize the TLB
+hierarchy~\cite{SharedLLT}, prefetch TLB entries
+~\cite{prefTLBintercore, prefTLBgokul, prefTLBrecency,
+power2014supporting}, speculate address translation on TLB
+misses~\cite{spectlb}, speed up page walks by caching page table
+entries~\cite{SkipPT, MMUcaches, power2014supporting}, or compress
+several translations into a single TLB entry~\cite{COLT}. Our
+evaluations with these techniques~\cite{SharedLLT, COLT, MMUcaches} in
+our baseline system show that there is still significant room to
+improve the performance overhead of LLT misses when using small pages.
+
+% The first order performance overhead of an LLT miss is due to the
+% latency of walking the application page table. For example, traversing
+% a four-level hierarchical page table can incur a really long latency
+% if each level in the page table were to be accessed on an LLT miss. To
+% address this problem, commercial products implement {\em Page Walk
+% Caches (PWC)} to avoid some of the page table
+% accesses~\cite{SkipPT,MMUcaches}. However, in practice, despite the
+% use of PWCs, address translation still requires multiple page table
+% accesses.
+
+% Consequently, queuing delays to access the page table are a
+% primary component of the long LLT miss latency.
+
+A recent real system measurement study showed significant opportunity
+to improve shared virtual memory performance of heterogeneous CPU-GPU
+systems~\cite{vesley2016ispass}. Specifically, they show that LLT
+misses are an order of magnitude slower on the GPU relative to the
+CPU. Thus, we focus on improving GPU LLT miss overhead in CPU-GPU
+systems with a heterogeneous memory system\footnote{Heterogeneous
+memory systems are designed since stacked DRAM cannot completely
+replace DDR~\cite{BEAR,moin2012}}. Since page tables are
+conventionally stored in commodity DRAM (here on referred to as system
+memory), frequent LLT misses degrade performance due to the long queuing delays
+in the memory subsystem. Thus, to ensure high performance, it is imperative to reduce the frequency and latency of LLT misses.
+
+%We {\em accelerate} address translation by leveraging the 4x-8x higher
+%bandwidth offered by stacked memory.
+
+% and is already being deployed in commercial heterogeneous processors
+% today~\cite{hbm_intel,hbm_amd,hbm_nvidia}. When the memory traffic is
+% excessively high,
+
+This paper proposes two hardware mechanisms to improve LLT coverage and LLT miss penalty without requiring any significant changes to the existing virtual memory system design. Our first mechanism, {\em Unified Cache and TLB (UCAT)}, reduces the frequency of on-die LLT misses by enabling the conventional unified LLC to also hold TLB entries. UCAT can replace the existing on-die LLT and increases on-die TLB coverage by potentially allowing as many TLB entries as there are cache lines in the conventional on-chip LLC.
+
+%entirely in software, proposes to allocate the frequently
+%accessed portion of the application page table in stacked memory.
+%Doing so significantly improves LLT miss latency compared to storing
+%the entire page table in system memory. 
+
+While high performing, UCAT {\em does not} reduce the LLT miss penalty incurred from walking the application page table. This is because an LLT miss still requires multiple long-latency, serial, accesses to the application page table. To address this limitation, we also propose {\em DRAM-TLB}, a hardware mechanism to memoize virtual to physical translations in DRAM.
+
+DRAM-TLB is a hardware-managed structure that serves as the next
+larger TLB in the processor TLB hierarchy. The DRAM-TLB logically sits
+between the LLT (or UCAT) and the application page table(s) in memory. The
+DRAM-TLB contents are identical to the contents of on-chip TLBs (i.e.
+virtual and physical address pairs, permission bits, and process ID)
+and is consulted upon LLT (or UCAT) misses before walking the page table.
+
+% The DRAM-TLB physically resides in memory and requires negligible
+% storage overhead. Furthermore, they can be sized arbitrarily such that
+% address translations can be retrieved with a single memory access.
+
+Overall, this paper makes the following contributions:
+
+\begin{enumerate}
+
+\item{UCAT}
+\item{DRAM-TLB}
+\item{DUCATI}
+
+%\item{To the best of our knowledge, this is the first study that
+%leverages stacked memory to improve TLB miss overhead. While these
+%proposals may seem obvious and incremental, the value is in their
+%simplicity. Our proposals significantly improve TLB miss overhead
+%without redesigning the existing address translation hardware.}
+
+% \item{We propose {\em Stacked Memory Placement}, a software mechanism
+%    that places the entire hierarchical page table in stacked memory.
+%    Doing so improves LLT miss latency due to lower stacked memory
+%    queuing delays.}
+
+%\item{We propose a software mechanism, {\em Distributed Placement},
+%   that reduces DRAM queuing delays by placing the frequently accessed
+%   page table level in stacked memory and the remainder in system
+%   memory.}
+
+% \item{While high performing, we show that page table placement does
+%   not reduce the bandwidth required for address translation. This is
+%   because LLT misses still require multiple page table accesses for
+%   address translation. To address this problem, we propose hardware
+%   support to increase the TLB hierarchy by placing {\em TLBs in
+%   DRAM}.}
+
+
+% \item{We propose a hardware mechanism, {\em Stacked-TLB}, that embeds
+%    a gigantic TLB in stacked memory. Stacked-TLB logically sits
+%    between the LLT and the page table. Unlike a page table walk,
+%    Stacked-TLB provides low-latency and low-bandwidth translations
+%    since it incurs a single memory access. }
+
+%  We place the DRAM-TLB in stacked memory and refer to it as {\em
+%    Stacked-TLB}.
+
+% We show that Stacked-TLB requires low storage overhead, is scalable,
+% and can be configured to provide full TLB coverage for any
+% application memory footprint.
+
+% \item{We show that Stacked-TLB requires low storage overhead, is
+%   scalable, and can be configured to provide full TLB coverage for any
+%   application memory footprint.}
+
+\end{enumerate}
+
+\noindent For a set of high performance computing workloads simulated
+on a heterogeneous CPU-GPU system, Unified Cache and TLB (UCAT)
+improves performance by X\% on average (up to Y\%). On the other hand,
+DRAM-TLB improves performance by Y\% on average (up to 2X). Both
+proposals combined, DUCATI, improves performance by Z\%. All proposals
+require negligible changes to the baseline system.
+
+% address translation system.
+
+\begin{figure}[tp] 
+\vspace{-0. in}
+\centering
+ 	\centerline{\psfig{file=FIGURES/page_table,angle=-90,width=\columnwidth}}
+%	\centerline{\psfig{file=FIGURES/page_table,angle=-90,width=\textwidth}}
+
+	\caption{\small A four-level hierarchical page table.
+	\normalsize}
+\label{fig:page_table} 
+\vspace{-0. in}
+\end{figure}

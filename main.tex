@@ -1,0 +1,93 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This is the template for submission to MICRO 2016
+% The cls file is a modified from  'sig-alternate.cls'
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass{sig-alternate}
+
+\newcommand{\aj}[1]{{\bf {\color{green} AJ: {#1}}}}
+\newcommand{\swk}[1]{{\bf {\color{red} SWK: {#1}}}}
+\newcommand{\boldheadingpara}[1]{\vspace{0.1 in} \noindent {\bf #1.} \hspace{0.005in}}
+
+\newcommand{\ignore}[1]{}
+\usepackage{fancyhdr}
+\usepackage[normalem]{ulem}
+\usepackage[hyphens]{url}
+\usepackage{hyperref}
+
+\usepackage[normalem]{ulem}
+\usepackage{alltt}
+\usepackage{epsfig}
+%\usepackage{times}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{amssymb,amsmath}
+% \usepackage[stable]{footmisc}
+\usepackage[hang,flushmargin]{footmisc} % for unindented footntoes
+\usepackage{tikz}
+\usepackage[numbers]{natbib}
+\usepackage{multirow}
+\usepackage{url}
+\usepackage{stfloats}
+% \usepackage[letterpaper,left=0.75in,right=0.75in,top=1in,bottom=1in]{geometry}
+
+%\usepackage{AMS}
+
+%%%%%%%%%%%---SETME-----%%%%%%%%%%%%%
+\newcommand{\microsubmissionnumber}{154}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\fancypagestyle{firstpage}{
+  \fancyhf{}
+\setlength{\headheight}{50pt}
+\renewcommand{\headrulewidth}{0pt}
+  \fancyhead[C]{\normalsize{MICRO Submission
+      \textbf{\#\microsubmissionnumber} -- Confidential Draft -- Do NOT Distribute!!}}
+  \pagenumbering{arabic}
+}
+
+%%%%%%%%%%%---SETME-----%%%%%%%%%%%%%
+% \title{Stacked-TLB: Leveraging Stacked Memory for High Bandwidth
+%   Virtual Address Translations}
+
+\title{DUCATI:  Accelerating Address Translation By Improving TLB
+  Reach on High Performance Computing Systems}
+
+\author{}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+
+%\author{
+%\hspace{0.4in}Chiachen Chou$\dagger$\hspace{0.8in} Aamer Jaleel$\ddagger$\thanks{$\ddagger$Aamer Jaleel contributed to this work while at Intel.} \hspace{0.8in} %Moinuddin K. Qureshi$\dagger$ \vspace{0.1 in} \\
+%\hspace{-0.1in}$\dagger$School of Electrical and Computer Engineering \hspace{1in}$\ddagger$ NVIDIA\\ 
+%\hspace{0.8in}Georgia Institute of Technology \hspace{1.1in} \authemail{ajaleel@nvidia.com}\\
+%\hspace{-0.1in}\authemail{\{cc.chou, moin\}@ece.gatech.edu} \hspace{1.5in} \\
+%}
+
+\date{}
+\maketitle
+\thispagestyle{firstpage}
+\pagestyle{plain}
+
+\input{abstract}   
+\input{introduction}
+\input{background}
+\input{methodology}
+\input{design_UCAT}
+\input{design_DRAMTLB}
+\input{design_DUCATI}
+\input{results}
+\input{discussion}
+\input{related}
+\input{summary}
+
+\begin{small}
+%\bibliographystyle{ieeetr}
+\bibliographystyle{IEEEtranS}
+\bibliography{sigproc}
+\end{small}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}
