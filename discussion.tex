@@ -1,55 +1,55 @@
 % \newpage
-\section{Discussion on Stacked Memory Based Address Translation} 
+\section{DUCATI Discussion } 
 \label{sec:implications}
 
-\subsection{Performance Impact On CPUs}
-
-\noindent Our baseline studies assume on-die integrated CPU-GPU
-systems~\cite{intelgen9, amdzen} with a hybrid memory system. On such
-systems, both the GPU and CPU have similar access latency to both the
-stacked memory and system memory. While our have studies focused
-primarily on GPU workloads, both Page Table Placement and Stacked-TLB
-proposals are also expected to improve the performance of
-TLB-sensitive CPU workloads.
-
-Our proposals also apply to discrete CPU-GPU systems where the CPU and
-GPU communicate using high speed links (e.g. QPI~\cite{intel_qpi},
-NVLink~\cite{bwa}). In commercially offered discrete systems
-today~\cite{hbm_intel, hbm_nvidia}, stacked memory is normally
-integrated on the GPU while system memory is normally integrated on
-the CPU. Thus, the GPU/CPU experiences longer unloaded access latency
-to the remote non-integrated memory (due to the additional round trip
-communication link latency).
-
-Since the GPU is directly connected to the stacked memory on discrete
-CPU-GPU systems, the GPU continues to benefit from our stacked memory
-proposals to improve address translation. A natural question is how
-our proposals affect CPU performance on discrete CPU-GPU systems? At
-first, it may seem that our stacked memory proposals will degrade CPU
-performance because the unloaded access latency to stacked memory is
-longer than to the baseline system memory. However, CPU performance
-behavior depends on the bandwidth utilization and observed latency to
-system memory.
-
-When system memory bandwidth is saturated, the stacked memory access
-latency tends to be lower than the observed system memory access
-latency. In fact, our studies revealed a 10\% lower stacked memory
-latency from the CPU relative to accessing the system memory. This is
-despite including the round trip communication link latency. As such,
-we expect our proposals to also improve CPU performance on discrete
-CPU-GPU system when the system memory bandwidth is saturated.
-
-In situations where the system memory bandwidth is not saturated, we
-can ensure no impact on CPU performance, by always applying the
-baseline policy for CPU workloads. For example, the operating system
-can always follow System Memory Placement for all CPU workloads.
-Furthermore, the CPU can always follow the baseline policy of walking
-the page table when it misses in its own last level TLB, rather than
-probing the Stacked-TLB. A dynamic decision may be possible where the
-CPU can adapt to either using the baseline policy or our stacked
-memory proposals depending on the bandwidth utilization of system
-memory. We leave these optimizations for future work.
-
+% \subsection{Performance Impact On CPUs}
+% 
+% \noindent Our baseline studies assume on-die integrated CPU-GPU
+% systems~\cite{intelgen9, amdzen} with a hybrid memory system. On such
+% systems, both the GPU and CPU have similar access latency to both the
+% stacked memory and system memory. While our have studies focused
+% primarily on GPU workloads, both Page Table Placement and Stacked-TLB
+% proposals are also expected to improve the performance of
+% TLB-sensitive CPU workloads.
+% 
+% Our proposals also apply to discrete CPU-GPU systems where the CPU and
+% GPU communicate using high speed links (e.g. QPI~\cite{intel_qpi},
+% NVLink~\cite{bwa}). In commercially offered discrete systems
+% today~\cite{hbm_intel, hbm_nvidia}, stacked memory is normally
+% integrated on the GPU while system memory is normally integrated on
+% the CPU. Thus, the GPU/CPU experiences longer unloaded access latency
+% to the remote non-integrated memory (due to the additional round trip
+% communication link latency).
+% 
+% Since the GPU is directly connected to the stacked memory on discrete
+% CPU-GPU systems, the GPU continues to benefit from our stacked memory
+% proposals to improve address translation. A natural question is how
+% our proposals affect CPU performance on discrete CPU-GPU systems? At
+% first, it may seem that our stacked memory proposals will degrade CPU
+% performance because the unloaded access latency to stacked memory is
+% longer than to the baseline system memory. However, CPU performance
+% behavior depends on the bandwidth utilization and observed latency to
+% system memory.
+% 
+% When system memory bandwidth is saturated, the stacked memory access
+% latency tends to be lower than the observed system memory access
+% latency. In fact, our studies revealed a 10\% lower stacked memory
+% latency from the CPU relative to accessing the system memory. This is
+% despite including the round trip communication link latency. As such,
+% we expect our proposals to also improve CPU performance on discrete
+% CPU-GPU system when the system memory bandwidth is saturated.
+% 
+% In situations where the system memory bandwidth is not saturated, we
+% can ensure no impact on CPU performance, by always applying the
+% baseline policy for CPU workloads. For example, the operating system
+% can always follow System Memory Placement for all CPU workloads.
+% Furthermore, the CPU can always follow the baseline policy of walking
+% the page table when it misses in its own last level TLB, rather than
+% probing the Stacked-TLB. A dynamic decision may be possible where the
+% CPU can adapt to either using the baseline policy or our stacked
+% memory proposals depending on the bandwidth utilization of system
+% memory. We leave these optimizations for future work.
+% 
 \subsection{Performance Impact on VM Operations}
 
 \noindent Virtual memory operations such as remapping the virtual to
