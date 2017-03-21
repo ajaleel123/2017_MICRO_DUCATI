@@ -22,18 +22,18 @@ Figure~\ref{fig:config}).
 
 \subsection{System Configuration}
 
-\noindent We use an industry proprietary event-driven performance
-simulator to simulate a GPU (Table~\ref{table:method_system}) with
-memory hierarchy that is loosely based on the NVIDIA Maxwell GPU
-system~\cite{gpu_maxwell}. We model 128 Streaming Multiprocessors (SM)
-that support 64 warps each. A simple round-robin warp scheduler
-selects warp instructions each cycle. The baseline GPU memory system
-consists of a two-level cache and TLB hierarchy. The first-level cache
-and TLB are private to each SM while the last-level cache (LLC) and
-last-level TLB (LLT) are shared by all the SMs. All caches use 128B
-cache line size with 32B sectors. Our baseline also incorporates a
-highly-threaded hardware page table walker for address
-translation~\cite{power2014supporting, pichaigpu}.
+\noindent We use an industry proprietary performance simulator to
+simulate a GPU (Table~\ref{table:method_system}) with memory hierarchy
+based on the NVIDIA Maxwell GPU system~\cite{gpu_maxwell}. We model
+128 Streaming Multiprocessors (SM) that support 64 warps each. A
+simple round-robin warp scheduler selects warp instructions each
+cycle. The baseline GPU memory system consists of a two-level cache
+and TLB hierarchy. The first-level cache and TLB are private to each
+SM while the last-level cache (LLC) and last-level TLB (LLT) are
+shared by all the SMs. All caches use 128B cache line size with 32B
+sectors. Our baseline also incorporates a highly-threaded hardware
+page table walker for address translation~\cite{power2014supporting,
+pichaigpu}.
 
 % Each TLB supports compressing up to four contiguous TLB
 % entries into a single entry~\cite{COLT}. 
