@@ -2,10 +2,10 @@
 
 \section{Introduction}
 
-\noindent Heterogeneous computing systems composed of latency
+\noindent Heterogeneous systems composed of latency
 optimized cores (e.g. CPUs) and throughput optimized cores (e.g. GPUs,
-MIC~\cite{MIC}) are becoming the defacto technologies for future high
-performance computing systems. Such systems typically consist of a
+MIC~\cite{MIC}) are becoming the defacto organization of future high
+performance computing platforms. Such systems typically consist of a
 hybrid memory system~\cite{hbm_intel,hbm_amd,hbm_nvidia} that is
 composed of commodity DRAM~\cite{ddr4-spec} and stacked
 DRAM~\cite{hbm-spec,hmc_spec}. Furthermore, such systems are expected
@@ -15,6 +15,9 @@ unified virtual address space. Consequently, the performance of
 emerging heterogeneous systems is dependent on hardware support for
 virtual memory.% and efficient
 % utilization of the hybrid memory system.
+% EIMAN-03-21: last sentence can be better tied to previous sentences.
+% Will work on it later.
+
 
 Under the virtual memory framework, programs operate on virtual
 addresses that must be dynamically translated to physical addresses.
@@ -26,6 +29,11 @@ access latency, processor architects cache recent address translations
 using an on-chip multi-level translation look-aside buffer (TLB)
 hierarchy. Therefore, virtual memory performance is dependent on the
 performance of the {\em Last-Level TLB (LLT)}.
+%EIMAN-03-21: leaving this for now but we can probably do better in the 
+%second paragraph of intro. Most of above probably belongs in the 
+%background section. The paragraph below seems like a better follow-on
+%to the first paragraph. I guess you just want to have mentioned LLT
+% and somehow ended up with the long background-esque paragraph above.
 
 Growing application memory footprints continue to stress the on-chip
 LLT~\cite{spectlb, Basu2013, SharedLLT, COLT}. LLT misses are latency
@@ -46,7 +54,7 @@ paging~\cite{cameo}, page creation, and page
 splitting~\cite{largepagevm}. Consequently, the use of large pages
 have traditionally been limited to complex server systems that have
 their own run-time systems to manage memory (e.g. Oracle
-DBMS~\cite{oracle_dbms}, SAP~\cite{sap}). Off the shelf modern
+DBMS~\cite{oracle_dbms}, SAP~\cite{sap}). Off-the-shelf modern
 operating systems typically avoid using large pages unless explicitly
 requested by the expert programmer.
 
@@ -56,6 +64,10 @@ implementation perspective, direct segments require non-negligible
 hardware and software changes to the baseline address translation
 system. Furthermore, direct segments can also suffer from problems
 similar to those of large pages.
+%EIMAN-03-21: did someone explicitly in the past take issue with why
+%direct segments was not highlighted in the paper? If not, this looks
+%like it should be in related work to me. Not here.
+
 
 Several studies have also focused on practical solutions to improve
 LLT performance. These proposals reorganize the TLB
@@ -93,6 +105,10 @@ replace DDR~\cite{BEAR,moin2012}}. Since page tables are
 conventionally stored in commodity DRAM (here on referred to as system
 memory), frequent LLT misses degrade performance due to the long queuing delays
 in the memory subsystem. Thus, to ensure high performance, it is imperative to reduce the frequency and latency of LLT misses.
+%EIMAN-03-21: The above paragraph can be pulled up to be the third paragraph
+%maybe and then the material in it can be used to frame the two problems
+%of frequency of LLT misses and latency of said misses that this work is
+%trying to address.
 
 %We {\em accelerate} address translation by leveraging the 4x-8x higher
 %bandwidth offered by stacked memory.

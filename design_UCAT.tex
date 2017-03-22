@@ -14,8 +14,8 @@
 hierarchy to ensure high performance. The last-level in each hierarchy
 is architected as a single large unified structure (holding both
 instruction and data entries) that is shared across all cores. For
-example, the unified last-level cache (LLC) contains several hundred
-thousand cache lines\footnote{An 8MB cache with 32B lines contains
+example, the unified last-level cache (LLC) contains hundreds
+of thousands of cache lines\footnote{An 8MB cache with 32B lines contains
 256K cache lines.}) that store data for recent memory references.
 Similarly, the unified last-level TLB (LLT) contains 512-1024 TLB
 entries~\cite{} that store address translations for recent memory
@@ -34,11 +34,18 @@ The LLT and LLC are cache structures with similar sized tag arrays.
 Since they provide different types of data, there is a 4x-8x
 difference in the data array size. We observe that, since the LLC data
 array is greater than the LLT data array, the LLC can also serve as
-gigantic TLB with as many entries as there are LLC lines. As such, the
-conventional LLC can potentially be used to store virtual to physical
+gigantic TLB with as many entries as there are LLC lines. 
+%EIMAN-03-21: verify that each LLC line can indeed hold one LLT entry.
+As such, the conventional LLC can potentially be used to store virtual to physical
 translations just like a TLB (in addition to caching data from
 memory). Based on this insight, we propose to re-architect the
 conventional LLC as a {\em Unified Cache and TLB (UCAT)}.
+
+%EIMAN-03-21: My summary for reworking later: 
+%   - both TLB and cache hierarchies involve multiple levels and many entries in the unified LL
+%   - there is a distinction between what the tag and data of each hierarhcy holds but the cache data portion is bigger
+%   - Since the tag arrays are similar in size (does this even matter?), we think of using part of the larger part of the data array of the caches to hold translation entries?
+%   - Could the motivaiton here at the end be done better? Isn't the motivation really that the LLC space isn't very efficiently used in the GPU, and its the GPU translations that we care about based on the citation that we had in the intro, right?
 
 \subsection{UCAT Architecture}
 
@@ -120,13 +127,18 @@ replacement policy is used to manage UCAT entries in a set. UCAT hits
 update the replacement state appropriately while UCAT misses utilize
 the conventional replacement policy to select the victim candidate
 within the set.
+%EIMAN-3-21: Not sure what "as in the baseline LLC" means above. THe baseline LLC
+%doesn't manage different types of entries, why would it be important to say
+%that it uses "a single replacement policy," as opposed to what?
+
 
 Figure Y shows UCAT performance.
 
-The baseline polic UCAT allocates entries based on demand, rather than
-utility. As such, workloads that requently stream through a large
+The baseline policy UCAT allocates entries based on demand, rather than
+utility. As such, workloads that frequently stream through a large
 number of cache lines can constantly discard UCAT TLB entries. Thus,
 we propose to enhance DUCAT by improving the underlying replacement
+%EIMAN-3-21: I imagine you mean UCAT here not DUCAT?
 policy. Our baseline system uses the Dynamic Re-Reference Interval
 Prediction (DRRIP) replacement policy~\cite{}. In this baseline
 policy, all UCAT insertions follow the same re-reference prediction
