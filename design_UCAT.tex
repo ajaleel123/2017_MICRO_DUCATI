@@ -122,31 +122,23 @@ lines.
 
 % PUCAT is inefficient when the TLB-entries and cachelines have
 % different capacity requirements at run time. To address this problen,
-TLB-entries and cachelines dynamically share the entries in a UCAT
-set. With this approach, TLB-entries and cachelines contend with one
-another to occupy UCAT space. As in the baseline LLC, a single
+TLB-entries and cachelines dynamically share entries in a UCAT
+set and contend with one another for UCAT space. Similar to the baseline, a single
 replacement policy is used to manage UCAT entries in a set. UCAT hits
 update the replacement state appropriately while UCAT misses utilize
 the conventional replacement policy to select the victim candidate
-within the set.
-%EIMAN-3-21: Not sure what "as in the baseline LLC" means above. THe baseline LLC
-%doesn't manage different types of entries, why would it be important to say
-%that it uses "a single replacement policy," as opposed to what?
+within the set. Figure Y shows UCAT performance.
 
-
-Figure Y shows UCAT performance.
-
-The baseline policy UCAT allocates entries based on demand, rather than
-utility. As such, workloads t hat frequently stream through a large
-number of cache lines can constantly discard UCAT TLB entries. Thus,
-we propose to enhance DUCAT by improving the underlying replacement
-%EIMAN-3-21: I imagine you mean UCAT here not DUCAT?
-policy. Our baseline system uses the Dynamic Re-Reference Interval
-Prediction (DRRIP) replacement policy~\cite{}. In this baseline
+The baseline UCAT allocates entries based on demand, rather than
+utility. As such, workloads that frequently stream through a large
+number of cache lines can constantly discard UCAT TLB entries. Based on this observation,
+we propose to enhance UCAT by improving the underlying replacement
+policy. To this end we use the Dynamic Re-Reference Interval
+Prediction (DRRIP) replacement policy~\cite{}. In this
 policy, all UCAT insertions follow the same re-reference prediction
 (i.e. insertion policy). We propose to enhance the insertion policy
 for TLB entries by inserting them with a {\em near-immediate
-prediction} rather than the baseline {\em far prediction}. In doing
+prediction} rather than the default {\em far prediction}. In doing
 so, TLB entries are allowed to reside in the UCAT for a longer
 duration. We refer to this enhancement as {\em UCAT with Insertion
 (UCAT-I)}.
@@ -168,9 +160,10 @@ Figure Y also shows performance of UCAT-I.
 
 \subsection{UCAT Optimizations}
 
-To avoid this additional storage overhead, we propose using the
-UCAT-entry status bits (i.e. MESI bits) to make the distinction.
+To avoid any additional storage overhead, we propose using the
+UCAT-entry status bits (i.e., MESI bits) to make the distinction between 
+a cache-line entry and a translation entry in the UCAT.
 Specifically, we insert TLB-entries into UCAT with the {\em exclusive}
-and {\em shared} status bits to be valid. Note that cachelines can
+and {\em shared} status bits both set to valid. Note that cachelines can
 either be in exclusive state or shared state, but not both.
 
