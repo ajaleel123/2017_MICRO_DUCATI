@@ -50,28 +50,29 @@ conventional LLC as a {\em Unified Cache and TLB (UCAT)}.
 
 \subsection{UCAT Architecture}
 
-\noindent A Unified Cache and TLB (UCAT) holds both cache lines and
-TLB entries in a single hardware structure. Thus, a UCAT-entry is
-either a cacheline or a TLB-entry. A single-bit per UCAT-entry can be
-used to distinguish between the two.
-
-In the baseline system where a UCAT-entry only stores a cache line,
-the tag-array stores the physical address while the data array stores
-the cache line (e.g. 32-bytes). However, when the UCAT-entry serves as
-a TLB-entry, the UCAT tag-array stores the virtual address while the
+\noindent 
+Figure~\ref{fig:pagetable_placement}(a) illustrates a baseline system
+with separate LLT and LLC structures, while Figure~\ref{fig:pagetable_placement}(b)
+demonstrates a Unified Cache and TLB (UCAT) which holds both cache lines and
+TLB entries in a single hardware structure. In the latter, a UCAT-entry is
+either a cacheline or a TLB-entry as determined by a single bit in
+each UCAT entry. Figure~\ref{fig:pagetable_placement}(c) shows how this is done. 
+When a UCAT entry stores a cache line similar to what the baseline system does,
+the tag-array stores a portion of the physical address while the data array stores
+the cache line (e.g. 32-bytes)~\footnote{In our baseline we assume
+a physically indexed, physically tagged cache. However, any other variant of
+virtual or physical indexing/tagging is equally possible with a UCAT.}. 
+However, when the UCAT entry serves as
+a TLB entry, the UCAT tag-array stores part of the virtual address while the
 data-array stores the virtual to physical address translation (roughly
-8 bytes). At first, it may appear as though a large fraction of the
-UCAT-entry is being wasted (e.g. 24-bytes out of a 32-byte line in our
-baseline). However, recent studies have shown (and independently
+8 bytes). We do not find using 8 bytes out of a 32-byte line of a UCAT entry's data to
+store a translation wasteful since recent studies have shown (and independently
 verified in this study) that the majority of LLC entries are unused
-after cache insertion~\cite{}. In other words, the existing LLC
-entries are already inefficiently utilized. UCAT efficiently utilizes
-the conventional LLC space by storing TLB entries in addition to cache
+after cache insertion~\cite{}. In other words, we find that UCAT utilizes
+the conventional LLC space more efficiently by storing TLB entries in addition to cache
 lines.
 
-Figure X illustrates how a physical address maps to a UCAT set to
-store/retrieve a cache line (baseline). Similarly we illustrate how a
-virtual address maps to a UCAT set to store/retrieve a TLB entry.
+
 
 % \subsection{Static UCAT Partitioning}
 % 
