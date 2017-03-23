@@ -10,35 +10,36 @@
 \section{Unifying Caches and TLBs}
 \label{sec:UCAT}
 
-\noindent Modern chip multiprocessors use a multi-level TLB and cache
-hierarchy to ensure high performance. The last-level in each hierarchy
-is architected as a single large unified structure (holding both
-instruction and data entries) that is shared across all cores. For
+\noindent Modern chip multiprocessors use multi-level TLB and cache
+hierarchies for high performance. The last-level in each hierarchy
+is architected as a single large unified structure that holds both
+instruction and data entries and is shared among all cores. For
 example, the unified last-level cache (LLC) contains hundreds
 of thousands of cache lines\footnote{An 8MB cache with 32B lines contains
-256K cache lines.}) that store data for recent memory references.
+256K cache lines.}.
+% that store data for recent memory references.
 Similarly, the unified last-level TLB (LLT) contains 512-1024 TLB
-entries~\cite{} that store address translations for recent memory
-references.
+entries~\cite{}.
+% that store address translations for recent memory references.
 
-The LLT and LLC are architected using a tag array and a data array.
-The LLT tag array stores a virtual address while the LLC tag array
-stores a physical memory address.\footnote{Additional meta data (e.g.
+The LLT and LLC are cache structures with a tag array and a data array.
+The LLT tag array stores virtual addresses while the LLC tag array
+stores physical addresses.\footnote{Additional meta data (e.g.
 coherence state, replacement state, etc) is also stored in the tag
-array.}. On the other hand, the LLT data array stores the physical
+array.}. The LLT data array stores the physical
 address corresponding to the virtual address translation (roughly 8
-bytes) while the LLC data array stores a copy of the data from memory
+bytes), while the LLC data array stores a copy of the data from memory
 at a cache line granularity (e.g. 32-64 bytes).
 
-The LLT and LLC are cache structures with similar sized tag arrays.
-Since they provide different types of data, there is a 4x-8x
-difference in the data array size. We observe that, since the LLC data
-array is greater than the LLT data array, the LLC can also serve as
+The LLT and LLC caches have similar sized tag arrays.
+Since they provide different types of data however, the LLC has a 4x-8x
+larger data array. Because of this, the LLC could potentially also serve as
 gigantic TLB with as many entries as there are LLC lines. 
 %EIMAN-03-21: verify that each LLC line can indeed hold one LLT entry.
-As such, the conventional LLC can potentially be used to store virtual to physical
-translations just like a TLB (in addition to caching data from
-memory). Based on this insight, we propose to re-architect the
+As such, given that last-level caches typically do not get very high
+hit-rates and are often inefficiently used, the conventional LLC can potentially be used to store virtual to physical
+translations just like a TLB in addition to caching data from
+memory. Based on this insight, we propose to re-architect the
 conventional LLC as a {\em Unified Cache and TLB (UCAT)}.
 
 %EIMAN-03-21: My summary for reworking later: 
@@ -135,7 +136,7 @@ within the set.
 Figure Y shows UCAT performance.
 
 The baseline policy UCAT allocates entries based on demand, rather than
-utility. As such, workloads that frequently stream through a large
+utility. As such, workloads t hat frequently stream through a large
 number of cache lines can constantly discard UCAT TLB entries. Thus,
 we propose to enhance DUCAT by improving the underlying replacement
 %EIMAN-3-21: I imagine you mean UCAT here not DUCAT?
