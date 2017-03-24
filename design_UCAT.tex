@@ -83,6 +83,16 @@ insertion~\cite{}. In other words, we find that UCAT utilizes the
 conventional LLC space more efficiently by storing TLB entries in
 addition to cache lines.
 
+Both cachelines and TLB-entries share the different ways of a UCAT
+set. In doing so, they dynamically contend with one another for UCAT
+space. Like the baseline LLC architecture, a single replacement policy
+is used to manage UCAT entries in a set. UCAT hits update the
+replacement state while UCAT misses use the baseline replacement
+policy to select the victim candidate within the set. 
+
+Figure Y shows UCAT performance.
+
+
 % \subsection{Static UCAT Partitioning}
 % 
 % \noindent UCAT entries must be distributed between TLB-entries and
@@ -100,23 +110,16 @@ addition to cache lines.
 % help arrive at the best UCAT partition for cachelines and TLB entries.
 % Figure X illustrates the behavior for different {\em m}.
 
-\subsection{UCAT Allocation and Management}
+\subsection{UCAT Management}
 
 % PUCAT is inefficient when the TLB-entries and cachelines have
 % different capacity requirements at run time. To address this problen,
 
-TLB-entries and cachelines dynamically share entries in a UCAT set and
-contend with one another for UCAT space. Similar to the baseline, a
-single replacement policy is used to manage UCAT entries in a set.
-UCAT hits update the replacement state appropriately while UCAT misses
-utilize the conventional replacement policy to select the victim
-candidate within the set. Figure Y shows UCAT performance.
-
-The baseline UCAT allocates entries based on demand, rather than
-utility. As such, workloads that frequently stream through a large
-number of cache lines can constantly discard UCAT TLB entries. Based
-on this observation, we enhance UCAT by improving the underlying UCAT
-replacement policy. To this end we use the Dynamic Re-Reference
+\noindent The baseline UCAT allocates entries based on demand, rather
+than utility. As such, workloads that frequently stream through a
+large number of cache lines can constantly discard UCAT TLB entries.
+Based on this observation, we enhance UCAT by improving the underlying
+UCAT replacement policy. To this end we use the Dynamic Re-Reference
 Interval Prediction (DRRIP) replacement policy~\cite{}. In this
 policy, all UCAT insertions follow the same re-reference prediction
 (i.e. insertion policy). We propose to enhance the insertion policy
@@ -127,24 +130,11 @@ We refer to this enhancement as {\em UCAT with Insertion (UCAT-I)}.
 
 Figure Y also shows performance of UCAT-I.
 
-\begin{figure*}[t] 
-  \vspace{-0. in} \centering
-%  \centerline{\psfig{file=FIGURES/stacked_tlb,angle=-90,width=\columnwidth}}
-   \centerline{\psfig{file=FIGURES/stacked_tlb,width=\textwidth}}
-
-  \caption{\small Improving TLB coverage by embedding TLBs in DRAM
-    (DRAM-TLB). A DRAM-TLB architected using commodity DRAM is called
-    SYSMEM-TLB and a DRAM-TLB architected with stacked DRAM is called
-    Stacked-TLB. \normalsize}
-  \label{fig:stacked_tlb} 
-  \vspace{-0. in}
-\end{figure*}
-
 \begin{figure}[tp] 
   \vspace{-0.in} \centering
   \centerline{\psfig{file=GRAPHS/UCAT_perf,angle=-90,width=\columnwidth}}
 
-  \caption{\small Performance of DRAM-TLBs. \normalsize}
+  \caption{\small UCAT Performance. \normalsize}
   \label{fig:perf_UCAT} 
   \vspace{0.2 in}
 \end{figure}
@@ -176,4 +166,3 @@ a cache-line entry and a translation entry in the UCAT.
 Specifically, we insert TLB-entries into UCAT with the {\em exclusive}
 and {\em shared} status bits both set to valid. Note that cachelines can
 either be in exclusive state or shared state, but not both.
-

@@ -18,6 +18,19 @@ before walking the page table (see Figure~\ref{fig:stacked_tlb}).
 % architecting stacked memory as a high capacity hardware-managed DRAM
 % cache~\cite{BEAR, moin2012, unison, loh2011, jaewoong2012}. Similarly,
 
+\begin{figure*}[t] 
+  \vspace{-0. in} \centering
+%  \centerline{\psfig{file=FIGURES/stacked_tlb,angle=-90,width=\columnwidth}}
+   \centerline{\psfig{file=FIGURES/stacked_tlb,width=\textwidth}}
+
+  \caption{\small Improving TLB coverage by embedding TLBs in DRAM
+    (DRAM-TLB). A DRAM-TLB architected using commodity DRAM is called
+    SYSMEM-TLB and a DRAM-TLB architected with stacked DRAM is called
+    Stacked-TLB. \normalsize}
+  \label{fig:stacked_tlb} 
+  \vspace{-0. in}
+\end{figure*}
+
 \subsection{DRAM-TLB Architecture}
 
 \noindent DRAM-TLBs can either be architected using stacked memory or
