@@ -62,7 +62,7 @@ baseline system does, the tag-array stores a portion of the physical
 address while the data array stores the cache line (e.g.
 32-bytes)~\footnote{In our baseline we assume a physically indexed,
 physically tagged cache. However, any other variant of virtual or
-physical indexing/tagging is equally possible with a UCAT.}. However,
+physical indexing/tagging is equally possible with UCAT.}. However,
 when the UCAT entry serves as a TLB entry, the UCAT tag-array stores
 portions of the virtual address and the address space identifier
 (ASID) while the data-array stores the virtual to physical address
@@ -70,28 +70,58 @@ translation. We propose to use 16 bytes of the UCAT data array for
 address translation. In addition to the physical address, the
 UCAT-entry also stores meta-data information such as page protection
 bits and the LSB of the ASID bits\footnote{When the ASID bits do not
-fit in the existing LLC tag array size, we use the MSB of the ASID for
-a partial tag match in the tag array. The LSB of the ASID stored in
-the data array is then used to finish the tag match before supplying
-the stored address translation}.
+fit in the existing LLC tag array size, we use the top bits of the
+ASID to enable a partial tag match in the tag array. The bottom bits
+of the ASID are stored in the data array and are also compared to
+ensure a full tag match before supplying the address translation
+stored in the UCAT-entry}.
 
 Note that even though we only use 16-bytes to store the translation,
-we do not think we are introducing any new inefficiency. This is
-because many recent studies have shown (and independently verified in
-this study) that the majority of LLC entries are unused after cache
-insertion~\cite{}. In other words, we find that UCAT utilizes the
-conventional LLC space more efficiently by storing TLB entries in
-addition to cache lines.
+we claim that UCAT improves upon the existing LLC inefficiency. This
+is because recent studies show (and independently verified in this
+study) that a majority of LLC entries are unused after cache
+insertion~\cite{}. As such, UCAT utilizes the conventional LLC space
+more efficiently by storing TLB entries in addition to cache lines.
 
-Both cachelines and TLB-entries share the different ways of a UCAT
-set. In doing so, they dynamically contend with one another for UCAT
-space. Like the baseline LLC architecture, a single replacement policy
-is used to manage UCAT entries in a set. UCAT hits update the
-replacement state while UCAT misses use the baseline replacement
-policy to select the victim candidate within the set. 
+UCAT enables both cachelines and TLB-entries to share space. In doing
+so, both dynamically contend for the available UCAT space. Like the
+baseline LLC architecture, we leverage the existing replacement policy
+to manage allocating UCAT entries in a set. UCAT hits update
+replacement state while UCAT misses utilize the baseline replacement
+policy to select the victim.
 
-Figure Y shows UCAT performance.
 
+Figure~\ref{fig:perf_UCAT} shows UCAT performance relative to the
+baseline system(on the y-axis) with the x-axis illustrating the
+different workloads. The first bar in the figure shows UCAT
+performance where cachelines and TLB-entries contend for UCAT space
+without any restrictions. The figure shows that UCAT significantly
+improves performance of workloads like {\em XSBench}, {\em dmr}, {\em
+MaxFlow}, and {\em MCB} by more than 2x (upto 4x in the latter two).
+Other workloads like {\em GUPS}, {\em SNAP}, {\em UMT}, and {\em CoMD}
+observe more than 15\% performance improvement. Overall, UCAT improves
+performance across all workloads by 53\%.
+
+To understand UCAT performance benefits, Figure~\ref{fig:tlblat_UCAT}
+and Figure~\ref{fig:tlbsize_UCAT} illustrate relative translation
+latency and effective on-die TLB size respectively. Workloads that
+experienced more than 2x performance improvements observe a reduction
+in TLB miss penalty by 70\% or more. This is because these workloads
+experience an increase in on-die TLB size by 4x-64x. On average, UCAT
+improves virtual to physical address translation latency by 51\% (up
+to 86\% for {\em MCB}). The improvement in translation latency stems
+from an increase in on-chip TLB coverage by 16x (up to 64x for {\em
+dmr}).
+
+Since UCAT decreases the effective capacity of cachelines compared to
+the baseline separate LLT and LLC, we also investigated increase in
+memory accesses due to potential increase in UCAT cacheline misses
+relative to the baseline system. Our evaluations show that on average,
+UCAT increases the number of memory accesses by 1\% (maximum 4\% for
+{\em XSBench}). As observed from the performance graphs, the
+additional increase in memory traffic has negligible performance
+impact. This illustrates that trading off conventional LLC space for
+TLB entries provides substantial performance improvements.
 
 % \subsection{Static UCAT Partitioning}
 % 
@@ -110,25 +140,37 @@ Figure Y shows UCAT performance.
 % help arrive at the best UCAT partition for cachelines and TLB entries.
 % Figure X illustrates the behavior for different {\em m}.
 
-\subsection{UCAT Management}
+\subsection{Managing UCAT Intelligently}
 
 % PUCAT is inefficient when the TLB-entries and cachelines have
 % different capacity requirements at run time. To address this problen,
 
-\noindent The baseline UCAT allocates entries based on demand, rather
-than utility. As such, workloads that frequently stream through a
-large number of cache lines can constantly discard UCAT TLB entries.
-Based on this observation, we enhance UCAT by improving the underlying
-UCAT replacement policy. To this end we use the Dynamic Re-Reference
-Interval Prediction (DRRIP) replacement policy~\cite{}. In this
-policy, all UCAT insertions follow the same re-reference prediction
-(i.e. insertion policy). We propose to enhance the insertion policy
-for TLB entries by inserting them with a {\em near-immediate
-prediction} rather than the default {\em far prediction}. In doing so,
-TLB entries are allowed to reside in the UCAT for a longer duration.
-We refer to this enhancement as {\em UCAT with Insertion (UCAT-I)}.
+\noindent The baseline UCAT replacement policy allocates entries based
+on demand, rather than utility. As such, TLB-sensitive workloads that
+frequently stream through a large number of cachelines can constantly
+discard performance critical UCAT TLB entries. Based on this insight,
+we enhance UCAT by improving the underlying UCAT replacement policy.
+To do so, we leverage the Dynamic Re-Reference Interval Prediction
+(DRRIP) replacement policy~\cite{}. In this policy, all UCAT
+insertions follow the same re-reference prediction (i.e. insertion
+policy). We propose to enhance the insertion policy for TLB entries by
+inserting them with a {\em near-immediate prediction} rather than the
+default {\em far prediction}. In doing so, TLB entries are allowed to
+reside in the UCAT for a longer duration. We refer to this enhancement
+as {\em UCAT with Insertion (UCAT-I)}.
 
-Figure Y also shows performance of UCAT-I.
+Figure~\ref{fig:perf_UCAT} shows that intelligently managing UCAT by
+preferencing TLB-entries over cachelines improves average performance
+of UCAT by an additional 12\%. We observe that UCAT-I has negligible
+increase in memory traffic (< 1\%). We observe TLB-sensitive workloads
+like {\em XSBench} and {\em dmr} observe further performance
+improvements (up to 90\%). Additionally, workloads like {\em LULESH},
+{\em SNAP}, and {\em CoMD} observe and additional 7-10\% performance
+improvement over UCAT by intelligently managing the UCAT-entries. This
+is evident from Figure~\ref{fig:tlbsize_UCAT} and
+Figure~\ref{fig:tlblat_UCAT} where UCAT-I increases effective TLB
+coverage by nearly 2x while improving average translation latency by
+7\%.
 
 \begin{figure}[tp] 
   \vspace{-0.in} \centering
@@ -143,7 +185,7 @@ Figure Y also shows performance of UCAT-I.
   \vspace{0.in} \centering
   \centerline{\psfig{file=GRAPHS/UCAT_tlblat,angle=-90,width=\columnwidth}}
 
-  \caption{\small TLB miss penalty relative to baseline system.\normalsize}
+  \caption{\small Translation latency relative to baseline system.\normalsize}
   \label{fig:tlblat_UCAT} 
   \vspace{-0.1 in}
 \end{figure}
@@ -153,7 +195,7 @@ Figure Y also shows performance of UCAT-I.
   \centerline{\psfig{file=GRAPHS/UCAT_tlbsize,angle=-90,width=\columnwidth}}
 
   \caption{\small Effective TLB Size.\normalsize}
-  \label{fig:tlblat_UCAT} 
+  \label{fig:tlbsize_UCAT} 
   \vspace{-0.1 in}
 \end{figure}
 

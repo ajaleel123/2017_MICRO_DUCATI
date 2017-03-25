@@ -198,7 +198,7 @@
 @    xaxis  tick major 13, 13
 @    xaxis  ticklabel 13, "Nekbone"
 @    xaxis  tick major 14, 14
-@    xaxis  ticklabel 14, "geomean"
+@    xaxis  ticklabel 14, "GeoMean"
 @    xaxis  tick minor 15, 0
 @    yaxis  on
 @    yaxis  type zero false

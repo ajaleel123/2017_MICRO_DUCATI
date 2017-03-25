@@ -90,8 +90,11 @@ executing four billion warp instructions. After functional warmup, we
 enable detailed timing simulation for two billion warp instructions.
 
 Reduction in total execution time is our primary metric for
-performance. We also report average TLB miss latency to correlate the
-change in performance.
+performance. We also compare virtual to physical address translation
+latency to correlate the change in performance. We compute translation
+latency as the cycles spent in translating a virtual address to
+physical address averaged across all memory instructions executed by
+the application.
 
 % collect average LLT miss latency. The reduction in LLT miss latency
 % directly correlates with performance improvements, we
