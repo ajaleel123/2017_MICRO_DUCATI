@@ -1,18 +1,18 @@
 \section{Architecting TLBs in DRAM } 
 \label{sec:stackedTLB}
 
-\noindent While high performing, page table placement does not reduce
-the number of memory accesses on an LLT miss. Consequently, the
-bandwidth required for address translation remains unchanged. It would
-be highly desirable to reduce the number of memory accesses on an LLT
-miss. Doing so not only improves memory access bandwidth but also
-reduces the effective LLT miss latency.
+\noindent When the application working set exceeds the TLB coverage
+provided by UCAT (e.g. {\em GUPS}), UCAT does not reduce the number of
+memory accesses on an LLT miss. Reducing the number of memory accesses
+on an LLT miss improves memory access bandwidth and also reduces the
+effective LLT miss latency.
 
 To address this problem, we propose to increase TLB coverage and
 extend the processor TLB hierarchy by architecting {\em TLBs in DRAM
 (DRAM-TLB)}. The DRAM-TLB logically sits between the on-die shared LLT
-and the page tables in memory and is first consulted on an LLT miss
-before walking the page table (see Figure~\ref{fig:stacked_tlb}).
+(or UCAT) and the page tables in memory and is first consulted on an
+LLT (or UCAT) miss before walking the page table (see
+Figure~\ref{fig:stacked_tlb}).
 
 % \noindent Recent proposals extend the processor cache hierarchy by
 % architecting stacked memory as a high capacity hardware-managed DRAM
@@ -145,7 +145,7 @@ read-modify-write operation~\cite{hbm-spec}.
   \vspace{-0.1 in}
 \end{figure}
 
-\subsection{Performance Analysis}
+\subsection{DRAM-TLB Performance}
 
 % For our evaluation purposes, we do not exploit the prefetching
 % benefits from fetching multiple TLB entries with a single DRAM read

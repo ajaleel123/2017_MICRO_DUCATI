@@ -55,26 +55,25 @@ Unified Cache and TLB (UCAT)}.
 separate LLT and LLC structures, while Figure~\ref{fig:UCAT}(b)
 demonstrates a Unified Cache and TLB (UCAT) which holds both cache
 lines and TLB entries in a single hardware structure. In the latter, a
-UCAT-entry is either a cacheline or a TLB-entry as determined by a
-single bit in each UCAT entry. Figure~\ref{fig:UCAT}(c) shows how this
-is done. When a UCAT entry stores a cache line similar to what the
-baseline system does, the tag-array stores a portion of the physical
-address while the data array stores the cache line (e.g.
-32-bytes)~\footnote{In our baseline we assume a physically indexed,
-physically tagged cache. However, any other variant of virtual or
-physical indexing/tagging is equally possible with UCAT.}. However,
-when the UCAT entry serves as a TLB entry, the UCAT tag-array stores
-portions of the virtual address and the address space identifier
-(ASID) while the data-array stores the virtual to physical address
-translation. We propose to use 16 bytes of the UCAT data array for
-address translation. In addition to the physical address, the
-UCAT-entry also stores meta-data information such as page protection
-bits and the LSB of the ASID bits\footnote{When the ASID bits do not
-fit in the existing LLC tag array size, we use the top bits of the
-ASID to enable a partial tag match in the tag array. The bottom bits
-of the ASID are stored in the data array and are also compared to
-ensure a full tag match before supplying the address translation
-stored in the UCAT-entry}.
+UCAT-entry is either a cacheline or a TLB-entry.
+Figure~\ref{fig:UCAT}(c) shows how this is done. When a UCAT entry
+stores a cache line similar to what the baseline system does, the
+tag-array stores a portion of the physical address while the data
+array stores the cache line (e.g. 32-bytes)~\footnote{In our baseline
+we assume a physically indexed, physically tagged cache. However, any
+other variant of virtual or physical indexing/tagging is equally
+possible with UCAT.}. However, when the UCAT entry serves as a TLB
+entry, the UCAT tag-array stores portions of the virtual address and
+the address space identifier (ASID) while the data-array stores the
+virtual to physical address translation. We propose to use 16 bytes of
+the UCAT data array for address translation. In addition to the
+physical address, the UCAT-entry also stores meta-data information
+such as page protection bits and the LSB of the ASID bits\footnote{If
+all the ASID bits do not fit in the existing LLC tag array size, we
+propose to store the top bits of the ASID to enable a partial tag
+match in the tag array. The bottom bits of the ASID are stored in the
+data array and must also compared to ensure a full tag match before
+supplying the address translation stored in the UCAT-entry}.
 
 Note that even though we only use 16-bytes to store the translation,
 we claim that UCAT improves upon the existing LLC inefficiency. This
@@ -90,16 +89,51 @@ to manage allocating UCAT entries in a set. UCAT hits update
 replacement state while UCAT misses utilize the baseline replacement
 policy to select the victim.
 
+The baseline UCAT replacement policy allocates entries based on
+demand, rather than utility. As such, TLB-sensitive workloads that
+frequently stream through a large number of cachelines can constantly
+discard performance critical UCAT TLB entries. Based on this insight,
+we also propose to enhance UCAT by improving the underlying UCAT
+replacement policy. To do so, we leverage the Dynamic Re-Reference
+Interval Prediction (DRRIP) replacement policy~\cite{}. In this
+policy, all UCAT insertions follow the same re-reference prediction
+(i.e. insertion policy). We propose to enhance the insertion policy
+for TLB entries by inserting them with a {\em near-immediate
+prediction} rather than the default {\em far prediction}. In doing so,
+TLB entries are allowed to reside in the UCAT for a longer duration.
+We refer to this enhancement as {\em UCAT with Insertion (UCAT-I)}.
 
-Figure~\ref{fig:perf_UCAT} shows UCAT performance relative to the
-baseline system(on the y-axis) with the x-axis illustrating the
+% \subsection{Static UCAT Partitioning}
+% 
+% \noindent UCAT entries must be distributed between TLB-entries and
+% cachelines. One way of accomplishing this is by statically employing
+% {\em way partitioning}~\cite{}. With {\em N} ways in a UCAT set, {\em
+% m} ways are statically devoted to cachelines while the remaining {\em
+% N-m} ways are statically devoted to TLB entries. Cachelines are only
+% inserted in the ways to devoted to them while TLB entries are inserted
+% in the ways devoted to them. When evicting UCAT entries, a replacement
+% policy is used (e.g. LRU, RRIP) to select between candidates within
+% the same UCAT partition. We refer to this design as {\em Static UCAT
+% Partitioning (UCAT-S)}.
+% 
+% Profiling across various workloads for different values of {\em m} can
+% help arrive at the best UCAT partition for cachelines and TLB entries.
+% Figure X illustrates the behavior for different {\em m}.
+
+\subsection{UCAT Performance}
+
+% PUCAT is inefficient when the TLB-entries and cachelines have
+% different capacity requirements at run time. To address this problen,
+
+\noindent Figure~\ref{fig:perf_UCAT} shows UCAT performance relative
+to the baseline system(on the y-axis) with the x-axis illustrating the
 different workloads. The first bar in the figure shows UCAT
 performance where cachelines and TLB-entries contend for UCAT space
 without any restrictions. The figure shows that UCAT significantly
 improves performance of workloads like {\em XSBench}, {\em dmr}, {\em
 MaxFlow}, and {\em MCB} by more than 2x (upto 4x in the latter two).
 Other workloads like {\em GUPS}, {\em SNAP}, {\em UMT}, and {\em CoMD}
-observe more than 15\% performance improvement. Overall, UCAT improves
+observe more than 15\% performance gains. Overall, UCAT improves
 performance across all workloads by 53\%.
 
 To understand UCAT performance benefits, Figure~\ref{fig:tlblat_UCAT}
@@ -123,54 +157,18 @@ additional increase in memory traffic has negligible performance
 impact. This illustrates that trading off conventional LLC space for
 TLB entries provides substantial performance improvements.
 
-% \subsection{Static UCAT Partitioning}
-% 
-% \noindent UCAT entries must be distributed between TLB-entries and
-% cachelines. One way of accomplishing this is by statically employing
-% {\em way partitioning}~\cite{}. With {\em N} ways in a UCAT set, {\em
-% m} ways are statically devoted to cachelines while the remaining {\em
-% N-m} ways are statically devoted to TLB entries. Cachelines are only
-% inserted in the ways to devoted to them while TLB entries are inserted
-% in the ways devoted to them. When evicting UCAT entries, a replacement
-% policy is used (e.g. LRU, RRIP) to select between candidates within
-% the same UCAT partition. We refer to this design as {\em Static UCAT
-% Partitioning (UCAT-S)}.
-% 
-% Profiling across various workloads for different values of {\em m} can
-% help arrive at the best UCAT partition for cachelines and TLB entries.
-% Figure X illustrates the behavior for different {\em m}.
-
-\subsection{Managing UCAT Intelligently}
-
-% PUCAT is inefficient when the TLB-entries and cachelines have
-% different capacity requirements at run time. To address this problen,
-
-\noindent The baseline UCAT replacement policy allocates entries based
-on demand, rather than utility. As such, TLB-sensitive workloads that
-frequently stream through a large number of cachelines can constantly
-discard performance critical UCAT TLB entries. Based on this insight,
-we enhance UCAT by improving the underlying UCAT replacement policy.
-To do so, we leverage the Dynamic Re-Reference Interval Prediction
-(DRRIP) replacement policy~\cite{}. In this policy, all UCAT
-insertions follow the same re-reference prediction (i.e. insertion
-policy). We propose to enhance the insertion policy for TLB entries by
-inserting them with a {\em near-immediate prediction} rather than the
-default {\em far prediction}. In doing so, TLB entries are allowed to
-reside in the UCAT for a longer duration. We refer to this enhancement
-as {\em UCAT with Insertion (UCAT-I)}.
-
-Figure~\ref{fig:perf_UCAT} shows that intelligently managing UCAT by
-preferencing TLB-entries over cachelines improves average performance
-of UCAT by an additional 12\%. We observe that UCAT-I has negligible
-increase in memory traffic (< 1\%). We observe TLB-sensitive workloads
-like {\em XSBench} and {\em dmr} observe further performance
-improvements (up to 90\%). Additionally, workloads like {\em LULESH},
-{\em SNAP}, and {\em CoMD} observe and additional 7-10\% performance
-improvement over UCAT by intelligently managing the UCAT-entries. This
-is evident from Figure~\ref{fig:tlbsize_UCAT} and
+Figure~\ref{fig:perf_UCAT} also shows that intelligently managing UCAT
+by preferencing TLB-entries over cachelines improves average
+performance of UCAT by an additional 12\%. We observed that UCAT-I
+also has negligible increase in memory traffic (< 1\%) and
+TLB-sensitive workloads like {\em XSBench} and {\em dmr} experience
+further performance improvements (up to 90\%). Additionally, workloads
+like {\em LULESH}, {\em SNAP}, and {\em CoMD} experience an additional
+7-10\% performance improvement over UCAT by intelligently managing the
+UCAT-entries. This is evident from Figure~\ref{fig:tlbsize_UCAT} and
 Figure~\ref{fig:tlblat_UCAT} where UCAT-I increases effective TLB
 coverage by nearly 2x while improving average translation latency by
-7\%.
+7\%. Overall, UCAT-I improves performance by 65\% relative to the baseline.
 
 \begin{figure}[tp] 
   \vspace{-0.in} \centering
@@ -200,11 +198,24 @@ coverage by nearly 2x while improving average translation latency by
 \end{figure}
 
 
-\subsection{UCAT Optimizations}
+\subsection{UCAT Design Overhead}
 
-To avoid any additional storage overhead, we propose using the
-UCAT-entry status bits (i.e., MESI bits) to make the distinction between 
-a cache-line entry and a translation entry in the UCAT.
-Specifically, we insert TLB-entries into UCAT with the {\em exclusive}
-and {\em shared} status bits both set to valid. Note that cachelines can
-either be in exclusive state or shared state, but not both.
+\noindent UCAT requires a mechanism to distinguish between cacheline
+entries and translation entries. We propose using the UCAT-entry state
+bits (i.e., MESI bits) and insert TLB-entries into UCAT with the {\em
+exclusive} and {\em shared} status bits both set to valid. Since
+cachelines can either be in exclusive state or shared state (and not
+both), this proposal enables distinguishing between TLB entries and
+cacheline entries at zero storage overhead.
+
+UCAT requires additional logic to invalidate/flush TLB entries from
+the UCAT. Targeted virtual address invalidations can be handled by
+looking up and invalidating the UCAT-entry. However, to enable a TLB
+flush for a given ASID, we use an 8-bit {\em Epoch Counter (EPCTR)}
+associated with each ASID. When inserting a TLB-entry into UCAT,
+besides storing the physical address and permission bits, we also
+store the current value of the EPCTR for the ASID. If the ASID
+requires a TLB flush, it simply increments its own EPCTR rather than
+iterating through the entire UCAT. With this support, UCAT provides a
+valid translation only if both the ASID and EPCTR stored in the
+UCAT-entry match the current EPCTR for the ASID.
