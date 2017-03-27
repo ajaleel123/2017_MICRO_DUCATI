@@ -2,12 +2,12 @@
 
 \section{Introduction}
 
-\noindent Heterogeneous systems composed of latency
-optimized cores (e.g. CPUs) and throughput optimized cores (e.g. GPUs,
-MIC~\cite{MIC}) are becoming the defacto organization of future high
-performance computing platforms. Such systems typically consist of a
-hybrid memory system~\cite{hbm_intel,hbm_amd,hbm_nvidia} that is
-composed of commodity DRAM~\cite{ddr4-spec} and stacked
+\noindent Heterogeneous systems composed of latency optimized cores
+(e.g. CPUs) and throughput optimized cores (e.g. GPUs, MIC~\cite{MIC})
+are becoming the defacto organization of future high performance
+computing platforms. Such systems typically consist of a hybrid memory
+system~\cite{hbm_intel,hbm_amd,hbm_nvidia} that is composed of
+commodity DRAM~\cite{ddr4-spec} and stacked
 DRAM~\cite{hbm-spec,hmc_spec}. Furthermore, such systems are expected
 to support {\em Shared Virtual Memory}~\cite{HSA,UVM} where both CPUs
 and GPUs can access the entire hybrid memory address space using a
@@ -15,17 +15,18 @@ unified virtual address space. Consequently, the performance of
 emerging heterogeneous systems is dependent on hardware support for
 virtual memory.
 
-In the virtual memory framework, depending on the page table implementation,
-address translation requires one or more page table accesses~\cite{Bhargava2008}.
-To avoid the long memory access latency, processor architects cache recent address translations
-using an on-chip multi-level translation look-aside buffer (TLB)
-hierarchy. Therefore, virtual memory performance is dependent on the
-performance of the {\em Last-Level TLB (LLT)}.
-Growing application memory footprints continue to stress the on-chip
-LLT~\cite{spectlb, Basu2013, SharedLLT, COLT}. LLT misses are latency
-sensitive operations that require one or more serial accesses to the
-page table. Reducing LLT miss latency enables instructions depending
-on the missing TLB entry to make faster forward progress.
+In the virtual memory framework, depending on the page table
+implementation, address translation requires one or more page table
+accesses~\cite{Bhargava2008}. To avoid the long memory access latency,
+processor architects cache recent address translations using an
+on-chip multi-level translation look-aside buffer (TLB) hierarchy.
+Therefore, virtual memory performance is dependent on the performance
+of the {\em Last-Level TLB (LLT)}. Growing application memory
+footprints continue to stress the on-chip LLT~\cite{spectlb, Basu2013,
+SharedLLT, COLT}. LLT misses are latency sensitive operations that
+require one or more serial accesses to the page table. Reducing LLT
+miss latency enables instructions depending on the missing TLB entry
+to make faster forward progress.
 
 A recent real system measurement study shows significant opportunity
 to improve shared virtual memory performance of heterogeneous CPU-GPU
@@ -39,8 +40,8 @@ replace DDR~\cite{BEAR,moin2012}}.
 %conventionally stored in commodity DRAM (here on referred to as system
 %memory), frequent LLT misses degrade performance due to the long queuing delays
 %in the memory subsystem. 
-In this paper we target reducing both the {\em frequency}
-of LLT misses, and their {\em latency} when they occur.
+In this paper we focus on reducing both LLT miss {\em frequency} and
+LLT miss {\em latency}.
 
 
 \begin{figure}[t] 
@@ -54,54 +55,65 @@ of LLT misses, and their {\em latency} when they occur.
 \vspace{-0.15 in}
 \end{figure}
 
-A simple
-solution to reduce the frequency of LLT misses would be to increase LLT size
-to cover the entire application memory footprint. 
-Figure~\ref{fig:tlb_sensitivity} shows the performance impact of doing so
-averaged across several memory intensive workloads on a GPU with a 1024-entry
-shared LLT (simulation methodology and benchmark selection discussed in 
-Section~\ref{sec:method}). The
-x-axis shows TLB sizes while the y-axis
-illustrates the performance relative to our baseline 1024-entry LLT
-at 4KB, 64KB, and 2MB page sizes. 
-The figure shows that performance can be highly sensitive to the number of LLT entries, especially when
-at smaller page sizes. On average, a 2 million entry LLT improves
-performance by 2X with a 4KB page size. Similarly, a 256k-entry
-LLT improves performance by 60\% with 64KB page size. Finally an 8k-entry LLT improves performance by 10\% with 2MB page size.
+A simple solution to reduce the frequency of LLT misses would be to
+increase LLT size to cover the entire application memory footprint.
+Figure~\ref{fig:tlb_sensitivity} shows the performance impact of doing
+so averaged across several memory intensive workloads on a GPU with a
+1024-entry shared LLT (simulation methodology and benchmark selection
+discussed in Section~\ref{sec:method}). The x-axis shows TLB sizes
+while the y-axis illustrates the performance relative to our baseline
+1024-entry LLT at 4KB, 64KB, and 2MB page sizes. The figure shows that
+performance can be highly sensitive to the number of LLT entries,
+especially with smaller page sizes. On average, a 2 million entry LLT
+improves performance by 2X with a 4KB page size. Similarly, a
+256k-entry LLT improves performance by 60\% with 64KB page size.
+Finally an 8k-entry LLT improves performance by 10\% with 2MB page
+size.
 %Assuming 8-bytes of storage requirement per TLB entry, processor
 %architects would need to budge 16MB, 2MB, and 64KB of area overhead
 %for 4KB, 64KB, and 2MB pages respectively. 
 
-Unfortunately,
-on-die area limitations prohibit simply increasing the LLT size, especially
-at smaller page sizes. 
-Recent work has investigated improving performance of virtual memory
-translation hardware using large pages to help TLB coverage. 
+Unfortunately, on-die area limitations prohibit simply increasing the
+LLT size, especially at smaller page sizes. Recent work has
+investigated improving performance of virtual memory translation
+hardware using large pages to help TLB coverage.
 %This is because a single large page (e.g. 2MB) TLB entry can
 %span hundreds of contiguous small page (e.g. 4KB) TLB entries. 
 %Covering a larger portion of the virtual address space using
 %entries of the on-chip multi-level TLB hierarhcy results in fewer page
 %table accesses in memory and avoids long memory access latencies. 
-However, unrestricted use of large pages can create unintended
-OS performance overheads ~\cite{SuperPageProblem, TwoPageSize} due to
+However, unrestricted use of large pages can create unintended OS
+performance overheads ~\cite{SuperPageProblem, TwoPageSize} due to
 memory imbalance~\cite{numa-harmful}, memory fragmentation,
 paging~\cite{cameo}, page creation, and page
 splitting~\cite{largepagevm}. Consequently, the use of large pages
 have traditionally been limited to complex server systems that have
 their own run-time systems to manage memory (e.g. Oracle
-DBMS~\cite{oracle_dbms}, SAP~\cite{sap}).
-As such, in this paper we focus on increasing on-die TLB
-coverage with small page sizes without high storage overhead.
+DBMS~\cite{oracle_dbms}, SAP~\cite{sap}). As such, in this paper we
+focus on increasing on-die TLB coverage with small page sizes without
+high storage overhead.
 
 
-This paper proposes two hardware mechanisms to improve LLT coverage and LLT miss penalty without requiring any significant changes to the existing virtual memory system design. Our first mechanism, {\em Unified Cache and TLB (UCAT)}, reduces the frequency of on-die LLT misses by enabling the conventional unified LLC to also hold TLB entries. UCAT can replace the existing on-die LLT and increases on-die TLB coverage by potentially allowing as many TLB entries as there are cache lines in the conventional on-chip LLC.
+This paper proposes two hardware mechanisms to improve LLT coverage
+and LLT miss penalty without requiring any significant changes to the
+existing virtual memory system design. Our first mechanism, {\em
+Unified Cache and TLB (UCAT)}, reduces the frequency of on-die LLT
+misses by enabling the conventional unified LLC to also hold TLB
+entries. UCAT augments the existing on-die LLT and increases on-die
+TLB coverage by potentially allowing as many TLB entries as there are
+cache lines in the conventional on-chip LLC.
 
 %entirely in software, proposes to allocate the frequently
 %accessed portion of the application page table in stacked memory.
 %Doing so significantly improves LLT miss latency compared to storing
 %the entire page table in system memory. 
 
-While high performing, UCAT {\em does not} reduce the LLT miss penalty incurred from walking the application page table. This is because an LLT miss still requires multiple long-latency, serial, accesses to the application page table. To address this limitation, we also propose {\em DRAM-TLB}, a hardware mechanism to memoize virtual to physical translations in DRAM.
+While high performing, UCAT {\em does not} reduce the LLT miss penalty
+incurred from walking the application page table. This is because an
+LLT miss still requires multiple long-latency, serial, accesses to the
+application page table. To address this limitation, we also propose
+{\em DRAM-TLB}, a hardware mechanism to memoize virtual to physical
+translations in DRAM.
 
 DRAM-TLB is a hardware-managed structure that serves as the next
 larger TLB in the processor TLB hierarchy. The DRAM-TLB logically sits

@@ -211,11 +211,10 @@ cacheline entries at zero storage overhead.
 UCAT requires additional logic to invalidate/flush TLB entries from
 the UCAT. Targeted virtual address invalidations can be handled by
 looking up and invalidating the UCAT-entry. However, to enable a TLB
-flush for a given ASID, we use an 8-bit {\em Epoch Counter (EPCTR)}
+flush for a given ASID, an 8-bit {\em Epoch Counter (EPCTR)} can be
 associated with each ASID. When inserting a TLB-entry into UCAT,
-besides storing the physical address and permission bits, we also
-store the current value of the EPCTR for the ASID. If the ASID
-requires a TLB flush, it simply increments its own EPCTR rather than
-iterating through the entire UCAT. With this support, UCAT provides a
-valid translation only if both the ASID and EPCTR stored in the
-UCAT-entry match the current EPCTR for the ASID.
+besides storing the physical address and permission bits, the current
+value of the EPCTR for the ASID is also stored. If the ASID requires a
+TLB flush, the EPCTR can be incremented. With such support, UCAT
+provides a valid translation only if both the ASID and EPCTR stored in
+the UCAT-entry match the current EPCTR for the ASID.
