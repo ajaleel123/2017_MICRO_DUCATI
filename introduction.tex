@@ -13,109 +13,86 @@ to support {\em Shared Virtual Memory}~\cite{HSA,UVM} where both CPUs
 and GPUs can access the entire hybrid memory address space using a
 unified virtual address space. Consequently, the performance of
 emerging heterogeneous systems is dependent on hardware support for
-virtual memory.% and efficient
-% utilization of the hybrid memory system.
-% EIMAN-03-21: last sentence can be better tied to previous sentences.
-% Will work on it later.
+virtual memory.
 
-
-Under the virtual memory framework, programs operate on virtual
-addresses that must be dynamically translated to physical addresses.
-The operating system (OS) maintains a {\em page table} in memory that
-maps application virtual addresses to physical addresses. Depending on
-the page table implementation, address translation requires one or
-more page table accesses~\cite{Bhargava2008}. To avoid the long memory
-access latency, processor architects cache recent address translations
+In the virtual memory framework, depending on the page table implementation,
+address translation requires one or more page table accesses~\cite{Bhargava2008}.
+To avoid the long memory access latency, processor architects cache recent address translations
 using an on-chip multi-level translation look-aside buffer (TLB)
 hierarchy. Therefore, virtual memory performance is dependent on the
 performance of the {\em Last-Level TLB (LLT)}.
-%EIMAN-03-21: leaving this for now but we can probably do better in the 
-%second paragraph of intro. Most of above probably belongs in the 
-%background section. The paragraph below seems like a better follow-on
-%to the first paragraph. I guess you just want to have mentioned LLT
-% and somehow ended up with the long background-esque paragraph above.
-
 Growing application memory footprints continue to stress the on-chip
 LLT~\cite{spectlb, Basu2013, SharedLLT, COLT}. LLT misses are latency
 sensitive operations that require one or more serial accesses to the
 page table. Reducing LLT miss latency enables instructions depending
-on the missing TLB entry to make faster forward progress. A simple
-solution to improve LLT miss latency would be to increase the LLT size
-to cover the entire application memory footprint. Unfortunately,
-on-die area limitations prohibit increasing the LLT size.
+on the missing TLB entry to make faster forward progress.
 
-To improve TLB coverage, recent studies have investigated using large
-pages. This is because a single large page (e.g. 2MB) TLB entry can
-span hundreds of contiguous small page (e.g. 4KB) TLB entries.
-Unfortunately, unrestricted use of large pages can create unintended
-OS performance overheads ~\cite{SuperPageProblem, TwoPageSize} due to
-memory imbalance~\cite{numa-harmful}, memory fragmentation,
-paging~\cite{cameo}, page creation, and page
-splitting~\cite{largepagevm}. Consequently, the use of large pages
-have traditionally been limited to complex server systems that have
-their own run-time systems to manage memory (e.g. Oracle
-DBMS~\cite{oracle_dbms}, SAP~\cite{sap}). Off-the-shelf modern
-operating systems typically avoid using large pages unless explicitly
-requested by the expert programmer.
-
-Alternatively, TLB coverage can be improved through the use of direct
-segments~\cite{Basu2013}. While high performing, from a practical
-implementation perspective, direct segments require non-negligible
-hardware and software changes to the baseline address translation
-system. Furthermore, direct segments can also suffer from problems
-similar to those of large pages.
-%EIMAN-03-21: did someone explicitly in the past take issue with why
-%direct segments was not highlighted in the paper? If not, this looks
-%like it should be in related work to me. Not here.
-
-
-Several studies have also focused on practical solutions to improve
-LLT performance. These proposals reorganize the TLB
-hierarchy~\cite{SharedLLT}, prefetch TLB entries
-~\cite{prefTLBintercore, prefTLBgokul, prefTLBrecency,
-power2014supporting}, speculate address translation on TLB
-misses~\cite{spectlb}, speed up page walks by caching page table
-entries~\cite{SkipPT, MMUcaches, power2014supporting}, or compress
-several translations into a single TLB entry~\cite{COLT}. Our
-evaluations with these techniques~\cite{SharedLLT, COLT, MMUcaches} in
-our baseline system show that there is still significant room to
-improve the performance overhead of LLT misses when using small pages.
-
-% The first order performance overhead of an LLT miss is due to the
-% latency of walking the application page table. For example, traversing
-% a four-level hierarchical page table can incur a really long latency
-% if each level in the page table were to be accessed on an LLT miss. To
-% address this problem, commercial products implement {\em Page Walk
-% Caches (PWC)} to avoid some of the page table
-% accesses~\cite{SkipPT,MMUcaches}. However, in practice, despite the
-% use of PWCs, address translation still requires multiple page table
-% accesses.
-
-% Consequently, queuing delays to access the page table are a
-% primary component of the long LLT miss latency.
-
-A recent real system measurement study showed significant opportunity
+A recent real system measurement study shows significant opportunity
 to improve shared virtual memory performance of heterogeneous CPU-GPU
 systems~\cite{vesley2016ispass}. Specifically, they show that LLT
 misses are an order of magnitude slower on the GPU relative to the
 CPU. Thus, we focus on improving GPU LLT miss overhead in CPU-GPU
 systems with a heterogeneous memory system\footnote{Heterogeneous
 memory systems are designed since stacked DRAM cannot completely
-replace DDR~\cite{BEAR,moin2012}}. Since page tables are
-conventionally stored in commodity DRAM (here on referred to as system
-memory), frequent LLT misses degrade performance due to the long queuing delays
-in the memory subsystem. Thus, to ensure high performance, it is imperative to reduce the frequency and latency of LLT misses.
-%EIMAN-03-21: The above paragraph can be pulled up to be the third paragraph
-%maybe and then the material in it can be used to frame the two problems
-%of frequency of LLT misses and latency of said misses that this work is
-%trying to address.
+replace DDR~\cite{BEAR,moin2012}}. 
+%Since page tables are
+%conventionally stored in commodity DRAM (here on referred to as system
+%memory), frequent LLT misses degrade performance due to the long queuing delays
+%in the memory subsystem. 
+In this paper we target reducing both the {\em frequency}
+of LLT misses, and their {\em latency} when they occur.
 
-%We {\em accelerate} address translation by leveraging the 4x-8x higher
-%bandwidth offered by stacked memory.
 
-% and is already being deployed in commercial heterogeneous processors
-% today~\cite{hbm_intel,hbm_amd,hbm_nvidia}. When the memory traffic is
-% excessively high,
+\begin{figure}[t] 
+\vspace{0. in}
+\centering
+\centerline{\psfig{file=GRAPHS/tlb_sensitivity,angle=-90,width=\columnwidth}}
+
+	\caption{\small Performance Sensitivity to LLT Entries. \normalsize}
+
+\label{fig:tlb_sensitivity} 
+\vspace{-0.15 in}
+\end{figure}
+
+A simple
+solution to reduce the frequency of LLT misses would be to increase LLT size
+to cover the entire application memory footprint. 
+Figure~\ref{fig:tlb_sensitivity} shows the performance impact of doing so
+averaged across several memory intensive workloads on a GPU with a 1024-entry
+shared LLT (simulation methodology and benchmark selection discussed in 
+Section~\ref{sec:method}). The
+x-axis shows TLB sizes while the y-axis
+illustrates the performance relative to our baseline 1024-entry LLT
+at 4KB, 64KB, and 2MB page sizes. 
+The figure shows that performance can be highly sensitive to the number of LLT entries, especially when
+at smaller page sizes. On average, a 2 million entry LLT improves
+performance by 2X with a 4KB page size. Similarly, a 256k-entry
+LLT improves performance by 60\% with 64KB page size. Finally an 8k-entry LLT improves performance by 10\% with 2MB page size.
+%Assuming 8-bytes of storage requirement per TLB entry, processor
+%architects would need to budge 16MB, 2MB, and 64KB of area overhead
+%for 4KB, 64KB, and 2MB pages respectively. 
+
+Unfortunately,
+on-die area limitations prohibit simply increasing the LLT size, especially
+at smaller page sizes. 
+Recent work has investigated improving performance of virtual memory
+translation hardware using large pages to help TLB coverage. 
+%This is because a single large page (e.g. 2MB) TLB entry can
+%span hundreds of contiguous small page (e.g. 4KB) TLB entries. 
+%Covering a larger portion of the virtual address space using
+%entries of the on-chip multi-level TLB hierarhcy results in fewer page
+%table accesses in memory and avoids long memory access latencies. 
+However, unrestricted use of large pages can create unintended
+OS performance overheads ~\cite{SuperPageProblem, TwoPageSize} due to
+memory imbalance~\cite{numa-harmful}, memory fragmentation,
+paging~\cite{cameo}, page creation, and page
+splitting~\cite{largepagevm}. Consequently, the use of large pages
+have traditionally been limited to complex server systems that have
+their own run-time systems to manage memory (e.g. Oracle
+DBMS~\cite{oracle_dbms}, SAP~\cite{sap}).
+As such, in this paper we focus on increasing on-die TLB
+coverage with small page sizes without high storage overhead.
+
 
 This paper proposes two hardware mechanisms to improve LLT coverage and LLT miss penalty without requiring any significant changes to the existing virtual memory system design. Our first mechanism, {\em Unified Cache and TLB (UCAT)}, reduces the frequency of on-die LLT misses by enabling the conventional unified LLC to also hold TLB entries. UCAT can replace the existing on-die LLT and increases on-die TLB coverage by potentially allowing as many TLB entries as there are cache lines in the conventional on-chip LLC.
 
@@ -208,3 +185,56 @@ require negligible changes to the baseline system.
 \label{fig:page_table} 
 \vspace{-0. in}
 \end{figure}
+
+%List of things that have been removed from the old intro that need to be 
+%added either to the background section or perhaps related work if the 
+%shortened version of them that comes in the intro above doesn't satisfy
+%what needs to be communicated:
+
+%the below used to be second paragraph. I think most of it is now 
+%covered, but if we want some of this we can include it in background too.
+%-------------
+%Under the virtual memory framework, programs operate on virtual
+%addresses that must be dynamically translated to physical addresses.
+%The operating system (OS) maintains a {\em page table} in memory that
+%maps application virtual addresses to physical addresses. Depending on
+%the page table implementation, address translation requires one or
+%more page table accesses~\cite{Bhargava2008}. To avoid the long memory
+%access latency, processor architects cache recent address translations
+%using an on-chip multi-level translation look-aside buffer (TLB)
+%hierarchy. Therefore, virtual memory performance is dependent on the
+%performance of the {\em Last-Level TLB (LLT)}.
+%-------------
+
+%the below used to be the fifth paragraph, seemed totally out of place
+%so i commented it. It can be moved to related work:
+%-------------
+%Alternatively, TLB coverage can be improved through the use of direct
+%segments~\cite{Basu2013}. While high performing, from a practical
+%implementation perspective, direct segments require non-negligible
+%hardware and software changes to the baseline address translation
+%system. Furthermore, direct segments can also suffer from problems
+%similar to those of large pages.
+%-------------
+
+%the below used to be the sixth paragraph, again should be moved to related
+%work or mentioned in methodology if the goal is to explain that we have
+% a good baseline:
+%-------------
+%Several studies have also focused on practical solutions to improve
+%LLT performance. These proposals reorganize the TLB
+%hierarchy~\cite{SharedLLT}, prefetch TLB entries
+%~\cite{prefTLBintercore, prefTLBgokul, prefTLBrecency,
+%power2014supporting}, speculate address translation on TLB
+%misses~\cite{spectlb}, speed up page walks by caching page table
+%entries~\cite{SkipPT, MMUcaches, power2014supporting}, or compress
+%several translations into a single TLB entry~\cite{COLT}. Our
+%evaluations with these techniques~\cite{SharedLLT, COLT, MMUcaches} in
+%our baseline system show that there is still significant room to
+%improve the performance overhead of LLT misses when using small pages.
+%-------------
+
+
+
+
+
