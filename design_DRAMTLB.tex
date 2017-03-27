@@ -2,7 +2,7 @@
 \label{sec:stackedTLB}
 
 \noindent When the application working set exceeds the TLB coverage
-provided by UCAT (e.g. {\em GUPS}), UCAT does not reduce the number of
+provided by UCAT (e.g. $GUPS$), UCAT does not reduce the number of
 memory accesses on an LLT miss. Reducing the number of memory accesses
 on an LLT miss improves memory access bandwidth and also reduces the
 effective LLT miss latency.
@@ -47,10 +47,11 @@ OS-visible memory space (see Figure~\ref{fig:stacked_tlb}(c)).
 
 \subsubsection{DRAM-TLB Organization}
 
-\noindent Like conventional on-chip SRAM TLBs, a DRAM-TLB entry
-maintains the TLB tag, physical address, and meta data information
-such as valid bits, page permission bits, and process information. To
-accommodate this information, we propose 16 bytes of storage per
+\noindent Like conventional on-chip SRAM TLBs, and the proposed UCAT
+architecture, a DRAM-TLB entry maintains the TLB tag, physical
+address, and meta data information such as valid bits, page permission
+bits, address space identifier (ASID), and the epoch counter (EPCTR).
+To accommodate this information, we propose 16 bytes of storage per
 DRAM-TLB entry. Figure~\ref{fig:stacked_tlb} illustrates the layout of
 the DRAM-TLB in the DRAM array. For example, a DRAM array of 2KB
 rowbuffers can hold 128 DRAM-TLB entries per rowbuffer.
@@ -114,36 +115,9 @@ read-modify-write operation~\cite{hbm-spec}.
 % 
 % \caption{\small This figure compares the average LLC miss latency of
 % 	DRAM-TLB and Stacked-TLB relative to the baseline system. \normalsize}
-% \label{fig:cachelat_stackedTLB} 
+% \label{fig:cachelat_DRAMTLB} 
 % \vspace{-0. in}
 % \end{figure}
-
-\begin{figure}[tp] 
-  \vspace{-0.in} \centering
-  \centerline{\psfig{file=GRAPHS/DRAMTLB_perf,angle=-90,width=\columnwidth}}
-
-  \caption{\small Performance of DRAM-TLBs. \normalsize}
-  \label{fig:perf_stackedTLB} 
-  \vspace{0.2 in}
-\end{figure}
-
-\begin{figure}[tp] 
-  \vspace{0.in} \centering
-  \centerline{\psfig{file=GRAPHS/DRAMTLB_tlblat,angle=-90,width=\columnwidth}}
-
-  \caption{\small Translation Latency Relative to baseline system.\normalsize}
-  \label{fig:tlblat_stackedTLB} 
-  \vspace{0.2 in}
-\end{figure}
-
-\begin{figure}[tp] 
-  \vspace{0.in} \centering
-  \centerline{\psfig{file=GRAPHS/DRAMTLB_pteaccess,angle=-90,width=\columnwidth}}
-
-  \caption{\small Memory Accesses on an LLT miss.\normalsize}
-  \label{fig:tlblat_stackedTLB} 
-  \vspace{-0.1 in}
-\end{figure}
 
 \subsection{DRAM-TLB Performance}
 
@@ -153,24 +127,32 @@ read-modify-write operation~\cite{hbm-spec}.
 
 % \subsubsection{Steady State Performance Behavior}
 
-\noindent We evaluate the performance of SYSMEM-TLB and Stacked-TLB
-assuming 32GB coverage when using 4KB pages. Since the application
-memory footprint is less than 32GB, both DRAM-TLB configurations incur
-only compulsory misses and behave like a {\em perfect} DRAM-TLB in
-steady state.
+% Since our application
+% have memory footprint less than 32GB, both DRAM-TLB configurations
+% incur only compulsory misses and behave like a {\em perfect} DRAM-TLB
+% in steady state.
 
 % illustrates the workloads on the x-axis and the performance relative
 % to our baseline system on the y-axis. The figure
 
-Figure~\ref{fig:perf_stackedTLB} shows that DRAM-TLBs improve
-performance relative to the baseline system across all TLB-sensitive
-workloads. On average, SYSMEM-TLB improves performance by 38\% while
-Stacked-TLB improves performance by 44\%. Some workloads ($BH$ and
-$BFS$) observe up to 2X performance improvement with Stacked-TLBs.
-This is due to reduction in address translation bandwidth from 1.75
-memory accesses per LLT miss to a single memory access. Consequently
-the LLT miss latency reduces by 43\% and 50\% for SYSMEM-TLB and
-Stacked-TLB respectively (see Figure~\ref{fig:tlblat_stackedTLB}).
+\noindent We evaluate SYSMEM-TLB and Stacked-TLB performance assuming
+an 8-million entry DRAM TLB (32GB TLB coverage with 4KB pages).
+Figure~\ref{fig:perf_DRAMTLB} shows that DRAM-TLBs improve performance
+relative to the baseline system across all TLB-sensitive workloads. On
+average, SYSMEM-TLB improves performance by 11\% while Stacked-TLB
+improves performance by 22\%. In general, Stacked-TLBs perform better
+than SYSMEM-TLBs because they are architected with stacked memory, a
+technology that provides high memory bandwidth and less memory queing
+delays. As illusrated in Figure~\ref{fig:tlblat_DRAMTLB}, unlike
+SYSMEM-TLBs that reduce address translation latency by 12\% on
+average, Stacked-TLBs reduce address translation latency by 40\% on
+average. The translation latency reduction stems from the fact that
+DRAM-TLBs reduce the number of memory accesses on an LLT miss from 1.6
+memory accesses to a single memory access on average (see
+Figure~\ref{fig:memaccess_DRAMTLB}). The improved translation latency
+boosts performance of workloads like $GUPS$ and $MaxFlow$ by more than
+70\%. On the other hand, workloads like $XSBench$, $dmr$, $LULESH$ and
+$MiniAMR$ experience more than 15\% performance gain.
 
 % % \subsubsection{Non-Steady State Performance Behavior}
 % % 
@@ -188,7 +170,7 @@ Stacked-TLB respectively (see Figure~\ref{fig:tlblat_stackedTLB}).
 % % 
 % %   \caption{\small Sensitivity to DRAM-TLB hit-rate. \normalsize}
 % % 
-% %   \label{fig:hitrate_stackedTLB} 
+% %   \label{fig:hitrate_DRAMTLB} 
 % %   \vspace{-0. in}
 % % \end{figure}
 % % 
@@ -198,7 +180,7 @@ Stacked-TLB respectively (see Figure~\ref{fig:tlblat_stackedTLB}).
 % % bandwidth. When bandwidth is scarce, both these operations can degrade
 % % performance significantly since they do not contribute towards useful
 % % work. To understand this phenomenon,
-% % Figure~\ref{fig:hitrate_stackedTLB} illustrates the performance
+% % Figure~\ref{fig:hitrate_DRAMTLB} illustrates the performance
 % % behavior of SYSMEM-TLBs and Stacked-TLBs as a function of
 % % hit-rate\footnote{A statistical model that samples a random number
 % % generator is used to achieve the desired DRAM-TLB hit rate.}. The
@@ -273,7 +255,7 @@ Stacked-TLB respectively (see Figure~\ref{fig:tlblat_stackedTLB}).
 % To quantify the desired behavior of DRAM-TLBs, both from miss traffic
 % and miss latency perspective, 
 
-% Figure~\ref{fig:hitrate_stackedTLB} illustrates the required
+% Figure~\ref{fig:hitrate_DRAMTLB} illustrates the required
 % DRAM-TLB hit rate to equalize the average address translation traffic
 % and the average address translation latency (assuming DRAM-TLB fills
 % do not significantly impact memory access latency) respectively. The
@@ -305,19 +287,47 @@ Stacked-TLB respectively (see Figure~\ref{fig:tlblat_stackedTLB}).
 % 
 % \caption{\small This figure illustrates a sensitivity study for the
 %   required DRAM-TLB hit rate for different pagetable requests per LLT miss. \normalsize}
-% \label{fig:hitrate_stackedTLB} 
+% \label{fig:hitrate_DRAMTLB} 
 % \vspace{-0. in}
 % \end{figure}
 %------------------> GRAVEYARD
 
-\subsection{DRAM-TLB Implementation}
+\begin{figure}[tp] 
+  \vspace{-0.in} \centering
+  \centerline{\psfig{file=GRAPHS/DRAMTLB_perf,angle=-90,width=\columnwidth}}
+
+  \caption{\small Performance of DRAM-TLBs. \normalsize}
+  \label{fig:perf_DRAMTLB} 
+%  \vspace{0.2 in}
+\end{figure}
+
+\begin{figure}[tp] 
+  \vspace{0.in} \centering
+  \centerline{\psfig{file=GRAPHS/DRAMTLB_tlblat,angle=-90,width=\columnwidth}}
+
+  \caption{\small Translation Latency Relative to baseline system.\normalsize}
+  \label{fig:tlblat_DRAMTLB} 
+%  \vspace{0.2 in}
+\end{figure}
+
+\begin{figure}[tp] 
+  \vspace{0.in} \centering
+  \centerline{\psfig{file=GRAPHS/DRAMTLB_pteaccess,angle=-90,width=\columnwidth}}
+
+  \caption{\small Memory Accesses on an LLT miss.\normalsize}
+ \label{fig:memaccess_DRAMTLB} 
+%  \vspace{-0.1 in}
+\end{figure}
+
+
+\subsection{DRAM-TLB Design Overhead}
 
 \noindent The Memory Management Unit (MMU) is responsible for
-providing retrieving the missing address translation. We propose
-simple modifications to the MMU state machine to support DRAM-TLBs
-(see Figure~\ref{fig:mmu_state}). As in the baseline system, the MMU
-first consults the page walk caches to retrieve the translation. If
-the request misses in the PWCs, the MMU consults the DRAM-TLB. If the
+retrieving the missing address translation. We propose simple
+modifications to the MMU state machine to support DRAM-TLBs (see
+Figure~\ref{fig:mmu_state}). As in the baseline system, the MMU first
+consults the page walk caches to retrieve the translation. If the
+request misses in the PWCs, the MMU consults the DRAM-TLB. If the
 request misses in the DRAM-TLB, the MMU walks the page table. Thus, we
 simply introduce a new state in the MMU state machine for the DRAM-TLB
 lookup before walking the page table.
@@ -355,7 +365,18 @@ miss, the MMU walks the page table to determine the virtual to
 physical translation. The MMU then returns this translation to the
 processor and also inserts it into the DRAM-TLB for future hits.
 
-\begin{figure}[tp] 
+The in-memory storage overhead for DRAM-TLBs depends on the desired
+TLB coverage. For example, achieving 32GB coverage with 4KB pages
+requires eight million 16-byte DRAM-TLB entries (128MB total). In
+general, this storage overhead is impractical for on-chip SRAM TLBs.
+However, 128MB is an insignificant fraction of emerging multi-gigabyte
+stacked memory systems. For example, a 128MB Stacked-TLB utilizes
+roughly 3\% of a 4GB stacked memory system. Consequently, DRAM-TLBs
+can improve TLB coverage using small pages with minimal storage
+overhead and most importantly require no significant changes to the
+existing address translation mechanisms.
+
+\begin{figure}[b] 
   \vspace{-0. in} \centering
   \centerline{\psfig{file=FIGURES/mmu_state,angle=-90,width=\columnwidth}}
 
@@ -365,7 +386,7 @@ processor and also inserts it into the DRAM-TLB for future hits.
   \vspace{-0 in}
 \end{figure}
 
-\subsection{DRAM-TLB Example}
+\subsubsection{DRAM-TLB Example}
 
 \noindent Assume a million entry direct-mapped DRAM-TLB stored in
 physical memory at {\em BaseAddr=0}. Assuming 4KB page size, imagine
@@ -376,18 +397,6 @@ entry is 0x123450 (i.e. 0 + 0x12345 * 1 * 16). The MMU then compares the
 tag stored in the DRAM-TLB entry with the tag of the missing virtual
 address (0xff22 in our case) to determine DRAM-TLB hit or miss.
 
-\subsection{DRAM-TLB Discussion}
-
-\boldheadingpara{Storage Space} The in-memory storage overhead for
-DRAM-TLBs depends on the desired TLB coverage. For example, achieving
-32GB coverage with 4KB pages requires eight million 16-byte DRAM-TLB
-entries (128MB total). In general, this storage overhead is
-impractical for on-chip SRAM TLBs. However, 128MB is an insignificant
-fraction of emerging multi-gigabyte stacked memory systems. For
-example, a 128MB Stacked-TLB utilizes roughly 3\% of a 4GB stacked
-memory system. Consequently, DRAM-TLBs can improve TLB coverage using
-small pages with minimal storage overhead and most importantly require
-no significant changes to the existing address translation mechanisms.
 
 % \subsection{DRAM-TLB Summary}
 % 
