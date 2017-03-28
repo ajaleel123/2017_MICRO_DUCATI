@@ -47,41 +47,43 @@ Figure~\ref{fig:summary_4k_pages_perf} shows that DRAM-TLBs
 architected with stacked memory improves average performance by 22\%,
 UCAT with insertion (UCAT-I) improves average performance by 61\%,
 while DUCATI combines the benefits of both to improve average
-performance by 81\%. These benefits are primarily due to reductions in
-the address translation latency. As illustrated in
-Figure~\ref{fig:summary_4k_pages_lat}, DUCATI improves address
-translation latency by up to 75\%. In doing so, DUCATI bridges 66\% of
-the performance gap between the baseline system and a system with a
-perfect LLT.
+performance by 81\%. In fact, workloads like $XSBench$, $dmr$,
+$MaxFlow$, and $MCB$ experience 4x or more performance improvement.
+The bulk of the gain for these workloads is improvements in on-die LLT
+coverage. On the other hand, $GUPS$ has a 2.5x performance primarily
+due to reduction in LLT miss penalty (i.e., DRAM-TLB component of
+DUCATI). All other workloads experience performance gains between 6\%
+to 35\%.
 
+To correlate performance improvements,
+Figure~\ref{fig:summary_4k_pages_lat} illustrates the relative address
+translation latency for the different proposals. On average, DRAM-TLB
+and UCAT reduce address translation latency by 40\% and 60\%
+respectively, while DUCATI reduces address translation latency by
+75\%. In doing so, DUCATI improves performance by 1.81x while a
+perfect LLT system improves performance by 2.24x. Thus, DUCATI bridges
+80\% of the performance gap between the baseline system and an
+unrealistic perfect LLT system.
+
+% Note that Figure~\ref{fig:summary_4k_pages_lat} clearly identifies
+% workloads that are are LLT capacity bound versus those workloads that
+% are LLT miss penalty bound. Specifically, workloads where the first
+% bar (DRAM-TLB) is lower than the second bar (UCAT) are those that
+% limited by LLT miss penalty
 
 
 \subsection{DUCATI Sensitivity to Page Size}
 
-\noindent We now present the performance of our schemes using 64KB
-page size. For our 1024-entry baseline LLT size, using 64KB pages
-increases the TLB coverage to 64MB (up to 256MB because of
-~\cite{COLT}). In doing so, the LLT miss frequency reduces for
-workloads that have high spatial locality in the virtual address
-space. Table~\ref{table:results_summary} summarizes the different
-performance metrics relative to the baseline system. With 64KB page
-size, Distributed Placement and Stacked-TLB reduce LLT miss latency by
-15\% and 39\% respectively. In turn, they improve performance by 4\%
-and 12\% respectively.
-
-With 64KB page size, Figure~\ref{fig:summary_64k_pages} presents the
-per workload performance behavior of our baseline system, Distributed
-Placement and Stacked-TLB relative to a perfect LLT system. We observe
-that workloads with high spatial locality within a 64KB page tend to
-observe fewer LLT misses. Consequently, the baseline system itself is
-within 30\% of a perfect LLT (as opposed to 50\% for the 4KB page size
-system). However, there is still opportunity to improve performance of
-workloads that are TLB-sensitive with 64KB pages (e.g. $HPGMG$, $DMR$,
-and $XSBENCH$). For these workloads, Distributed Placement and
-Stacked-TLB proposals improve performance by 27-45\%. Overall,
-Stacked-TLB bridges 30\% of the performance gap between the baseline
-system and a perfect LLT.
-
+\noindent We now present the performance of our proposals using 64KB
+and 2MB page size. For our 1024-entry baseline LLT size, using 4KB
+pages provides TLB coverage of 4MB, using 64KB pages increases the TLB
+coverage to 64MB, while using 2MB pages increases the TLB coverage to
+2GB. Figure~\ref{fig:summary_4k_pages_perf} illustrates the average
+performance across all workloads for 4KB, 64KB, and 2MB pages.
+Overall, DUCATI improves performance by 81\% with 4KB pages, 56\% with
+64K pages, and 8\% with 2MB pages. In fact, DUCATI is within 80\%,
+95\%, and 98\% of an unrealstic perfect LLT system when using 4KB,
+64KB, and 2MB pages respectively.
 
 \begin{figure}[tp] 
 \vspace{0. in} \centering
