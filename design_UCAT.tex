@@ -126,8 +126,7 @@ We refer to this enhancement as {\em UCAT with Insertion (UCAT-I)}.
 % different capacity requirements at run time. To address this problen,
 
 \noindent Figure~\ref{fig:perf_UCAT} shows UCAT performance relative
-to the baseline system(on the y-axis) with the x-axis illustrating the
-different workloads. The first bar in the figure shows UCAT
+to the baseline system(on the y-axis) with workloads on the x-axis. The first bar in the figure shows UCAT
 performance where cachelines and TLB-entries contend for UCAT space
 without any restrictions. The figure shows that UCAT significantly
 improves performance of workloads like {\em XSBench}, {\em dmr}, {\em
@@ -136,21 +135,21 @@ Other workloads like {\em GUPS}, {\em SNAP}, {\em UMT}, and {\em CoMD}
 observe more than 15\% performance gains. Overall, UCAT improves
 performance across all workloads by 53\%.
 
-To understand UCAT performance benefits, Figure~\ref{fig:tlblat_UCAT}
+To understand the performance benefits of UCAT, Figure~\ref{fig:tlblat_UCAT}
 and Figure~\ref{fig:tlbsize_UCAT} illustrate relative translation
 latency and effective on-die TLB size respectively. Workloads that
 experienced more than 2x performance improvements observe a reduction
 in TLB miss penalty by 70\% or more. This is because these workloads
-experience an increase in on-die TLB size by 4x-64x. On average, UCAT
+experience an increase in on-die TLB size by 4x-64x.\ee{explain how you're calculating ``experiencing increased TLB size'' } On average, UCAT
 improves virtual to physical address translation latency by 51\% (up
 to 86\% for {\em MCB}). The improvement in translation latency stems
 from an increase in on-chip TLB coverage by 16x (up to 64x for {\em
 dmr}).
 
 Since UCAT decreases the effective capacity of cachelines compared to
-the baseline separate LLT and LLC, we also investigated increase in
+the separate LLC, we also investigated increase in
 memory accesses due to potential increase in UCAT cacheline misses
-relative to the baseline system. Our evaluations show that on average,
+relative to the baseline. Our evaluations show that on average,
 UCAT increases the number of memory accesses by 1\% (maximum 4\% for
 {\em XSBench}). As observed from the performance graphs, the
 additional increase in memory traffic has negligible performance
@@ -162,11 +161,10 @@ by preferencing TLB-entries over cachelines improves average
 performance of UCAT by an additional 12\%. We observed that UCAT-I
 also has negligible increase in memory traffic (< 1\%) and
 TLB-sensitive workloads like {\em XSBench} and {\em dmr} experience
-further performance improvements (up to 90\%). Additionally, workloads
+significant further performance improvements of up to 90\%. Additionally, workloads
 like {\em LULESH}, {\em SNAP}, and {\em CoMD} experience an additional
 7-10\% performance improvement over UCAT by intelligently managing the
-UCAT-entries. This is evident from Figure~\ref{fig:tlbsize_UCAT} and
-Figure~\ref{fig:tlblat_UCAT} where UCAT-I increases effective TLB
+UCAT-entries. This is evident from Figures~\ref{fig:tlblat_UCAT} and~\ref{fig:tlbsize_UCAT} where UCAT-I increases effective TLB
 coverage by nearly 2x while improving average translation latency by
 7\%. Overall, UCAT-I improves performance by 65\% relative to the baseline.
 
