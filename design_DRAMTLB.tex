@@ -53,8 +53,8 @@ address, and meta data information such as valid bits, page permission
 bits, address space identifier (ASID), and the epoch counter (EPCTR).
 To accommodate this information, we propose 16 bytes of storage per
 DRAM-TLB entry. Figure~\ref{fig:stacked_tlb} illustrates the layout of
-the DRAM-TLB in the DRAM array. For example, a DRAM array of 2KB
-rowbuffers can hold 128 DRAM-TLB entries per rowbuffer.
+the DRAM-TLB in the DRAM array. For example, a 2KB DRAM array holds
+128 DRAM-TLB entries per rowbuffer.
 
 \subsubsection{DRAM-TLB Lookups}
 
@@ -118,6 +118,61 @@ read-modify-write operation~\cite{hbm-spec}.
 % \label{fig:cachelat_DRAMTLB} 
 % \vspace{-0. in}
 % \end{figure}
+
+\subsection{DRAM-TLB Implementation}
+
+\noindent The Memory Management Unit (MMU) is responsible for
+retrieving the missing address translation. We propose simple
+modifications to the MMU state machine to support DRAM-TLBs (see
+Figure~\ref{fig:mmu_state}). As in the baseline system, the MMU first
+consults the page walk caches to retrieve the translation. If the
+request misses in the PWCs, the MMU consults the DRAM-TLB. If the
+request misses in the DRAM-TLB, the MMU walks the page table. Thus, we
+simply introduce a new state in the MMU state machine for the DRAM-TLB
+lookup before walking the page table.
+
+% If the request can be serviced from the first-level page table, the
+% MMU follows the baseline address translation policy and fetches the
+% translation from the first-level page table. This is because
+% retreiving the first-level page table entry and a DRAM-TLB lookup both
+% require a single memory access.
+
+% If the MMU is required to access more than one level of the page
+% table, we propose that the
+
+Since the DRAM-TLB is located in physical memory, the MMU must first
+determine the physical location in DRAM for the corresponding TLB
+entry. To do so, the MMU computes the DRAM-TLB set index {\em S} of
+the missing virtual address. The set index $SI$ is then used to
+compute the physical address of the DRAM-TLB-entry. Assuming the
+DRAM-TLB has base address {\em BaseAddr} (an 8-byte register in the
+MMU), associativity $A$, and TLB-entry size $s$ (16 bytes in our
+case), the physical address for the DRAM-TLB entry is computed using
+combinational logic:
+
+\begin{equation}
+  \begin{array}{rl}
+    \text{PhysAddr} = BaseAddr + SI * A * s
+  \end{array}
+\end{equation}
+
+\noindent The MMU uses this address to fetch data from memory at the
+granularity of the DRAM interface (e.g. 32 bytes) and compares the
+DRAM-TLB entries. On a DRAM-TLB hit, the MMU returns the missing
+translation to the processor. However, in the event of a DRAM-TLB
+miss, the MMU walks the page table to determine the virtual to
+physical translation. The MMU then returns this translation to the
+processor and also inserts it into the DRAM-TLB for future hits.
+
+\subsubsection{DRAM-TLB Example}
+
+\noindent Assume a 1M-entry direct-mapped DRAM-TLB (with 4KB pages)
+starting at memory location {\em BaseAddr=0}. An LLT miss for virtual
+page 0xff2212345000 requires fetching the 16-byte DRAM-TLB entry at
+set index 0x12345. With $A=1$ and $s=16$, the physical memory location
+for this DRAM-TLB entry is 0x123450 (i.e. 0 + 0x12345 * 1 * 16). The
+MMU compares the missing tag (0xff22) with the DRAM-TLB entry to
+determine DRAM-TLB hit or miss.
 
 \subsection{DRAM-TLB Performance}
 
@@ -322,49 +377,6 @@ $MiniAMR$ experience more than 15\% performance gain.
 
 \subsection{DRAM-TLB Design Overhead}
 
-\noindent The Memory Management Unit (MMU) is responsible for
-retrieving the missing address translation. We propose simple
-modifications to the MMU state machine to support DRAM-TLBs (see
-Figure~\ref{fig:mmu_state}). As in the baseline system, the MMU first
-consults the page walk caches to retrieve the translation. If the
-request misses in the PWCs, the MMU consults the DRAM-TLB. If the
-request misses in the DRAM-TLB, the MMU walks the page table. Thus, we
-simply introduce a new state in the MMU state machine for the DRAM-TLB
-lookup before walking the page table.
-
-% If the request can be serviced from the first-level page table, the
-% MMU follows the baseline address translation policy and fetches the
-% translation from the first-level page table. This is because
-% retreiving the first-level page table entry and a DRAM-TLB lookup both
-% require a single memory access.
-
-% If the MMU is required to access more than one level of the page
-% table, we propose that the
-
-Since the DRAM-TLB is located in physical memory, the MMU must first
-determine the physical location in DRAM for the corresponding TLB
-entry. To do so, the MMU computes the DRAM-TLB set index {\em S} of
-the missing virtual address. The set index {\em S} is then used to
-compute the physical address of the DRAM-TLB-entry. Assuming the
-DRAM-TLB has base address {\em BaseAddr} (an 8-byte register in the
-MMU), associativity {\em A}, and TLB-entry size {\em E} (16 bytes in
-our case), the physical address for the DRAM-TLB entry is computed
-using combinational logic:
-
-\begin{equation}
-  \begin{array}{rl}
-    \text{PhysAddr} = BaseAddr + S * A * E \\
-  \end{array}
-\end{equation}
-
-\noindent The MMU uses this address to fetch data from memory at the
-granularity of the DRAM interface (e.g. 32 bytes) and compares the
-DRAM-TLB entries. On a DRAM-TLB hit, the MMU returns the missing
-translation to the processor. However, in the event of a DRAM-TLB
-miss, the MMU walks the page table to determine the virtual to
-physical translation. The MMU then returns this translation to the
-processor and also inserts it into the DRAM-TLB for future hits.
-
 The in-memory storage overhead for DRAM-TLBs depends on the desired
 TLB coverage. For example, achieving 32GB coverage with 4KB pages
 requires eight million 16-byte DRAM-TLB entries (128MB total). In
@@ -386,16 +398,6 @@ existing address translation mechanisms.
   \vspace{-0 in}
 \end{figure}
 
-\subsubsection{DRAM-TLB Example}
-
-\noindent Assume a million entry direct-mapped DRAM-TLB stored in
-physical memory at {\em BaseAddr=0}. Assuming 4KB page size, imagine
-an LLT miss occurs for virtual page 0xff2212345000. This requires
-fetching the 16-byte DRAM-TLB entry at set index 0x12345. With {\em
-A=1} and {\em E=16}, the physical memory location for this DRAM-TLB
-entry is 0x123450 (i.e. 0 + 0x12345 * 1 * 16). The MMU then compares the
-tag stored in the DRAM-TLB entry with the tag of the missing virtual
-address (0xff22 in our case) to determine DRAM-TLB hit or miss.
 
 
 % \subsection{DRAM-TLB Summary}

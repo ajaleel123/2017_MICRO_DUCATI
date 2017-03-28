@@ -1,3 +1,12 @@
+\begin{figure*}[tbh] 
+\vspace{-0. in}
+\centering
+\centerline{\psfig{file=FIGURES/UCAT,scale=0.80,width=\textwidth}}
+\caption{\small UCAT Architecture. \normalsize}
+\label{fig:UCAT} 
+\vspace{-0.0in}
+\end{figure*}
+
 \section{Unifying Caches and TLBs}
 \label{sec:UCAT}
 
@@ -33,15 +42,6 @@ LLC can potentially be used to store virtual to physical translations
 just like a TLB in addition to caching data from memory. Based on this
 insight, we propose to re-architect the conventional LLC as a {\em
 Unified Cache and TLB (UCAT)}.
-
-\begin{figure*}[tbh] 
-\vspace{-0. in}
-\centering
-\centerline{\psfig{file=FIGURES/UCAT,scale=0.80,width=\textwidth}}
-\caption{\small UCAT Architecture. \normalsize}
-\label{fig:UCAT} 
-\vspace{-0.0in}
-\end{figure*}
 
 %EIMAN-03-21: My summary for reworking later: 
 %   - both TLB and cache hierarchies involve multiple levels and many entries in the unified LL
