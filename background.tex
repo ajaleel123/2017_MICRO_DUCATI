@@ -71,8 +71,9 @@ misses and PWC hit rates impacts address translation performance.
 
 \input{workloads}
 
-Table~\ref{table:bench_char} shows the number of LLT misses for the 
-workloads discussed in the previous Section in Figure~\ref{fig:tlb_sensitivity}.
+In Figure~\ref{fig:tlb_sensitivity} we already motivated increasing TLB
+coverage by demonstrating its direct impact on performance. Table~\ref{table:bench_char} 
+shows the number of LLT misses for the evaluated workloads.
 We observe that these workloads incur frequent LLT misses when using 4KB pages. 
 To make things worse,
 each LLT miss requires more than one memory access to the page table
