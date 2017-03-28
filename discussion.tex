@@ -55,9 +55,9 @@
 \noindent Virtual memory operations such as remapping the virtual to
 physical address or changes to page permissions require sending page
 table update requests and TLB shootdowns to stacked memory in both the
-Distributed Page Table Placement and Stacked-TLB proposals. One
-potential concern is whether the stacked memory access latency can
-impact the overall latency of these virtual memory operations. 
+UCAT and DRAM-TLB proposals. One potential concern is whether these
+proposals can impact the overall latency of these virtual memory
+operations.
 
 The virtual memory operations discussed above normally occur as a part
 of a CPU generated interrupt flow which ranges from 5-30
