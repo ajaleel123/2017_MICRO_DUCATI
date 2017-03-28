@@ -50,27 +50,39 @@
 % memory proposals depending on the bandwidth utilization of system
 % memory. We leave these optimizations for future work.
 % 
-\subsection{Performance Impact on VM Operations}
+% \subsection{Performance Impact on VM Operations}
 
 \noindent Virtual memory operations such as remapping the virtual to
-physical address or changes to page permissions require sending page
-table update requests and TLB shootdowns to stacked memory in both the
-UCAT and DRAM-TLB proposals. One potential concern is whether these
-proposals can impact the overall latency of these virtual memory
-operations.
+physical address or changes to page permissions require efficient
+handling of page table update requests such as TLB shootdowns and TLB
+flush. It would be highly desirable that DUCATI does not impact the
+overall latency of TLB shootdowns and TLB flushes.
 
-The virtual memory operations discussed above normally occur as a part
-of a CPU generated interrupt flow which ranges from 5-30
-microseconds~\cite{zhengpagedgpu}. The observed access latency for
-stacked memory across all our workloads tends to be 100-250
-nanoseconds . Thus, even in the worst case, the stacked memory access
+TLB shootdowns normally occur as a part of an interrupt flow that
+requires 5-30 microseconds ~\cite{zhengpagedgpu}. The access latency
+for UCAT and DRAM-TLB tends to be a few tens to a few hundred nano
+seconds. Thus, even in the worst case, the additional shootdown
 latency is a small fraction of the overall interrupt latency (2-5\%).
-Realistically, when the system memory bandwidth is saturated, we
-expect performance improvements relative to the baseline system since
-the observed stacked memory access latency would be significantly
-lower than the observed system memory access latency. As such, we
-expect our stacked memory proposals to have negligible performance
-impact on VM operations.
+As such, DUCATI has negligible performance impact on TLB shootdown
+latency.
+
+TLB flushes normally occur when the virtual to physical mappings of an
+entire ASID need to be updated. Flushing conventional on-die TLB sizes
+(e.g. 1024 entries in the baseline) can be done quickly. However,
+flushing thousands of TLB entries (as in UCAT) or millions of TLB
+entries (as in DRAM-TLB) can be a very long latency operation.
+However, simple architecture support can be provided to flush large
+TLBs without the long latency operation. For example, an {\em Epoch
+Counter (EPCTR)} can be associated with each ASID. This counter tracks
+the virtual to physical translations for an ASID in a given epoch. In
+the DUCATI framework, the DRAM-TLB and UCAT can store the EPCTR in
+addition to the physical address and page permission bits. When the
+ASID requires a TLB flush, the EPCTR can simply be incremented. Thus,
+DUCATI provides a valid translation only if the ASID and EPCTR stored
+in the corresponding TLB-entry match the current EPCTR of the ASID.
+Both DRAM-TLB and UCAT have sufficent storage space to support a
+16-bit EPCTR. As such, the TLB flush overhead can be completely
+eliminated with neglible latency and hardware overhead.
 
 % Though DRAM-TLB shootdowns and flush events consume bandwidth, these
 % events occur infrequently and thus we expect minimal performance
