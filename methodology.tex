@@ -24,16 +24,16 @@ Figure~\ref{fig:config}).
 
 \noindent We use an industry proprietary performance simulator to
 simulate a GPU (Table~\ref{table:method_system}) with memory hierarchy
-based on the NVIDIA Maxwell GPU system~\cite{gpu_maxwell}. We model
-128 Streaming Multiprocessors (SM) that support 64 warps each. A
-simple round-robin warp scheduler selects warp instructions each
-cycle. The baseline GPU memory system consists of a two-level cache
-and TLB hierarchy. The first-level cache and TLB are private to each
-SM while the last-level cache (LLC) and last-level TLB (LLT) are
-shared by all the SMs. All caches use 128B cache line size with 32B
-sectors. Our baseline also incorporates a highly-threaded hardware
-page table walker for address translation~\cite{power2014supporting,
-pichaigpu}.
+based on the NVIDIA Pascal GPU system~\cite{gpu_pascal}. We model 128
+Streaming Multiprocessors (SM) that support 64 warps each. A warp
+scheduler selects warp instructions each cycle. The baseline GPU
+memory system consists of a multii-level cache and TLB hierarchy. The
+first-level cache and TLB are private to each SM while the last-level
+cache (LLC) and last-level TLB (LLT) are shared by all the SMs. All
+caches use 128B cache line size with 32B sectors. We assume 5 bytes of
+total tag storage per LLC entry (including valid, dirty, coherence
+state, and replacement bits). For the UCAT architecture, we assume an
+extra 40 cycle load-to-use latency to consult the UCAT on an LLT miss.
 
 % Each TLB supports compressing up to four contiguous TLB
 % entries into a single entry~\cite{COLT}. 
@@ -43,13 +43,17 @@ We model a hybrid memory subsystem consisting of 16GB of stacked DRAM
 technology~\cite{hbm-spec} and 256GB of commodity DRAM (referred to as
 system memory) using conventional DDR4 technology~\cite{ddr4-spec}.
 The stacked memory has 8X the bandwidth of system memory with similar
-random access latency. The CPU and GPU have similar interconnect
-latency to the system memory controller and stacked memory controller
-(50ns in both cases). The memory controller supports 128-entry read
-and write queues for each memory channel, open-page policy, minimalist
-address mapping policy~\cite{minimalist} and FR-FCFS scheduling policy
-(prioritizing reads over writes). Writes are issued in batches when
-the write queue starts to fill up. 
+random access latency. To ensure full utilization of the total
+available system bandwidth, physical pages are allocated based on the
+bandwidth ratio of the hybrid memory system~\cite{bwa,batman}. In
+doing so, both system memory and stacked memory satisfy memory
+requests. The CPU and GPU have similar interconnect latency to the
+system memory controller and stacked memory controller (50ns in both
+cases). The memory controller supports 128-entry read and write queues
+per channel, open-page policy, minimalist address mapping
+policy~\cite{minimalist} and FR-FCFS scheduling policy (prioritizing
+reads over writes). Writes are issued in batches when the write queue
+starts to fill up.
 
 % This isolates our performance studies to the bandwidth capability of
 % the two memory systems rather than the latency to and from each
@@ -58,25 +62,21 @@ the write queue starts to fill up.
 % Section~\ref{sec:implications}.
 
 We model a virtual memory system that maps virtual addresses to
-physical addresses using random page replacement.  Our baseline
-assumes 4KB page size, however we also study sensitivity to larger
-page size (i.e. 64KB). To ensure full utilization of the total
-available system bandwidth, physical pages are allocated based on the
-bandwidth ratio of the hybrid memory system~\cite{bwa,batman}. In
-doing so, both system memory and stacked memory satisfy memory
-requests.
-
+physical addresses using random page replacement. Our baseline assumes
+4KB page size, however we also study sensitivity to larger page size.
 We model a four-level hierarchical page table~\cite{SkipPT}: Page Map
 Level 4 (PML4), Page Directory Pointer (PDP), Page Directory (PD), and
 Page Table (PT). All pages tables are initially allocated in low
 bandwidth system memory in our baseline system. To speed up address
 translation, we also model on-chip Page Walk Caches
 (PWCs)~\cite{SkipPT, MMUcaches} for each page table level. The PWCs
-are indexed by portions of the virtual address and are co-located with
-the MMUs~\cite{MMUcaches}. We model a 16-entry PML4-cache, 16-entry
+are small, fully associative hardware structures that are indexed by
+portions of the virtual address and are co-located on-chip with the
+MMUs~\cite{MMUcaches}. We model a 16-entry PML4-cache, 16-entry
 PDP-cache, a 16-entry PD-cache, and a 16-entry
-PT-cache\cite{MMUcaches}. Note that PWCs tend to be relatively small
-since they are power hungry, fully associative hardware structures.
+PT-cache\cite{MMUcaches}. Finally, we assume a highly-threaded
+hardware page table walker for handling misses in the
+PWCs~\cite{power2014supporting, pichaigpu}.
 
 \subsection{Workloads and Metric of Interest}
 

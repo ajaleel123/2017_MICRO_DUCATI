@@ -10,32 +10,34 @@ latency due to multiple memory accesses to the page table. When LLT
 misses are frequent, applications desire low latency for address
 translation.
 
-This paper accelerates address translations by improving on-die LLT
-coverage and LLT miss penalty. We improve on-die TLB coverage by
-proposing {\em Unified Cache and TLB (UCAT)}, a hardware mechanism
-that enables the conventional unified Last-Level Cache (LLC) to also
-hold TLB entries. UCAT increases the on-die LLT coverage by allowing
-as many TLB entries as there are cache lines in the conventional
-on-chip LLC. We show that UCAT improves performance by 60\% on average
-across a set of memory intensive GPU workloads. We show that these
-improvements can be realized with negligible changes to the existing
-LLC architecture.
+This paper accelerates virtual to physical address translation by
+improving on-die LLT coverage and LLT miss penalty. We improve on-die
+TLB coverage by proposing {\em Unified Cache and TLB (UCAT)}, a
+hardware mechanism that enables the conventional unified Last-Level
+Cache (LLC) to also hold TLB entries. UCAT increases the on-die LLT
+coverage by allowing as many TLB entries as there are cache lines in
+the conventional on-chip LLC. We show that UCAT improves performance
+by 60\% (up to 4x) on average across a set of memory intensive GPU
+workloads. We show that these improvements can be realized with
+negligible changes to the existing LLC architecture.
 
 % This is because it still requires multiple requests to the page table
 % for retrieving the address translation.
 
 While UCAT improves performance, it does not decrease the number of
-page table accesses on an LLT miss. Thus, we propose {\em
-Stacked-TLB}, a hardware proposal that extends the coverage of the
-on-chip TLB hierarchy. Stacked-TLB serves as the next larger level in
-the TLB hierarchy and can be arbitrarily configured to increase TLB
-coverage. In the common case, Stacked-TLB avoids multiple page table
+page table accesses on an LLT miss. To address this problem, we
+propose {\em DRAM-TLB}, a hardware proposal that provides off-chip
+support to extend the coverage of the on-chip TLB hierarchy. DRAM-TLB
+serves as the next larger level in the TLB hierarchy architected in
+DRAM technology and can be arbitrarily sized to provide the desired
+TLB coverage. In steady state, DRAM-TLB can avoid multiple page table
 accesses and provides address translation using a single stacked
-memory access. Consequently, Stacked-TLB is a low latency high
-bandwidth alternative to walking the page table on an LLT miss. Our
-studies show that Stacked-TLB improves performance by 22\% on average
-(up to 2X). We show that Stacked-TLB requires less than 1\% the
-capacity of our baseline 16GB stacked memory system.
+memory access. Consequently, DRAM-TLB is a low latency alternative to
+walking the page table on an LLT miss. Our studies show that DRAM-TLB
+architected using emerging stacked memory technology improves
+performance by 22\% on average (up to 2.25X). We show that DRAM-TLB
+requires less than 1\% the capacity of our baseline 16GB stacked
+memory system.
 
 % \newpage
 % We have shown that emerging stacked memory technologies have now
