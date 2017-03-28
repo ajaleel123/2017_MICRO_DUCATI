@@ -67,13 +67,13 @@ entry, the UCAT tag-array stores portions of the virtual address and
 the address space identifier (ASID) while the data-array stores the
 virtual to physical address translation. We propose to use 16 bytes of
 the UCAT data array for address translation. In addition to the
-physical address, the UCAT-entry also stores meta-data information
-such as page protection bits and the LSB of the ASID bits\footnote{If
-all the ASID bits do not fit in the existing LLC tag array size, we
-propose to store the top bits of the ASID to enable a partial tag
-match in the tag array. The bottom bits of the ASID are stored in the
-data array and must also compared to ensure a full tag match before
-supplying the address translation stored in the UCAT-entry}.
+physical address, the UCAT-entry also stores additional information
+such as page protection bits and ASID bits\footnote{If all the ASID
+bits do not fit in the existing LLC tag array size, we propose to
+store the top bits of the ASID to enable a partial tag match in the
+tag array. The bottom bits of the ASID are stored in the data array
+and are compared before supplying the translation stored in the
+UCAT-entry.}.
 
 Note that even though we only use 16-bytes to store the translation,
 we claim that UCAT improves upon the existing LLC inefficiency. This
