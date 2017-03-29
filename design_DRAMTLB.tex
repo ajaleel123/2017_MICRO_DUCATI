@@ -2,12 +2,12 @@
 \label{sec:stackedTLB}
 
 \noindent When the application working set exceeds the TLB coverage
-provided by UCAT (e.g. $GUPS$), UCAT does not reduce the number of
+provided by UCAT (e.g., $GUPS$), UCAT does not reduce the number of
 memory accesses on an LLT miss. Reducing the number of memory accesses
-on an LLT miss improves memory access bandwidth and also reduces the
-effective LLT miss latency.
+on an LLT miss reduces effective LLT miss latency and also improves the memory 
+access bandwidth of the system.
 
-To address this problem, we propose to increase TLB coverage and
+To this end, we propose to increase TLB coverage and
 extend the processor TLB hierarchy by architecting {\em TLBs in DRAM
 (DRAM-TLB)}. The DRAM-TLB logically sits between the on-die shared LLT
 (or UCAT) and the page tables in memory and is first consulted on an
@@ -54,29 +54,22 @@ bits, address space identifier (ASID), and the epoch counter (EPCTR).
 To accommodate this information, we propose 16 bytes of storage per
 DRAM-TLB entry. Figure~\ref{fig:stacked_tlb} illustrates the layout of
 the DRAM-TLB in the DRAM array. For example, a 2KB DRAM array holds
-128 DRAM-TLB entries per rowbuffer.
+128 DRAM-TLB entries per row.
 
 \subsubsection{DRAM-TLB Lookups}
 
 \noindent Unlike on-chip TLBs, all DRAM-TLB operations occur on the
 DRAM data bus at the granularity of the DRAM read/write interface.
-Thus, on an LLT miss, a Stacked-TLB lookup fetches data at the
+Thus, on an LLT miss, if implemented as a stacked-TLB, the lookup fetches data at the
 granularity of the stacked memory interface: 32-byte cacheline (two
-TLB entries). While SYSMEM-TLB lookup fetches data at the granularity
+TLB entries), and if implemented in sysmem, the lookup fetches data at the granularity
 of the DDR interface: 64-byte cacheline (four TLB entries).
 
-Reading multiple TLB entries with a single DRAM read operation can be
-exploited in two ways. First, retrieving the co-located DRAM-TLB
-entries on a DRAM-TLB read naturally enables prefetching of
-neighboring address translations. For example, prefetched entries can
-potentially be stored in an on-chip TLB prefetch buffer. This approach
-is similar to caching co-located page table entries in the page walk
-cache on a conventional page table walk. Alternately, reading multiple
+Reading multiple
 TLB entries enables architecting a set-associative DRAM-TLB without
-incurring additional latency or bandwidth~\cite{moin2012,loh2011}. 
-
-We explored the design space of set-associative and direct-mapped
-DRAM-TLBs. Our studies with both set-associative and direct-mapped
+incurring additional latency or bandwidth~\cite{moin2012,loh2011}. We 
+explored the design space of set-associative and direct-mapped
+DRAM-TLBs. Our evaluation of set-associative and direct-mapped
 designs yielded similar performance with large DRAM-TLB sizes. These
 results match the behavior of existing work on large DRAM Caches where
 conflict misses tend to be low~\cite{moin2012}. Thus, we architect a
@@ -84,6 +77,16 @@ direct-mapped DRAM-TLB where consecutive DRAM-TLB sets map to the same
 rowbuffer in memory (to exploit DRAM row buffer locality). Adjacent
 DRAM-TLB entries fetched are also inserted into the PWC for potential
 future hits.
+
+We could further take advantage of reading multiple TLB entries with a single read 
+operation. Retrieving the co-located DRAM-TLB
+entries on a DRAM-TLB read naturally enables prefetching of
+neighboring address translations. For example, prefetched entries can
+potentially be stored in an on-chip TLB prefetch buffer. This approach
+is similar to caching co-located page table entries in the page walk
+cache on a conventional page table walk. We leave the evaluation of such
+designs to future work.
+
 
 % Similar to page walk caches, we also provision an 8-entry
 % DRAM-TLB-Cache (DTLBcache) that stores recent lines retrieved from the
@@ -148,9 +151,9 @@ logic:
 \noindent Once the DRAM-TLB entry is retrieved from memory, a tag
 comparison is performed to determine hit or miss. On a DRAM-TLB hit,
 the missing translation is returned to the processor. However, on a
-DRAM-TLB miss, the application page table is walked to find the
+DRAM-TLB miss, the we walk the application page table to find the
 virtual to physical translation. This translation is returned to the
-processor and also inserted into the DRAM-TLB for future hits.
+processor and also inserted into the DRAM-TLB.
 
 \subsubsection{DRAM-TLB Example}
 
@@ -160,7 +163,8 @@ page 0xff2212345000 requires fetching the 16-byte DRAM-TLB entry at
 set index 0x12345. With $A=1$ and $s=16$, the physical memory location
 for this DRAM-TLB entry is 0x123450 (i.e. 0 + 0x12345 * 1 * 16). The
 MMU compares the missing tag (0xff22) with the DRAM-TLB entry to
-determine DRAM-TLB hit or miss.
+determine DRAM-TLB hit or miss.\ee{if we start running out of space this 
+sort of thing is probably a bit redundant}
 
 \subsection{DRAM-TLB Performance}
 
