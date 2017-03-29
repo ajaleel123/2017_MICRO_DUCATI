@@ -202,8 +202,8 @@ coverage by nearly 2x while improving average translation latency by
 entries and translation entries. We propose using the UCAT-entry state
 bits (i.e., MESI bits) and insert TLB-entries into UCAT with the {\em
 exclusive} and {\em shared} status bits both set to valid. Since
-cachelines can either be in exclusive state or shared state (and not
-both), this proposal enables distinguishing between TLB entries and
+cachelines can either be in exclusive state or shared state and not
+both, this proposal enables distinguishing between TLB entries and
 cacheline entries at zero storage overhead.
 
 UCAT requires additional logic to invalidate/flush TLB entries from
@@ -215,4 +215,4 @@ besides storing the physical address and permission bits, the current
 value of the EPCTR for the ASID is also stored. If the ASID requires a
 TLB flush, the EPCTR can be incremented. With such support, UCAT
 provides a valid translation only if both the ASID and EPCTR stored in
-the UCAT-entry match the current EPCTR for the ASID.
+the UCAT-entry match the current EPCTR for the ASID corresponding to a memory request.
