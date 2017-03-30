@@ -60,10 +60,11 @@ the DRAM-TLB in the DRAM array. For example, a 2KB DRAM array holds
 
 \noindent Unlike on-chip TLBs, all DRAM-TLB operations occur on the
 DRAM data bus at the granularity of the DRAM read/write interface.
-Thus, on an LLT miss, if implemented as a stacked-TLB, the lookup fetches data at the
-granularity of the stacked memory interface: 32-byte cacheline (two
-TLB entries), and if implemented in sysmem, the lookup fetches data at the granularity
-of the DDR interface: 64-byte cacheline (four TLB entries).
+Thus, on an LLT miss, if implemented as a stacked-TLB, the lookup
+fetches data at the granularity of the stacked memory interface:
+32-byte cacheline (two TLB entries), and if implemented in system
+memory, the lookup fetches data at the granularity of the DDR
+interface: 64-byte cacheline (four TLB entries).
 
 Reading multiple
 TLB entries enables architecting a set-associative DRAM-TLB without
@@ -163,8 +164,10 @@ page 0xff2212345000 requires fetching the 16-byte DRAM-TLB entry at
 set index 0x12345. With $A=1$ and $s=16$, the physical memory location
 for this DRAM-TLB entry is 0x123450 (i.e. 0 + 0x12345 * 1 * 16). The
 MMU compares the missing tag (0xff22) with the DRAM-TLB entry to
-determine DRAM-TLB hit or miss.\ee{if we start running out of space this 
-sort of thing is probably a bit redundant}
+determine DRAM-TLB hit or miss.
+
+% \ee{if we start running out of space this sort of thing is probably a
+% bit redundant}
 
 \subsection{DRAM-TLB Performance}
 
@@ -190,19 +193,19 @@ average, SYSMEM-TLB improves performance by 11\% while Stacked-TLB
 improves performance by 22\%. In general, Stacked-TLBs perform better
 than SYSMEM-TLBs because they are architected with stacked memory, a
 technology that provides high memory bandwidth and less memory queing
-delays. As illusrated in Figure~\ref{fig:tlblat_DRAMTLB}, unlike
-SYSMEM-TLBs that reduce address translation latency by 12\% on
-average, Stacked-TLBs reduce address translation latency by 40\% on
-average. The translation latency reduction stems from the fact that
-DRAM-TLBs reduce the number of memory accesses on an LLT miss from 1.6
-memory accesses to a single memory access on average (see
-Figure~\ref{fig:memaccess_DRAMTLB}). \ee{A question that comes up
-here is that they both seem to be reducing the number of memory 
-accesses to the same extent, why is the performance of Stacked TLB so 
-much better? Is there something else we should be showing/talking about?} The improved translation latency 
+delays. Our studies show that stacked memory access latency is \aj{X\%}
+lower than system memory access latency.
+
+As illusrated in Figure~\ref{fig:tlblat_DRAMTLB}, unlike SYSMEM-TLBs
+that reduce address translation latency by 12\% on average,
+Stacked-TLBs reduce address translation latency by 40\% on average.
+The translation latency reduction stems from the fact that DRAM-TLBs
+reduce the number of memory accesses on an LLT miss from 1.6 memory
+accesses to a single memory access on average (see
+Figure~\ref{fig:memaccess_DRAMTLB}). The improved translation latency
 boosts performance of workloads like $GUPS$ and $MaxFlow$ by more than
-70\% while workloads like $XSBench$, $dmr$, $LULESH$ and
-$MiniAMR$ experience more than 15\% performance gain.
+70\% while workloads like $XSBench$, $dmr$, $LULESH$ and $MiniAMR$
+experience more than 15\% performance gain.
 
 % % \subsubsection{Non-Steady State Performance Behavior}
 % % 

@@ -15,9 +15,9 @@ hierarchies for high performance. The last-level in each hierarchy is
 architected as a single large unified structure that holds both
 instruction and data entries and is shared among all cores. For
 example, the unified last-level cache (LLC) contains hundreds of
-thousands of cache lines\footnote{An 8MB cache with 32B lines contains
-256K cache lines.}. Similarly, the unified last-level TLB (LLT)
-contains 512-1024 TLB entries~\cite{}\ee{for Aamer to fill}.
+thousands of cache lines (e.g., 256K lines in an 8MB cache with 32B
+cache lines). Similarly, the unified last-level TLB (LLT) contains
+512-1024 TLB entries~\cite{sodani2016knights,ia_manual}.
 
 % that store data for recent memory references.
 % that store address translations for recent memory references.
@@ -37,11 +37,11 @@ data array. Because of this, the LLC could potentially also serve as
 gigantic TLB with as many entries as there are LLC lines.
 %EIMAN-03-21: verify that each LLC line can indeed hold one LLT entry.
 As such, given that last-level caches typically do not get very high
-hit-rates and are often inefficiently used~\cite{}\ee{for Aamer to fill}, the conventional
-LLC can potentially be used to store virtual to physical translations
-just like a TLB in addition to caching data from memory. Based on this
-insight, we propose to re-architect the conventional LLC as a {\em
-Unified Cache and TLB (UCAT)}.
+hit-rates and are often inefficiently used~\cite{jaleel_rrip}\aj{need
+more}, the conventional LLC can potentially be used to store virtual
+to physical translations just like a TLB in addition to caching data
+from memory. Based on this insight, we propose to re-architect the
+conventional LLC as a {\em Unified Cache and TLB (UCAT)}.
 
 %EIMAN-03-21: My summary for reworking later: 
 %   - both TLB and cache hierarchies involve multiple levels and many entries in the unified LL
@@ -79,8 +79,9 @@ Note that even though we only use 16-bytes to store the translation,
 we claim that UCAT improves upon the existing LLC inefficiency. This
 is because recent studies show (and independently verified in this
 study) that a majority of LLC entries are unused after cache
-insertion~\cite{}\ee{Aamer to fill}. As such, UCAT utilizes the conventional LLC space
-more efficiently by storing TLB entries in addition to cache lines.
+insertion~\cite{jaleel_rrip}. As such, UCAT utilizes the conventional
+LLC space more efficiently by storing TLB entries in addition to cache
+lines.
 
 In the UCAT design cachelines and TLB-entries dynamically contend for 
 the available UCAT space. Like the
@@ -95,7 +96,7 @@ frequently stream through a large number of cachelines and can constantly
 discard performance critical UCAT TLB entries. Based on this insight,
 we enhance the baseline UCAT design by improving the utilized
 replacement policy. To this end, we leverage the Dynamic Re-Reference
-Interval Prediction (DRRIP) replacement policy~\cite{}\ee{Aamer to fill}. In this
+Interval Prediction (DRRIP) replacement policy~\cite{jaleel_rrip}. In this
 policy, all UCAT insertions follow the same re-reference prediction
 or insertion policy. We propose enhancing the insertion policy
 for TLB entries by inserting them with a {\em near-immediate
@@ -126,47 +127,54 @@ We refer to this enhancement as {\em UCAT with Insertion (UCAT-I)}.
 % different capacity requirements at run time. To address this problen,
 
 \noindent Figure~\ref{fig:perf_UCAT} shows UCAT performance relative
-to the baseline system(on the y-axis) with workloads on the x-axis. The first bar in the figure shows UCAT
-performance where cachelines and TLB-entries contend for UCAT space
-without any restrictions. The figure shows that UCAT significantly
-improves performance of workloads like {\em XSBench}, {\em dmr}, {\em
-MaxFlow}, and {\em MCB} by more than 2x (upto 4x in the latter two).
-Other workloads like {\em GUPS}, {\em SNAP}, {\em UMT}, and {\em CoMD}
-observe more than 15\% performance gains. Overall, UCAT improves
-performance across all workloads by 53\%.
+to the baseline system(on the y-axis) with workloads on the x-axis.
+The first bar in the figure shows UCAT performance where cachelines
+and TLB-entries contend for UCAT space without any restrictions. The
+figure shows that UCAT significantly improves performance of workloads
+like {\em XSBench}, {\em dmr}, {\em MaxFlow}, and {\em MCB} by more
+than 2x (upto 4x in the latter two). Other workloads like {\em GUPS},
+{\em SNAP}, {\em UMT}, and {\em CoMD} observe more than 15\%
+performance gains. Overall, UCAT improves performance across all
+workloads by 53\%.
 
-To understand the performance benefits of UCAT, Figure~\ref{fig:tlblat_UCAT}
-and Figure~\ref{fig:tlbsize_UCAT} illustrate relative translation
-latency and effective on-die TLB size respectively. Workloads that
-experienced more than 2x performance improvements observe a reduction
-in TLB miss penalty by 70\% or more. This is because these workloads
-experience an increase in on-die TLB size by 4x-64x.\ee{explain how you're calculating ``experiencing increased TLB size'' } On average, UCAT
-improves virtual to physical address translation latency by 51\% (up
-to 86\% for {\em MCB}). The improvement in translation latency stems
-from an increase in on-chip TLB coverage by 16x (up to 64x for {\em
-dmr}).
+To understand the performance benefits of UCAT,
+Figure~\ref{fig:tlblat_UCAT} and Figure~\ref{fig:tlbsize_UCAT}
+illustrate relative translation latency and effective on-die TLB size
+respectively. The effective on-die TLB size is reported as the average
+number of TLB entries in the UCAT during the course of application
+execution. 
+
+Workloads with more than 2x performance improvements observe a
+reduction in TLB miss penalty by 70\% or more. This is because these
+workloads experience an increase in on-die TLB size by 4x-64x. On
+average, UCAT improves virtual to physical address translation latency
+by 51\% (up to 86\% for {\em MCB}). The improvement in translation
+latency stems from an increase in on-chip TLB coverage by 16x (up to
+64x for {\em dmr}).
 
 Since UCAT decreases the effective capacity of cachelines compared to
-the separate LLC, we also investigated increase in
-memory accesses due to potential increase in UCAT cacheline misses
-relative to the baseline. Our evaluations show that on average,
-UCAT increases the number of memory accesses by 1\% (maximum 4\% for
-{\em XSBench}). As observed from the performance graphs, the
-additional increase in memory traffic has negligible performance
-impact. This illustrates that trading off conventional LLC space for
-TLB entries provides substantial performance improvements.
+the separate LLC, we also investigated increase in memory accesses due
+to potential increase in UCAT cacheline misses relative to the
+baseline. Our evaluations show that on average, UCAT increases the
+number of memory accesses by 1\% (maximum 4\% for {\em XSBench}). As
+observed from the performance graphs, the additional increase in
+memory traffic has negligible performance impact. This illustrates
+that trading off conventional LLC space for TLB entries provides
+substantial performance improvements.
 
 Figure~\ref{fig:perf_UCAT} also shows that intelligently managing UCAT
-by preferencing TLB-entries over cachelines improves average
-performance of UCAT by an additional 12\%. We observed that UCAT-I
-also has negligible increase in memory traffic (< 1\%) and
-TLB-sensitive workloads like {\em XSBench} and {\em dmr} experience
-significant further performance improvements of up to 90\%. Additionally, workloads
-like {\em LULESH}, {\em SNAP}, and {\em CoMD} experience an additional
+by preferencing TLB-entries over cachelines improves average UCAT
+performance by an additional 12\%. We observed that UCAT-I also has
+negligible increase in memory traffic (< 1\%) and TLB-sensitive
+workloads like {\em XSBench} and {\em dmr} experience additional
+performance improvements of up to 90\%. Additionally, workloads like
+{\em LULESH}, {\em SNAP}, and {\em CoMD} experience an additional
 7-10\% performance improvement over UCAT by intelligently managing the
-UCAT-entries. This is evident from Figures~\ref{fig:tlblat_UCAT} and~\ref{fig:tlbsize_UCAT} where UCAT-I increases effective TLB
+UCAT-entries. This is evident from Figures~\ref{fig:tlblat_UCAT}
+and~\ref{fig:tlbsize_UCAT} where UCAT-I increases effective TLB
 coverage by nearly 2x while improving average translation latency by
-7\%. Overall, UCAT-I improves performance by 65\% relative to the baseline.
+7\%. Overall, UCAT-I improves performance by 65\% relative to the
+baseline.
 
 \begin{figure}[tp] 
   \vspace{-0.in} \centering

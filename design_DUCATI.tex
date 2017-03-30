@@ -38,13 +38,11 @@ x-axis shows the different workloads while the y-axis illustrates
 performance. For each workload, we present the relative performance
 for DRAM-TLBs architected with stacked memory (i.e. Stacked-TLB),
 Unified Cache and TLB (UCAT) enhanced with insertion (UCAT-I), DUCATI,
-and for comparison an unbuildable Perfect Last-Level TLB (LLT)
-system.\ee{I don't remember ever discussing the perfect last level TLB 
-before, we might want to describe what that means here in one sentence if 
-this is indeed the first time we talk about it.} To provide insight into
-the reason for performance improvement,
-Figure~\ref{fig:summary_4k_pages_lat} presents relative address
-translation latencies of the different proposals.
+and for comparison a hypotehtical Perfect LLT system\footnote{We model
+a Perfect LLT by assuming all references to the LLT in the baseline
+system are hits}. To provide insight into the reason for performance
+improvement, Figure~\ref{fig:summary_4k_pages_lat} presents relative
+address translation latencies of the different proposals.
 
 Figure~\ref{fig:summary_4k_pages_perf} shows that stacked memory DRAM-TLBs
 improve average performance by 22\%,
@@ -64,8 +62,12 @@ and UCAT reduce address translation latency by 40\% and 60\%
 respectively, while DUCATI reduces address translation latency by
 75\%. In doing so, DUCATI improves performance by 1.81x while a
 perfect LLT system improves performance by 2.24x. Thus, DUCATI bridges
-80\%\ee{I don't see how 1.81x and 2.24x leads to 80\% of the performance gap being covered, it seems more like 64\% or something like that to me} of the performance gap between the baseline system and an
-unrealistic perfect LLT system.
+80\%
+
+% \ee{I don't see how 1.81x and 2.24x leads to 80\% of the performance
+% gap being covered, it seems more like 64\% or something like that to
+% me} of the performance gap between the baseline system and an
+% unrealistic perfect LLT system.
 
 % Note that Figure~\ref{fig:summary_4k_pages_lat} clearly identifies
 % workloads that are are LLT capacity bound versus those workloads that

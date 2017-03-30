@@ -33,15 +33,16 @@ to improve shared virtual memory performance of heterogeneous CPU-GPU
 systems~\cite{vesley2016ispass}. Specifically, they show that LLT
 misses are an order of magnitude slower on the GPU relative to the
 CPU. Thus, we focus on improving GPU LLT miss overhead in CPU-GPU
-systems with a heterogeneous memory system\footnote{Heterogeneous
-memory systems are designed since stacked DRAM cannot completely
-replace DDR~\cite{BEAR,moin2012}}. 
+systems by reducing both LLT miss {\em frequency} and LLT miss {\em
+latency}.
+
+% with a heterogeneous memory system\footnote{Heterogeneous memory
+% systems are designed since stacked DRAM cannot completely replace
+% DDR~\cite{BEAR,moin2012}}.
 %Since page tables are
 %conventionally stored in commodity DRAM (here on referred to as system
 %memory), frequent LLT misses degrade performance due to the long queuing delays
 %in the memory subsystem. 
-In this paper we focus on reducing both LLT miss {\em frequency} and
-LLT miss {\em latency}.
 
 
 \begin{figure}[t] 
@@ -55,15 +56,15 @@ LLT miss {\em latency}.
 \vspace{-0.15 in}
 \end{figure}
 
-A simple solution to reduce the frequency of LLT misses would be to
-increase LLT size to cover the entire application memory footprint.
-Figure~\ref{fig:tlb_sensitivity} shows the performance impact of doing
-so averaged across several memory intensive workloads on a GPU with a
-1024-entry shared LLT (simulation methodology and benchmark selection
-discussed in Section~\ref{sec:method}). The x-axis shows TLB sizes
-while the y-axis illustrates the performance relative to our baseline
-1024-entry LLT at 4KB, 64KB, and 2MB page sizes. The figure shows that
-performance can be highly sensitive to the number of LLT entries,
+A simple solution to reduce LLT miss frequency would be to increase
+LLT size to cover the entire application memory footprint. For several
+memory intensive workloads, Figure~\ref{fig:tlb_sensitivity} shows GPU
+performance sensitivity to LLT size relative to a 1024-entry shared
+LLT (simulation methodology and benchmark selection discussed in
+Section~\ref{sec:method}). The x-axis shows TLB sizes while the y-axis
+illustrates the average performance relative to our baseline
+1024-entry LLT with 4KB, 64KB, and 2MB page sizes. The figure shows
+that performance can be highly sensitive to the number of LLT entries,
 especially with smaller page sizes. On average, a 2 million entry LLT
 improves performance by 2X with a 4KB page size. Similarly, a
 256k-entry LLT improves performance by 60\% with 64KB page size.
@@ -93,7 +94,6 @@ DBMS~\cite{oracle_dbms}, SAP~\cite{sap}). As such, in this paper we
 focus on increasing on-die TLB coverage with small page sizes without
 high storage overhead.
 
-
 This paper proposes two hardware mechanisms to improve LLT coverage
 and LLT miss penalty without requiring any significant changes to the
 existing virtual memory system design. Our first mechanism, {\em
@@ -111,16 +111,13 @@ cache lines in the conventional on-chip LLC.
 While high performing, UCAT {\em does not} reduce the LLT miss penalty
 incurred from walking the application page table. This is because an
 LLT miss still requires multiple long-latency, serial, accesses to the
-application page table. To address this limitation, we also propose
-{\em DRAM-TLB}, a hardware mechanism to memoize virtual to physical
-translations in DRAM.
-
-DRAM-TLB is a hardware-managed structure that serves as the next
-larger TLB in the processor TLB hierarchy. The DRAM-TLB logically sits
-between the LLT (or UCAT) and the application page table(s) in memory. The
-DRAM-TLB contents are identical to the contents of on-chip TLBs (i.e.
-virtual and physical address pairs, permission bits, and process ID)
-and is consulted upon LLT (or UCAT) misses before walking the page table.
+application page table. To address this limitation, we propose {\em
+DRAM-TLB}, a hardware mechanism to memoize virtual to physical
+translations in DRAM. DRAM-TLB serves as the next larger TLB in the
+processor TLB hierarchy whose contents are identical to the contents
+of on-chip TLBs (i.e. virtual and physical address pairs, permission
+bits, and address space identifier (ASID)). A DRAM-TLB is consulted
+upon LLT (or UCAT) misses before walking the page table.
 
 % The DRAM-TLB physically resides in memory and requires negligible
 % storage overhead. Furthermore, they can be sized arbitrarily such that
@@ -130,9 +127,35 @@ Overall, this paper makes the following contributions:
 
 \begin{enumerate}
 
-\item{UCAT}
-\item{DRAM-TLB}
-\item{DUCATI}
+  \item{We extend on-die TLB coverage by enabling the conventional LLC
+    to serve as a {\em Unified Cache and TLB (UCAT)} structure. UCAT
+    holds cache lines and TLB entries in a single hardware structure.
+    Thus, UCAT improves on-die TLB coverage by enabling as many on-die
+    TLB entries as there are cache lines in the conventional on-chip
+    LLC.}
+
+  \item{We reduce LLC miss penalty by architecting {\em TLBs in DRAM
+    (DRAM-TLB)}. A DRAM-TLB is a gigantic hardware-managed structure
+    that logically sits between the LLT (or UCAT) and the page table.
+    A DRAM-TLB can be arbitrarily sized to provide the desired TLB
+    coverage. Unlike a page table walk, a DRAM-TLB provides
+    low-latency address translation with a single memory access. }
+
+
+  \item{We propose DUCATI, an address translation that combines the
+  benefits of DRAM-TLB and UCAT to collectively improve TLB coverage
+  and LLT miss latency in high performance computing systems.}
+
+\end{enumerate}
+
+\noindent For a set of high performance computing workloads simulated
+on a heterogeneous CPU-GPU system, Unified Cache and TLB (UCAT)
+improves performance by X\% on average (up to Y\%). On the other hand,
+DRAM-TLB improves performance by Y\% on average (up to 2X). Both
+proposals combined, DUCATI, improves performance by Z\%. All proposals
+require negligible changes to the baseline system.
+
+
 
 %\item{To the best of our knowledge, this is the first study that
 %leverages stacked memory to improve TLB miss overhead. While these
@@ -174,15 +197,6 @@ Overall, this paper makes the following contributions:
 % \item{We show that Stacked-TLB requires low storage overhead, is
 %   scalable, and can be configured to provide full TLB coverage for any
 %   application memory footprint.}
-
-\end{enumerate}
-
-\noindent For a set of high performance computing workloads simulated
-on a heterogeneous CPU-GPU system, Unified Cache and TLB (UCAT)
-improves performance by X\% on average (up to Y\%). On the other hand,
-DRAM-TLB improves performance by Y\% on average (up to 2X). Both
-proposals combined, DUCATI, improves performance by Z\%. All proposals
-require negligible changes to the baseline system.
 
 % address translation system.
 
