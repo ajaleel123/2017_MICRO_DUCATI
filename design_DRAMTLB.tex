@@ -79,14 +79,14 @@ rowbuffer in memory (to exploit DRAM row buffer locality). Adjacent
 DRAM-TLB entries fetched are also inserted into the PWC for potential
 future hits.
 
-We could further take advantage of reading multiple TLB entries with a single read 
-operation. Retrieving the co-located DRAM-TLB
-entries on a DRAM-TLB read naturally enables prefetching of
-neighboring address translations. For example, prefetched entries can
-potentially be stored in an on-chip TLB prefetch buffer. This approach
-is similar to caching co-located page table entries in the page walk
-cache on a conventional page table walk. We leave the evaluation of such
-designs to future work.
+We could further take advantage of reading multiple TLB entries with a
+single read operation. Retrieving the co-located DRAM-TLB entries on a
+DRAM-TLB read naturally enables prefetching of neighboring address
+translations. For example, prefetched entries can potentially be
+stored in an on-chip TLB prefetch buffer. This approach is similar to
+caching co-located page table entries in the page walk cache on a
+conventional page table walk. We leave the evaluation of such designs
+to future work.
 
 
 % Similar to page walk caches, we also provision an 8-entry
@@ -192,20 +192,20 @@ relative to the baseline system across all TLB-sensitive workloads. On
 average, SYSMEM-TLB improves performance by 11\% while Stacked-TLB
 improves performance by 22\%. In general, Stacked-TLBs perform better
 than SYSMEM-TLBs because they are architected with stacked memory, a
-technology that provides high memory bandwidth and less memory queing
-delays. Our studies show that stacked memory access latency is \aj{X\%}
-lower than system memory access latency.
+technology that provides lower memory queuing delay due to the high
+memory bandwidth. Our studies show that the loaded stacked memory
+latency observed is 8-15x lower than system memory access latency.
 
-As illusrated in Figure~\ref{fig:tlblat_DRAMTLB}, unlike SYSMEM-TLBs
-that reduce address translation latency by 12\% on average,
-Stacked-TLBs reduce address translation latency by 40\% on average.
-The translation latency reduction stems from the fact that DRAM-TLBs
-reduce the number of memory accesses on an LLT miss from 1.6 memory
-accesses to a single memory access on average (see
-Figure~\ref{fig:memaccess_DRAMTLB}). The improved translation latency
-boosts performance of workloads like $GUPS$ and $MaxFlow$ by more than
-70\% while workloads like $XSBench$, $dmr$, $LULESH$ and $MiniAMR$
-experience more than 15\% performance gain.
+As illusrated in Figure~\ref{fig:tlblat_DRAMTLB}, SYSMEM-TLBs reduce
+address translation latency by 12\% on average while Stacked-TLBs
+reduce address translation latency by 40\% on average. The translation
+latency reduction stems from the fact that DRAM-TLBs reduce the number
+of memory accesses on an LLT miss from 1.6 memory accesses to a single
+memory access on average (see Figure~\ref{fig:memaccess_DRAMTLB}). The
+improved translation latency boosts performance of workloads like
+$GUPS$ and $MaxFlow$ by more than 70\% while workloads like $XSBench$,
+$dmr$, $LULESH$ and $MiniAMR$ experience more than 15\% performance
+gain.
 
 % % \subsubsection{Non-Steady State Performance Behavior}
 % % 
@@ -375,15 +375,13 @@ experience more than 15\% performance gain.
 
 \subsection{DRAM-TLB Design Overhead}
 
-\noindent Figure~\ref{fig:mmu_state} shows the simple modifications 
-we propose to the Memory Management
-Unit (MMU) state machine to support DRAM-TLBs. On an LLT miss, 
-the MMU first consults
-the page walk caches to retrieve the translation. If the request
-misses in the PWCs, the MMU consults the DRAM-TLB. If the request
-misses in the DRAM-TLB, the MMU walks the page table. Thus, we simply
-introduce a new state in the MMU state machine for the DRAM-TLB lookup
-before walking the page table.
+\noindent Figure~\ref{fig:mmu_state} shows the simple modifications we
+propose to the Memory Management Unit (MMU) state machine to support
+DRAM-TLBs. On an LLT miss, the MMU first consults the PWCs to retrieve
+the translation. If the request misses in the PWCs, the MMU consults
+the DRAM-TLB. If the request misses in the DRAM-TLB, the MMU walks the
+page table. Thus, we simply introduce a new state in the MMU state
+machine for the DRAM-TLB lookup before walking the page table.
 
 The in-memory storage overhead for DRAM-TLBs depends on the desired
 TLB coverage. For example, achieving full system memory (256GB in our

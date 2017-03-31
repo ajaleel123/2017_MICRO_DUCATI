@@ -37,11 +37,12 @@ data array. Because of this, the LLC could potentially also serve as
 gigantic TLB with as many entries as there are LLC lines.
 %EIMAN-03-21: verify that each LLC line can indeed hold one LLT entry.
 As such, given that last-level caches typically do not get very high
-hit-rates and are often inefficiently used~\cite{jaleel_rrip}\aj{need
-more}, the conventional LLC can potentially be used to store virtual
-to physical translations just like a TLB in addition to caching data
-from memory. Based on this insight, we propose to re-architect the
-conventional LLC as a {\em Unified Cache and TLB (UCAT)}.
+hit-rates and are often inefficiently
+used~\cite{jaleel_rrip,setdueling,wu2011,jimenez_micro2013}, the
+conventional LLC can potentially be used to store virtual to physical
+translations just like a TLB in addition to caching data from memory.
+Based on this insight, we propose to re-architect the conventional LLC
+as a {\em Unified Cache and TLB (UCAT)}.
 
 %EIMAN-03-21: My summary for reworking later: 
 %   - both TLB and cache hierarchies involve multiple levels and many entries in the unified LL

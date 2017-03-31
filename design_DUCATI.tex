@@ -1,15 +1,15 @@
 \section{DUCATI: Combining DRAM-TLBs \newline and UCAT}
 \label{sec:DUCATI}
 
-\noindent UCAT and DRAM-TLB independently improve on-die
-processor TLB coverage and LLT miss overhead respectively. These
-mechanisms can be combined to collectively improve processor
-performance. To this end, we propose {\em DUCATI}, an address
-translation architecture that combines \underline{D}RAM-TLBs and
-\underline{UCAT-I}. While DUCATI can be architected with Stacked-TLBs
-or SYSMEM-TLBs, we limit our analysis of DUCATI with Stacked-TLBs
-since DRAM-TLB architected with stacked memory technology performs
-better than with conventional DDR memory technology.
+\noindent UCAT and DRAM-TLB independently improve on-die processor TLB
+coverage and LLT miss overhead respectively. These mechanisms can be
+combined to collectively improve processor performance. To this end,
+we propose {\em DUCATI}, an address translation architecture that
+combines \underline{D}RAM-TLBs and \underline{UCAT-I}. While DUCATI
+can either be architected with Stacked-TLBs or with SYSMEM-TLBs, we
+limit our analysis of DUCATI to Stacked-TLBs. This is becuase stacked
+memory technology provides better bandwidth and latency than with
+conventional DDR memory technology.
 
 \subsection{DUCATI Performance}
 
