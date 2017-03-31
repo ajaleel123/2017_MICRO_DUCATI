@@ -112,8 +112,10 @@ LLT miss still requires multiple long-latency, serial, accesses to the page tabl
 DRAM-TLB}, a hardware mechanism to memoize virtual to physical
 translations in DRAM. DRAM-TLB serves as the next larger TLB in the
 processor TLB hierarchy whose contents are identical to the contents
-of on-chip TLBs (i.e. virtual and physical address pairs, permission
-bits, and address space identifier (ASID)). A DRAM-TLB is consulted
+of on-chip TLBs.
+% (i.e. virtual and physical address pairs, permission
+%bits, and address space identifier (ASID)). 
+A DRAM-TLB is consulted
 upon LLT (or UCAT) misses before walking the page table.
 
 % The DRAM-TLB physically resides in memory and requires negligible
@@ -132,10 +134,10 @@ Overall, this paper makes the following contributions:
     LLC.}
 
   \item{We reduce LLC miss penalty by architecting {\em TLBs in DRAM
-    (DRAM-TLB)}. A DRAM-TLB is a gigantic hardware-managed structure
+    (DRAM-TLB)}. A DRAM-TLB is a very large hardware-managed structure
     that logically sits between the LLT (or UCAT) and the page table.
     A DRAM-TLB can be arbitrarily sized to provide the desired TLB
-    coverage. Unlike a page table walk, a DRAM-TLB provides
+    coverage by only occupying a very small portion of gigantic DRAM sizes in today's systems. Unlike a page table walk, a DRAM-TLB provides
     low-latency address translation with a single memory access. }
 
 
