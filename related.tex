@@ -10,51 +10,41 @@ coverage through compression~\cite{COLT, tlbreachclustering} and
 enhanced TLB organizations~\cite{SharedLLT, simTLBperf} by changing
 the existing TLB structures. Other work has investigated mechanisms to
 accelerate page walks by caching portions of the page
-table~\cite{SkipPT,MMUcaches}, or prefetching TLB entries~\cite{prefTLBintercore, prefTLBgokul, prefTLBrecency,
+table~\cite{SkipPT,MMUcaches}, or prefetching TLB
+entries~\cite{prefTLBintercore, prefTLBgokul, prefTLBrecency,
 power2014supporting}, or speculating on the address translation on TLB
-misses~\cite{spectlb}. Despite implementing these mechanisms
-in our baseline system, we find that there is further opportunity to improve TLB overheads. When the memory footprint of workloads is large, we 
-find
-that small page walk caches are unable to completely avoid the page
-table walk. For the workloads in our study, we observe 1.75 page table
-accesses per last-level TLB miss. Our work focuses both on increasing
-TLB coverage and reducing TLB miss penalty by embedding a TLB in DRAM.
-Our DRAM-TLB proposal skips the page walk entirely and in the common
-case provide address translations using a single memory access.
-\ee{The only thing I'm concerned about in this paragraph is that we seem to suggest that we're implementing all these mechanisms in our baseline and we're only implementing two of them. We can maybe try re-wording/re-writing some of what comes after the citations in the last few sentences}
+misses~\cite{spectlb}. When the memory footprint of workloads is
+extremely large, such proposals are unable to provide full TLB
+coverage and avoid TLB miss overhead. Our work focuses both on
+increasing TLB coverage and reducing TLB miss penalty by storing TLB
+entries in the conventional LLC and embedding a TLB in DRAM. The
+DRAM-TLB proposal skips the page walk entirely and in the common case
+provide address translations using a single memory access.
 
-\boldheadingpara{Large Pages and Direct Segments} Our studies show that
-the use of large pages (e.g. 2MB, 64MB, 1GB) and direct
-segments~\cite{Basu2013} can provide full TLB coverage. However,
-significant work has shown that unrestricted use of large pages cause
-several performance limitations
-~\cite{SuperPageProblem,TwoPageSize,numa-harmful,cameo,largepagevm}
+\boldheadingpara{Large Pages and Direct Segments} Our studies show
+that the use of large pages (e.g. 2MB, 64MB, 1GB) and direct
+segments~\cite{Basu2013} can significantly improve TLB coverage.
+However, recent work has shown that unrestricted use of large pages
+creates unintended performance
+overheads~\cite{SuperPageProblem,TwoPageSize,numa-harmful,cameo,largepagevm}
 causing modern operating systems to avoid using large pages in the
-common case. Alternatively, direct segments while high performing,
-requires both hardware and software support to redesign the existing
-address translation system. Our proposals on the other hand provide a
-complementary approach to improve address translation using smaller
-pages (4KB, 64KB) without the overhead of large pages and the design
-complexity of direct segments. Our proposals are simple and practical
-from an implementation perspective and can be easily deployed into a
-variety of computing systems.\ee{Not sure what this last sentence adds}
+common case. Alternatively, the use of direct segments can improve TLB
+coverage. However, direct segments requires both hardware and software
+support to redesign the existing address translation system. Our
+proposals on the other hand provide a complementary approach to
+improve address translation using smaller pages (4KB, 64KB) without
+the overhead of large pages and the design complexity of direct
+segments. 
 
-%  rather than complex systems with their own run-time managed memory
-% system
-
-\boldheadingpara{Alternate DRAM Architectures} Recent proposals extend the
-processor cache hierarchy by architecting stacked memory as a DRAM
+\boldheadingpara{Alternate DRAM Architectures} Recent proposals extend
+the processor cache hierarchy by architecting stacked memory as a DRAM
 cache~\cite{BEAR, moin2012, unison, loh2011, jaewoong2012,
-dramcache-resilient}. DRAM caches are orthogonal to the proposals 
-of this paper, and the trade-offs for architecting DRAM-TLBs are
+dramcache-resilient}. DRAM caches are orthogonal to the proposals of
+this paper, and the trade-offs for architecting DRAM-TLBs are
 different from those considered in DRAM cache designs. For example,
-stacked-TLB entries are much smaller than DRAM cache entries and as such,
-stacked-TLBs expose different trade-offs for reading and updating
+DRAM-TLB entries are much smaller than DRAM cache entries and as such,
+DRAM-TLBs expose different trade-offs for reading and updating
 multiple entries without incurring higher latency or bandwidth.
-\ee{I've modified the above a bit, but still am not happy with it.
-I know that the fact that they're orthogonal makes you not even
-want to write this last sentence and it comes across in what we have here.
-Can we improve this to something less fluffy?}
 
 \boldheadingpara{Data Placement in Hybrid Memory} Application data
 placement in hybrid memory systems as well as NUMA system has been
@@ -63,37 +53,38 @@ utilize total system bandwidth by distributing pages between system
 memory and stacked memory based on the bandwidth
 ratio~\cite{bwa,batman}. NUMA aware placement on the other hand
 focuses on data placement near computing resources to minimize overall
-latency~\cite{numa-traffic, numa-OSsupport, numa-bolosky}. To the best
-of our knowledge, this is the first work that investigates page table
-placement strategies for improving the performance of address
-translation. \ee{This last sentence seems to be from the previous submission. Shouldn't we just be saying that this work is orthogonal to all these prior works now with the new story?}
+latency~\cite{numa-traffic, numa-OSsupport, numa-bolosky}. Our work is
+orthogonal these proposals.
 
-\boldheadingpara{Address Translation Support for GPUs} Efficient and high
-performing address translation on GPUs is an important area of
+\boldheadingpara{Address Translation Support for GPUs} Efficient and
+high performing address translation on GPUs is an important area of
 research. Recent studies~\cite{power2014supporting, pichaigpu} show
 that simply extending CPU-style TLBs and page walkers to GPUs do not
-perform well. Consequently, novel mechanisms such as highly
-threaded page walkers~\cite{power2014supporting} and intelligent page
-walk scheduling~\cite{pichaigpu} have been proposed. Our work focuses
-on speeding up page walks through better page table placement. \ee{Also this pervious sentence seems to be from the previous submission? Can you please adjust that and the next sentence accordingly?} We also
-focus on minimizing the number of page walks by using DRAM-TLBs to
-improve TLB coverage.
+perform well. Consequently, novel mechanisms such as highly threaded
+page walkers~\cite{power2014supporting} and intelligent page walk
+scheduling~\cite{pichaigpu} have been proposed. Our work focuses on
+improving GPU TLB coverage by allowing the GPU LLC to hold TLB
+entries. We also improve GPU TLB miss latency by architecting TLBs in
+DRAM.
 
-\boldheadingpara{Inverted Page Tables} \ee{This section is pretty entertaining. First of all, there is no citation so its not clear what prior work we're even talking about. Second, it is just right out the gates telling the world how shitty inverted page tables are!!! I think a beginning sentene telling the reader why we're even talking about inverted page tables and also giving a citation to the related work is in order.} DRAM-TLBs leverage the hierarchical
-page table structure and allow shared address spaces. Inverted page
-tables on the other hand do not allow shared spaces. Second, inverted
-page tables rely on a hash function to search the page table. In case
-of conflicts, a linked list must be traversed to find the translation.
-As such inverted page tables may require more than one memory access.
-On the other hand, DRAM-TLBs provide address translation using a
-single memory access in the common case.
+\boldheadingpara{Inverted Page Tables} \ee{This section is pretty
+entertaining. First of all, there is no citation so its not clear what
+prior work we're even talking about. Second, it is just right out the
+gates telling the world how shitty inverted page tables are!!! I think
+a beginning sentene telling the reader why we're even talking about
+inverted page tables and also giving a citation to the related work is
+in order.} DRAM-TLBs leverage the hierarchical page table structure
+and allow shared address spaces. Inverted page tables on the other
+hand do not allow shared spaces. Second, inverted page tables rely on
+a hash function to search the page table. In case of conflicts, a
+linked list must be traversed to find the translation. As such
+inverted page tables may require more than one memory access. On the
+other hand, DRAM-TLBs provide address translation using a single
+memory access in the common case.
 
-
-% 
 % DRAM-TLBs in most common case yields a translation in a single lookup.
 % However, inverted page tables first require a hash function to
 % determine where to start the search, and then a linked list traversal
 % to the find the corresponding mapping. Additionally, unlike inverted
 % page tables, DRAM-TLBs allow flexible share of data between multiple
 % virtual addresses/processes.
-% 

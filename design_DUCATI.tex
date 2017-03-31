@@ -57,17 +57,18 @@ DUCATI). All other workloads experience performance gains between 6\%
 to 35\%.
 
 Figure~\ref{fig:summary_4k_pages_lat} illustrates the relative address
-translation latency for the different proposals that show where the performance improvements of Figure~\ref{fig:summary_4k_pages_perf} come from. On average, DRAM-TLB
-and UCAT reduce address translation latency by 40\% and 60\%
-respectively, while DUCATI reduces address translation latency by
-75\%. In doing so, DUCATI improves performance by 1.81x while a
-perfect LLT system improves performance by 2.24x. Thus, DUCATI bridges
-80\%
+translation latency for the different proposals that show where the
+performance improvements of Figure~\ref{fig:summary_4k_pages_perf}
+come from. On average, DRAM-TLB and UCAT reduce address translation
+latency by 40\% and 60\% respectively, while DUCATI reduces address
+translation latency by 75\%. In doing so, DUCATI improves performance
+by 1.81x while a perfect LLT system improves performance by 2.24x.
+Thus, DUCATI bridges two-thirds of the performance gap between the
+baseline system and a perfect LLT system.
 
 % \ee{I don't see how 1.81x and 2.24x leads to 80\% of the performance
 % gap being covered, it seems more like 64\% or something like that to
-% me} of the performance gap between the baseline system and an
-% unrealistic perfect LLT system.
+% me} 
 
 % Note that Figure~\ref{fig:summary_4k_pages_lat} clearly identifies
 % workloads that are are LLT capacity bound versus those workloads that
@@ -78,17 +79,22 @@ perfect LLT system improves performance by 2.24x. Thus, DUCATI bridges
 
 \subsection{DUCATI Sensitivity to Page Size}
 
-\noindent This section presents the performance of our proposals using 64KB
-and 2MB page sizes. For our 1024-entry baseline LLT, using 4KB
-pages provides a TLB coverage of 4MB, using 64KB pages increases the TLB
-coverage to 64MB, and using 2MB pages increases TLB coverage to
-2GB. Figure~\ref{fig:summary_pagesize} illustrates the average
+\noindent This section presents the performance of our proposals using
+64KB and 2MB page sizes. For our 1024-entry baseline LLT, using 4KB
+pages provides a TLB coverage of 4MB, using 64KB pages increases the
+TLB coverage to 64MB, and using 2MB pages increases TLB coverage to
+2GB. Note that while large page sizes improve TLB coverage,
+unrestricted use of large pages can create various performance
+overheads~\cite{SuperPageProblem,TwoPageSize,numa-harmful,cameo,largepagevm}.
+Nonetheless, Figure~\ref{fig:summary_pagesize} illustrates the average
 performance across all workloads for 4KB, 64KB, and 2MB pages.
 Overall, DUCATI improves performance by 81\% with 4KB pages, 56\% with
-64K pages, and 8\% with 2MB pages. In fact, DUCATI is within 80\%,
-95\%, and 98\% of an unrealstic perfect LLT system when using 4KB,
-64KB, and 2MB pages respectively.
-\ee{What's concerning to me here is that we haven't other than one or a few sentences in the intro spoken about why using 2MB pages isn't good enough that this is a problem worth addressing. I might be spacing out, but if we haven't we probably want to emphasize this somehow maybe here?}
+64K pages, and 8\% with 2MB pages. In fact, DUCATI is within 20\%,
+5\%, and 2\% the performance of an unrealistic perfect LLT system when
+using 4KB, 64KB, and 2MB pages respectively. Thus, with both small and
+large page sizes, DUCATI is able to significantly bridge gap between
+the baseline system and a perfect LLT system.
+
 \begin{figure}[tp] 
 \vspace{0. in} \centering
 \centerline{\psfig{file=GRAPHS/pagesize_sensitivity2,angle=-90,width=\columnwidth}}
