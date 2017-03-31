@@ -11,20 +11,21 @@ commodity DRAM~\cite{ddr4-spec} and stacked
 DRAM~\cite{hbm-spec,hmc_spec}. Furthermore, such systems are expected
 to support {\em Shared Virtual Memory}~\cite{HSA,UVM} where both CPUs
 and GPUs can access the entire hybrid memory address space using a
-unified virtual address space. Consequently, the performance of
-emerging heterogeneous systems is dependent on hardware support for
-virtual memory.
+unified virtual address space. 
+%Consequently, the performance of
+%emerging heterogeneous systems is dependent on hardware support for
+%virtual memory.
 
 In the virtual memory framework, depending on the page table
 implementation, address translation requires one or more page table
 accesses~\cite{Bhargava2008}. To avoid the long memory access latency,
 processor architects cache recent address translations using an
 on-chip multi-level translation look-aside buffer (TLB) hierarchy.
-Therefore, virtual memory performance is dependent on the performance
-of the {\em Last-Level TLB (LLT)}. Growing application memory
-footprints continue to stress the on-chip LLT~\cite{spectlb, Basu2013,
-SharedLLT, COLT}. LLT misses are latency sensitive operations that
-require one or more serial accesses to the page table. Reducing LLT
+Growing application memory footprints continue to stress the on-chip 
+{\em Last-Level TLB (LLT)}~\cite{spectlb, Basu2013, SharedLLT, COLT}. 
+LLT misses are latency sensitive operations that require one or more 
+serial accesses to the page table. Therefore, virtual memory 
+performance is dependent on the performance of the LLT. Reducing LLT
 miss latency enables instructions depending on the missing TLB entry
 to make faster forward progress.
 
