@@ -58,15 +58,12 @@ latency}.
 \end{figure}
 
 A simple solution to reduce LLT miss frequency would be to increase
-LLT size to cover the entire application memory footprint. For several
-memory intensive workloads, Figure~\ref{fig:tlb_sensitivity} shows GPU
+LLT size to cover the entire application memory footprint. Figure~\ref{fig:tlb_sensitivity} shows GPU
 performance sensitivity to LLT size relative to a 1024-entry shared
-LLT (simulation methodology and benchmark selection discussed in
-Section~\ref{sec:method}). The x-axis shows TLB sizes while the y-axis
-illustrates the average performance relative to our baseline
-1024-entry LLT with 4KB, 64KB, and 2MB page sizes. The figure shows
-that performance can be highly sensitive to the number of LLT entries,
-especially with smaller page sizes. On average, a 2 million entry LLT
+LLT for several
+memory intensive workloads\footnote{Section~\ref{sec:method} discusses simulation methodology and benchmark selection.}. The x-axis shows TLB sizes, while the y-axis shows average performance relative to the baseline
+across three configurations of 4KB, 64KB, and 2MB page sizes. The figure shows
+that performance is highly sensitive to the number of LLT entries with smaller page sizes. On average, a 2 million entry LLT
 improves performance by 2X with a 4KB page size. Similarly, a
 256k-entry LLT improves performance by 60\% with 64KB page size.
 Finally an 8k-entry LLT improves performance by 10\% with 2MB page
@@ -109,10 +106,9 @@ cache lines in the conventional on-chip LLC.
 %Doing so significantly improves LLT miss latency compared to storing
 %the entire page table in system memory. 
 
-While high performing, UCAT {\em does not} reduce the LLT miss penalty
-incurred from walking the application page table. This is because an
-LLT miss still requires multiple long-latency, serial, accesses to the
-application page table. To address this limitation, we propose {\em
+However, UCAT {\em does not} reduce the LLT miss penalty
+incurred from walking the page table. This is because an
+LLT miss still requires multiple long-latency, serial, accesses to the page table. To this end, we propose {\em
 DRAM-TLB}, a hardware mechanism to memoize virtual to physical
 translations in DRAM. DRAM-TLB serves as the next larger TLB in the
 processor TLB hierarchy whose contents are identical to the contents
