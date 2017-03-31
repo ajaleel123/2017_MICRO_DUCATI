@@ -71,16 +71,15 @@ misses and PWC hit rates impacts address translation performance.
 
 \input{workloads}
 
-In Figure~\ref{fig:tlb_sensitivity} we already motivated increasing TLB
-coverage by demonstrating its direct impact on performance. Table~\ref{table:bench_char} 
+In the previous Section we already motivated increasing TLB
+coverage by demonstrating its direct impact on performance in Figure~\ref{fig:tlb_sensitivity}. To provide further insight, Table~\ref{table:bench_char} 
 shows the number of LLT misses for the evaluated workloads.
 We observe that these workloads incur frequent LLT misses when using 4KB pages. 
 To make things worse,
 each LLT miss requires more than one memory access to the page table
-(maximum of 2 in some cases). Consequently, these workloads experience
+(maximum of two in some cases). Consequently, these workloads experience
 significant performance overheads due to TLB misses. This clearly
-motivates architecture support for not only improving LLT coverage,
-but also reducing the number of memory accesses on an LLT miss. Before
+motivates the need for reducing the number of memory accesses on an LLT miss in addition to improving LLT coverage. Before
 we describe our solutions to address both these problems, we first
 provide details on our experimental methodology.
 
