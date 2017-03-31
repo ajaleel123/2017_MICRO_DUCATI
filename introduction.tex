@@ -8,10 +8,10 @@ are becoming the defacto organization of future high performance
 computing platforms. Such systems typically consist of a hybrid memory
 system~\cite{hbm_intel,hbm_amd,hbm_nvidia} that is composed of
 commodity DRAM~\cite{ddr4-spec} and stacked
-DRAM~\cite{hbm-spec,hmc_spec}. Furthermore, such systems are expected
-to support {\em Shared Virtual Memory}~\cite{HSA,UVM} where both CPUs
-and GPUs can access the entire hybrid memory address space using a
-unified virtual address space. 
+DRAM~\cite{hbm-spec,hmc_spec}. Furthermore, such systems also support
+{\em Shared Virtual Memory}~\cite{HSA,UVM} where both CPUs and GPUs
+can access the entire hybrid memory address space using a unified
+virtual address space.
 %Consequently, the performance of
 %emerging heterogeneous systems is dependent on hardware support for
 %virtual memory.
@@ -58,65 +58,66 @@ latency}.
 \end{figure}
 
 A simple solution to reduce LLT miss frequency would be to increase
-LLT size to cover the entire application memory footprint. Figure~\ref{fig:tlb_sensitivity} shows GPU
-performance sensitivity to LLT size relative to a 1024-entry shared
-LLT for several
-memory intensive workloads\footnote{Section~\ref{sec:method} discusses simulation methodology and benchmark selection.}. The x-axis shows TLB sizes, while the y-axis shows average performance relative to the baseline
-across three configurations of 4KB, 64KB, and 2MB page sizes. The figure shows
-that performance is highly sensitive to the number of LLT entries with smaller page sizes. On average, a 2 million entry LLT
-improves performance by 2X with a 4KB page size. Similarly, a
-256k-entry LLT improves performance by 60\% with 64KB page size.
-Finally an 8k-entry LLT improves performance by 10\% with 2MB page
-size.
+LLT size to cover the entire application memory footprint.
+Figure~\ref{fig:tlb_sensitivity} shows GPU performance sensitivity to
+LLT size relative to a 1024-entry shared
+LLT\footnote{Section~\ref{sec:method} discusses workloads and
+simulation methodology.}. The x-axis shows TLB sizes, while the y-axis
+shows average performance relative to the baseline across three
+configurations of 4KB, 64KB, and 2MB page sizes. The figure shows that
+performance is highly sensitive to the number of LLT entries with
+smaller page sizes. On average, a two million entry LLT improves
+performance by 2X with a 4KB page size. Similarly, a 256k-entry LLT
+improves performance by 60\% with 64KB page size. Finally, an 8k-entry
+LLT improves performance by 10\% with 2MB page size.
 %Assuming 8-bytes of storage requirement per TLB entry, processor
 %architects would need to budge 16MB, 2MB, and 64KB of area overhead
 %for 4KB, 64KB, and 2MB pages respectively. 
 
-Unfortunately, on-die area limitations prohibit simply increasing the
-LLT size, especially at smaller page sizes. Recent work has
-investigated improving performance of virtual memory translation
-hardware using large pages to help TLB coverage.
 %This is because a single large page (e.g. 2MB) TLB entry can
 %span hundreds of contiguous small page (e.g. 4KB) TLB entries. 
 %Covering a larger portion of the virtual address space using
 %entries of the on-chip multi-level TLB hierarhcy results in fewer page
 %table accesses in memory and avoids long memory access latencies. 
-However, unrestricted use of large pages can create unintended OS
-performance overheads ~\cite{SuperPageProblem, TwoPageSize} due to
-memory imbalance~\cite{numa-harmful}, memory fragmentation,
+Unfortunately, on-die area limitations prohibit simply increasing the
+LLT size, especially with smaller page sizes. Recent work has
+investigated improving performance of virtual memory translation
+hardware using large pages to help TLB coverage. However, unrestricted
+use of large pages can create unintended OS performance overheads
+~\cite{SuperPageProblem, TwoPageSize} due to memory
+imbalance~\cite{numa-harmful}, memory fragmentation,
 paging~\cite{cameo}, page creation, and page
 splitting~\cite{largepagevm}. Consequently, the use of large pages
 have traditionally been limited to complex server systems that have
 their own run-time systems to manage memory (e.g. Oracle
-DBMS~\cite{oracle_dbms}, SAP~\cite{sap}). As such, in this paper we
-focus on increasing on-die TLB coverage with small page sizes without
-high storage overhead.
+DBMS~\cite{oracle_dbms}, SAP~\cite{sap}). As such, this paper focus on
+increasing on-die TLB coverage with small page sizes without high
+storage overhead or changes to the existing virtual memory system.
 
 This paper proposes two hardware mechanisms to improve LLT coverage
-and LLT miss penalty without requiring any significant changes to the
-existing virtual memory system design. Our first mechanism, {\em
-Unified Cache and TLB (UCAT)}, reduces the frequency of on-die LLT
-misses by enabling the conventional unified LLC to also hold TLB
-entries. UCAT augments the existing on-die LLT and increases on-die
-TLB coverage by potentially allowing as many TLB entries as there are
-cache lines in the conventional on-chip LLC.
+and LLT miss penalty. Our first mechanism, {\em Unified Cache and TLB
+(UCAT)}, reduces the frequency of on-die LLT misses by enabling the
+conventional unified LLC to also hold TLB entries. UCAT augments the
+existing on-die LLT and increases on-die TLB coverage by potentially
+allowing as many TLB entries as there are cache lines in the
+conventional on-chip LLC.
 
 %entirely in software, proposes to allocate the frequently
 %accessed portion of the application page table in stacked memory.
 %Doing so significantly improves LLT miss latency compared to storing
 %the entire page table in system memory. 
 
-However, UCAT {\em does not} reduce the LLT miss penalty
-incurred from walking the page table. This is because an
-LLT miss still requires multiple long-latency, serial, accesses to the page table. To this end, we propose {\em
-DRAM-TLB}, a hardware mechanism to memoize virtual to physical
-translations in DRAM. DRAM-TLB serves as the next larger TLB in the
-processor TLB hierarchy whose contents are identical to the contents
-of on-chip TLBs.
+However, UCAT {\em does not} reduce the LLT miss penalty incurred from
+walking the page table. This is because an LLT miss still requires
+multiple long-latency, serial, accesses to the page table. To this
+end, we propose {\em DRAM-TLB}, a hardware mechanism to memoize
+virtual to physical translations in DRAM. DRAM-TLB serves as the next
+larger TLB in the processor TLB hierarchy whose contents are identical
+to the contents of on-chip TLBs. A DRAM-TLB is consulted upon LLT (or
+UCAT) misses before walking the page table.
+
 % (i.e. virtual and physical address pairs, permission
 %bits, and address space identifier (ASID)). 
-A DRAM-TLB is consulted
-upon LLT (or UCAT) misses before walking the page table.
 
 % The DRAM-TLB physically resides in memory and requires negligible
 % storage overhead. Furthermore, they can be sized arbitrarily such that
@@ -137,13 +138,15 @@ Overall, this paper makes the following contributions:
     (DRAM-TLB)}. A DRAM-TLB is a very large hardware-managed structure
     that logically sits between the LLT (or UCAT) and the page table.
     A DRAM-TLB can be arbitrarily sized to provide the desired TLB
-    coverage by only occupying a very small portion of gigantic DRAM sizes in today's systems. Unlike a page table walk, a DRAM-TLB provides
-    low-latency address translation with a single memory access. }
+    coverage by only occupying a very small portion of gigantic DRAM
+    sizes in today's systems. Unlike a page table walk, a DRAM-TLB
+    provides low-latency address translation with a single memory
+    access. }
 
 
-  \item{We propose DUCATI, an address translation that combines the
-  benefits of DRAM-TLB and UCAT to collectively improve TLB coverage
-  and LLT miss latency in high performance computing systems.}
+  \item{We propose DUCATI, an address translation architecture that
+  combines DRAM-TLB and UCAT benefits to improve TLB coverage and LLT
+  miss latency in high performance computing systems.}
 
 \end{enumerate}
 
