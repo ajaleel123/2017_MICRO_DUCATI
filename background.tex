@@ -8,11 +8,11 @@
 today and is responsible for translating virtual addresses to physical
 addresses. Address translation is performed by maintaining an
 application {\em page table} in system memory.
-Figure~\ref{fig:page_table} shows a typical four-level
-hierarchical page table commonly used in computing systems today. Each
-node in the page table is 4KB in size and contains 512 8-byte entries
-that point to the next node in the page table. The leaf node contains
-the physical address mapping. Generally, the page table is sparsely
+Figure~\ref{fig:page_table} shows a typical four-level hierarchical
+page table commonly used in computing systems today. Each node in the
+page table is 4KB in size and contains 512 8-byte entries that point
+to the next node in the page table. The leaf node contains the
+physical address mapping. Generally, the page table is sparsely
 populated and new nodes are created only when data is referenced. As
 such, the typical in-memory storage space for the application page
 table is roughly 0.2\% of the total memory footprint (8 bytes of
@@ -71,17 +71,18 @@ misses and PWC hit rates impacts address translation performance.
 
 \input{workloads}
 
-In the previous Section we already motivated increasing TLB
-coverage by demonstrating its direct impact on performance in Figure~\ref{fig:tlb_sensitivity}. To provide further insight, Table~\ref{table:bench_char} 
-shows the number of LLT misses for the evaluated workloads.
-We observe that these workloads incur frequent LLT misses when using 4KB pages. 
-To make things worse,
-each LLT miss requires more than one memory access to the page table
-(maximum of two in some cases). Consequently, these workloads experience
-significant performance overheads due to TLB misses. This clearly
-motivates the need for reducing the number of memory accesses on an LLT miss in addition to improving LLT coverage. Before
-we describe our solutions to address both these problems, we first
-provide details on our experimental methodology.
+In the previous section, Figure~\ref{fig:tlb_sensitivity} motivated
+increasing TLB coverage by demonstrating its direct impact on
+performance. To provide further insight, Table~\ref{table:bench_char}
+shows the number of LLT misses for the evaluated workloads. We observe
+that these workloads incur frequent LLT misses when using 4KB pages.
+To make things worse, each LLT miss requires more than one memory
+access to the page table (maximum of two in some cases). Consequently,
+these workloads experience significant performance overheads due to
+TLB misses. This clearly motivates the need for reducing the number of
+memory accesses on an LLT miss in addition to improving LLT coverage.
+Before we describe our solutions to address both these problems, we
+first provide details on our experimental methodology.
 
 \begin{figure}[t]
 \vspace{0. in}
