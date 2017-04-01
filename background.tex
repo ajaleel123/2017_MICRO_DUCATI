@@ -64,10 +64,11 @@ virtual address.
 %\end{figure}
 
 To reduce page table accesses on an LLT miss, commercial processors
-employ Page Walk Caches (PWC) for each page table level. PWCs exploit
-temporal and spatial locality in the page table access stream and
-avoid memory accesses on PWC hits. Consequently, the frequency of TLB
-misses and PWC hit rates impacts address translation performance.
+employ Page Walk Caches (PWC) for each page table level~\cite{SkipPT,
+MMUcaches}. PWCs exploit temporal and spatial locality in the page
+table access stream and avoid memory accesses on PWC hits.
+Consequently, the frequency of TLB misses and PWC hit rates impacts
+address translation performance.
 
 \input{workloads}
 
@@ -92,6 +93,6 @@ first provide details on our experimental methodology.
         \caption{\small Baseline System. \normalsize}
 
 \label{fig:config}
-\vspace{-0.15 in}
+\vspace{-.2 in}
 \end{figure}
 
