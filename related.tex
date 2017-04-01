@@ -70,8 +70,8 @@ DRAM.
 \boldheadingpara{Inverted Page Tables} To reduce the number of memory
 accesses in a hierarchical page table design, some designs use
 inverted page tables~\cite{invertedPT,invertedPT2}. Inverted page
-tables designed to provide translation with a single memory access.
-Inverted page tables are indexed using a hash of the virtual address.
+tables are designed to provide translation with a single memory access
+by indexing the page table using a hash of the virtual address.
 However, since different virtual addresses might produce a similar
 hash, a collision-chain is created. Consequently, a drawback is that
 the number of memory accesses is dependent on the length of the

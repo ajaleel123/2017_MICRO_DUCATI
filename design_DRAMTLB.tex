@@ -50,11 +50,11 @@ OS-visible memory space (see Figure~\ref{fig:stacked_tlb}(c)).
 \noindent Like conventional on-chip SRAM TLBs, and the proposed UCAT
 architecture, a DRAM-TLB entry maintains the TLB tag, physical
 address, and meta data information such as valid bits, page permission
-bits, address space identifier (ASID), and the epoch counter (EPCTR).
-To accommodate this information, we propose 16 bytes of storage per
-DRAM-TLB entry. Figure~\ref{fig:stacked_tlb} illustrates the layout of
-the DRAM-TLB in the DRAM array. For example, a 2KB DRAM array holds
-128 DRAM-TLB entries per row.
+bits, address space identifier (ASID). To accommodate this
+information, we propose 16 bytes of storage per DRAM-TLB entry.
+Figure~\ref{fig:stacked_tlb} illustrates the layout of the DRAM-TLB in
+the DRAM array. For example, a 2KB DRAM array holds 128 DRAM-TLB
+entries per row.
 
 \subsubsection{DRAM-TLB Lookups}
 
@@ -104,6 +104,9 @@ existing DRAM interfaces that allow partial writes (e.g. byte-level
 writes) to memory without the power and bandwidth overhead of a full
 read-modify-write operation~\cite{hbm-spec}.
 
+% Note that a direct-mapped DRAM-TLB architecture also helps avoid a
+% read-modify-write operation. If the DRAM-TLB were set-associative, a
+% read is necessary to determine which DRAM-TLB way .
 
 % If the DRAM-TLB entry exists in the DTLBcache, the corresponding entry
 % is directly updated in the DTLBcache. However, if the entry does not
@@ -152,7 +155,7 @@ logic:
 \noindent Once the DRAM-TLB entry is retrieved from memory, a tag
 comparison is performed to determine hit or miss. On a DRAM-TLB hit,
 the missing translation is returned to the processor. However, on a
-DRAM-TLB miss, the we walk the application page table to find the
+DRAM-TLB miss, the application page table is walked to find the
 virtual to physical translation. This translation is returned to the
 processor and also inserted into the DRAM-TLB.
 
@@ -358,7 +361,7 @@ gain.
   \vspace{0.in} \centering
   \centerline{\psfig{file=GRAPHS/DRAMTLB_tlblat,angle=-90,width=\columnwidth}}
 
-  \caption{\small Translation Latency Relative to baseline.\normalsize}
+  \caption{\small Relative Translation Latency.\normalsize}
   \label{fig:tlblat_DRAMTLB} 
 %  \vspace{0.2 in}
 \end{figure}
@@ -375,26 +378,27 @@ gain.
 
 \subsection{DRAM-TLB Design Overhead}
 
-\noindent Figure~\ref{fig:mmu_state} shows the simple modifications we
-propose to the Memory Management Unit (MMU) state machine to support
-DRAM-TLBs. On an LLT miss, the MMU first consults the PWCs to retrieve
-the translation. If the request misses in the PWCs, the MMU consults
-the DRAM-TLB. If the request misses in the DRAM-TLB, the MMU walks the
-page table. Thus, we simply introduce a new state in the MMU state
-machine for the DRAM-TLB lookup before walking the page table.
+\noindent Figure~\ref{fig:mmu_state} shows simple modifications to the
+Memory Management Unit (MMU) state machine to support DRAM-TLBs. On an
+LLT miss, the MMU first consults the PWCs to retrieve the translation.
+If the request misses in the PWCs, the MMU consults the DRAM-TLB. If
+the request misses in the DRAM-TLB, the MMU walks the page table.
+Thus, we simply introduce a new state in the MMU state machine for the
+DRAM-TLB lookup before walking the page table.
 
 The in-memory storage overhead for DRAM-TLBs depends on the desired
 TLB coverage. For example, achieving full system memory (256GB in our
-baseline) coverage with 4KB, 64KB, and 2MB pages 1GB, 64MB, and 2MB of
-storage overhead (assuming 16-byte DRAM-TLB entries). In general, this
-storage overhead is impractical for on-chip SRAM TLBs. However, these
-sizes are an insignificant fraction of emerging multi-gigabyte stacked
-memory systems. For example, the aforementioned storage overheads
-correspond to 6\% (4KB pages), 0.4\% (64KB pages), and 0.01\% (2MB
-pages) storage overhead for a 16GB stacked memory system.
-Consequently, DRAM-TLBs can improve TLB coverage using small pages
-with minimal storage overhead and most importantly require no
-significant changes to the existing address translation mechanisms.
+baseline) coverage with 4KB, 64KB, and 2MB pages requires 1GB, 64MB,
+and 2MB of storage overhead respectively (assuming 16-byte DRAM-TLB
+entries). In general, this storage overhead is impractical for on-chip
+SRAM TLBs. However, these sizes are an insignificant fraction of
+emerging multi-gigabyte stacked memory systems. For example, the
+aforementioned storage overheads correspond to 6\% (4KB pages), 0.4\%
+(64KB pages), and 0.01\% (2MB pages) storage overhead for a 16GB
+stacked memory system. Consequently, DRAM-TLBs can improve TLB
+coverage using small pages with minimal storage overhead and most
+importantly require no significant changes to the existing address
+translation architecture.
 
 \begin{figure}[b] 
   \vspace{-0. in} \centering

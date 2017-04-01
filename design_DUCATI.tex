@@ -6,9 +6,9 @@ coverage and LLT miss overhead respectively. These mechanisms can be
 combined to collectively improve processor performance. To this end,
 we propose {\em DUCATI}, an address translation architecture that
 combines \underline{D}RAM-TLBs and \underline{UCAT-I}. While DUCATI
-can either be architected with Stacked-TLBs or with SYSMEM-TLBs, we
-limit our analysis of DUCATI to Stacked-TLBs. This is becuase stacked
-memory technology provides better bandwidth and latency than with
+can be architected with Stacked-TLBs or with SYSMEM-TLBs, we limit our
+analysis of DUCATI to Stacked-TLBs. This is becuase stacked memory
+technology provides better bandwidth and latency than with
 conventional DDR memory technology.
 
 \subsection{DUCATI Performance}
@@ -38,33 +38,31 @@ x-axis shows the different workloads while the y-axis illustrates
 performance. For each workload, we present the relative performance
 for DRAM-TLBs architected with stacked memory (i.e. Stacked-TLB),
 Unified Cache and TLB (UCAT) enhanced with insertion (UCAT-I), DUCATI,
-and for comparison a hypotehtical Perfect LLT system\footnote{We model
+and for comparison a hypothetical Perfect LLT system\footnote{We model
 a Perfect LLT by assuming all references to the LLT in the baseline
 system are hits}. To provide insight into the reason for performance
 improvement, Figure~\ref{fig:summary_4k_pages_lat} presents relative
 address translation latencies of the different proposals.
 
-Figure~\ref{fig:summary_4k_pages_perf} shows that stacked memory DRAM-TLBs
-improve average performance by 22\%,
-UCAT with insertion (UCAT-I) improves average performance by 61\%,
-while DUCATI combines the benefits of both to improve average
-performance by 81\%. In fact, workloads like $XSBench$, $dmr$,
-$MaxFlow$, and $MCB$ experience 4x or more performance improvement.
-The bulk of the gain for these workloads is improvements in on-die LLT
-coverage. On the other hand, $GUPS$ has a 2.5x performance primarily
-due to reduction in LLT miss penalty (i.e., the DRAM-TLB component of
-DUCATI). All other workloads experience performance gains between 6\%
-to 35\%.
+Figure~\ref{fig:summary_4k_pages_perf} shows that stacked memory
+DRAM-TLBs improve average performance by 22\%, UCAT with insertion
+(UCAT-I) improves average performance by 61\%, while DUCATI combines
+the benefits of both to improve average performance by 81\%. In fact,
+workloads like $XSBench$, $dmr$, $MaxFlow$, and $MCB$ experience 4x or
+more performance improvement. The bulk of the gain for these workloads
+is improvements in on-die LLT coverage. On the other hand, $GUPS$ has
+a 2.5x performance primarily due to reduction in LLT miss penalty
+(i.e., the DRAM-TLB component of DUCATI). For the medium and low TLB
+sensitive workloads, DUCATI improves performance by 6-35\%.
 
 Figure~\ref{fig:summary_4k_pages_lat} illustrates the relative address
-translation latency for the different proposals that show where the
-performance improvements of Figure~\ref{fig:summary_4k_pages_perf}
-come from. On average, DRAM-TLB and UCAT reduce address translation
-latency by 40\% and 60\% respectively, while DUCATI reduces address
-translation latency by 75\%. In doing so, DUCATI improves performance
-by 1.81x while a perfect LLT system improves performance by 2.24x.
-Thus, DUCATI bridges two-thirds of the performance gap between the
-baseline system and a perfect LLT system.
+translation latency for the different proposals. On average, DRAM-TLB
+and UCAT reduce address translation latency by 40\% and 60\%
+respectively, while DUCATI reduces address translation latency by
+75\%. In doing so, DUCATI improves performance by 1.81x while a
+perfect LLT system improves performance by 2.24x. Thus, DUCATI bridges
+two-thirds of the performance gap between the baseline system and a
+perfect LLT system.
 
 % \ee{I don't see how 1.81x and 2.24x leads to 80\% of the performance
 % gap being covered, it seems more like 64\% or something like that to

@@ -78,10 +78,10 @@ the DUCATI framework, the DRAM-TLB and UCAT can store the EPCTR in
 addition to the physical address and page permission bits. When the
 ASID requires a TLB flush, the EPCTR can simply be incremented. Thus,
 DUCATI provides a valid translation only if the ASID and EPCTR stored
-in the corresponding TLB-entry match the current EPCTR of the ASID.
-Both DRAM-TLB and UCAT have sufficent storage space to support a
-16-bit EPCTR. As such, the TLB flush overhead can be completely
-eliminated with neglible latency and hardware overhead.
+in the TLB-entry match the current EPCTR of the ASID. Both DRAM-TLB
+and UCAT have sufficent storage space to support a 16-bit EPCTR. As
+such, the TLB flush overhead can be completely eliminated with
+neglible latency and hardware overhead.
 
 % Though DRAM-TLB shootdowns and flush events consume bandwidth, these
 % events occur infrequently and thus we expect minimal performance
