@@ -54,7 +54,7 @@
 @timestamp rot 0
 @timestamp font 0
 @timestamp char size 1.000000
-@timestamp def "Mon Mar 20 19:34:38 2017"
+@timestamp def "Sat Apr  1 15:56:49 2017"
 @r0 off
 @link r0 to g0
 @r0 type above
@@ -254,7 +254,7 @@
 @    s1 symbol color 1
 @    s1 symbol pattern 1
 @    s1 symbol fill color 1
-@    s1 symbol fill pattern 1
+@    s1 symbol fill pattern 6
 @    s1 symbol linewidth 1.0
 @    s1 symbol linestyle 1
 @    s1 symbol char 65
@@ -303,7 +303,7 @@
 @    s2 symbol color 2
 @    s2 symbol pattern 1
 @    s2 symbol fill color 2
-@    s2 symbol fill pattern 1
+@    s2 symbol fill pattern 5
 @    s2 symbol linewidth 1.0
 @    s2 symbol linestyle 1
 @    s2 symbol char 65
@@ -352,7 +352,7 @@
 @    s3 symbol color 3
 @    s3 symbol pattern 1
 @    s3 symbol fill color 3
-@    s3 symbol fill pattern 1
+@    s3 symbol fill pattern 4
 @    s3 symbol linewidth 1.0
 @    s3 symbol linestyle 1
 @    s3 symbol char 65
@@ -401,7 +401,7 @@
 @    s4 symbol color 4
 @    s4 symbol pattern 1
 @    s4 symbol fill color 4
-@    s4 symbol fill pattern 1
+@    s4 symbol fill pattern 3
 @    s4 symbol linewidth 1.0
 @    s4 symbol linestyle 1
 @    s4 symbol char 65
@@ -607,7 +607,7 @@
 @    s1 symbol color 1
 @    s1 symbol pattern 1
 @    s1 symbol fill color 1
-@    s1 symbol fill pattern 1
+@    s1 symbol fill pattern 6
 @    s1 symbol linewidth 1.0
 @    s1 symbol linestyle 1
 @    s1 symbol char 65
@@ -656,7 +656,7 @@
 @    s2 symbol color 2
 @    s2 symbol pattern 1
 @    s2 symbol fill color 2
-@    s2 symbol fill pattern 1
+@    s2 symbol fill pattern 5
 @    s2 symbol linewidth 1.0
 @    s2 symbol linestyle 1
 @    s2 symbol char 65
@@ -705,7 +705,7 @@
 @    s3 symbol color 3
 @    s3 symbol pattern 1
 @    s3 symbol fill color 3
-@    s3 symbol fill pattern 1
+@    s3 symbol fill pattern 4
 @    s3 symbol linewidth 1.0
 @    s3 symbol linestyle 1
 @    s3 symbol char 65
@@ -754,7 +754,7 @@
 @    s4 symbol color 4
 @    s4 symbol pattern 1
 @    s4 symbol fill color 4
-@    s4 symbol fill pattern 1
+@    s4 symbol fill pattern 3
 @    s4 symbol linewidth 1.0
 @    s4 symbol linestyle 1
 @    s4 symbol char 65
@@ -960,7 +960,7 @@
 @    s1 symbol color 1
 @    s1 symbol pattern 1
 @    s1 symbol fill color 1
-@    s1 symbol fill pattern 1
+@    s1 symbol fill pattern 6
 @    s1 symbol linewidth 1.0
 @    s1 symbol linestyle 1
 @    s1 symbol char 65
@@ -1009,7 +1009,7 @@
 @    s2 symbol color 2
 @    s2 symbol pattern 1
 @    s2 symbol fill color 2
-@    s2 symbol fill pattern 1
+@    s2 symbol fill pattern 5
 @    s2 symbol linewidth 1.0
 @    s2 symbol linestyle 1
 @    s2 symbol char 65
@@ -1058,7 +1058,7 @@
 @    s3 symbol color 3
 @    s3 symbol pattern 1
 @    s3 symbol fill color 3
-@    s3 symbol fill pattern 1
+@    s3 symbol fill pattern 4
 @    s3 symbol linewidth 1.0
 @    s3 symbol linestyle 1
 @    s3 symbol char 65
@@ -1107,7 +1107,7 @@
 @    s4 symbol color 4
 @    s4 symbol pattern 1
 @    s4 symbol fill color 4
-@    s4 symbol fill pattern 1
+@    s4 symbol fill pattern 3
 @    s4 symbol linewidth 1.0
 @    s4 symbol linestyle 1
 @    s4 symbol char 65
