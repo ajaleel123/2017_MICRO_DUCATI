@@ -172,6 +172,33 @@ determine DRAM-TLB hit or miss.
 % \ee{if we start running out of space this sort of thing is probably a
 % bit redundant}
 
+\begin{figure}[tp] 
+  \vspace{-0.in} \centering
+  \centerline{\psfig{file=GRAPHS/DRAMTLB_perf,angle=-90,width=\columnwidth}}
+
+  \caption{\small Performance of DRAM-TLBs. \normalsize}
+  \label{fig:perf_DRAMTLB} 
+  \vspace{0.2 in}
+\end{figure}
+
+\begin{figure}[tp] 
+  \vspace{0.in} \centering
+  \centerline{\psfig{file=GRAPHS/DRAMTLB_tlblat,angle=-90,width=\columnwidth}}
+
+  \caption{\small Relative Translation Latency.\normalsize}
+  \label{fig:tlblat_DRAMTLB} 
+%  \vspace{0.2 in}
+\end{figure}
+
+\begin{figure}[tbh] 
+  \vspace{0.2in} \centering
+  \centerline{\psfig{file=GRAPHS/DRAMTLB_pteaccess,angle=-90,width=\columnwidth}}
+
+  \caption{\small Memory Accesses on an LLT miss.\normalsize}
+ \label{fig:memaccess_DRAMTLB} 
+  \vspace{0.0 in}
+\end{figure}
+
 \subsection{DRAM-TLB Performance}
 
 % For our evaluation purposes, we do not exploit the prefetching
@@ -348,34 +375,6 @@ gain.
 % \end{figure}
 %------------------> GRAVEYARD
 
-\begin{figure}[tp] 
-  \vspace{-0.in} \centering
-  \centerline{\psfig{file=GRAPHS/DRAMTLB_perf,angle=-90,width=\columnwidth}}
-
-  \caption{\small Performance of DRAM-TLBs. \normalsize}
-  \label{fig:perf_DRAMTLB} 
-  \vspace{0.2 in}
-\end{figure}
-
-\begin{figure}[tp] 
-  \vspace{0.in} \centering
-  \centerline{\psfig{file=GRAPHS/DRAMTLB_tlblat,angle=-90,width=\columnwidth}}
-
-  \caption{\small Relative Translation Latency.\normalsize}
-  \label{fig:tlblat_DRAMTLB} 
-%  \vspace{0.2 in}
-\end{figure}
-
-\begin{figure}[tp] 
-  \vspace{0.in} \centering
-  \centerline{\psfig{file=GRAPHS/DRAMTLB_pteaccess,angle=-90,width=\columnwidth}}
-
-  \caption{\small Memory Accesses on an LLT miss.\normalsize}
- \label{fig:memaccess_DRAMTLB} 
-%  \vspace{-0.1 in}
-\end{figure}
-
-
 \subsection{DRAM-TLB Design Overhead}
 
 \noindent Figure~\ref{fig:mmu_state} shows simple modifications to the
@@ -400,7 +399,7 @@ coverage using small pages with minimal storage overhead and most
 importantly require no significant changes to the existing address
 translation architecture.
 
-\begin{figure}[b] 
+\begin{figure}[tp] 
   \vspace{-0. in} \centering
   \centerline{\psfig{file=FIGURES/mmu_state,angle=-90,width=\columnwidth}}
 

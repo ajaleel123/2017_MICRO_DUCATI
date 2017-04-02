@@ -139,6 +139,33 @@ than 2x (up to 4x in the latter two). Other workloads like {\em GUPS},
 performance gains. Overall, UCAT improves performance across all
 workloads by 53\%.
 
+\begin{figure}[tp] 
+  \vspace{-0.in} \centering
+  \centerline{\psfig{file=GRAPHS/UCAT_perf,angle=-90,width=\columnwidth}}
+
+  \caption{\small UCAT Performance. \normalsize}
+  \label{fig:perf_UCAT} 
+  \vspace{0.1 in}
+\end{figure}
+
+\begin{figure}[tp] 
+  \vspace{0.1in} \centering
+  \centerline{\psfig{file=GRAPHS/UCAT_tlblat,angle=-90,width=\columnwidth}}
+
+  \caption{\small Relative Translation latency.\normalsize}
+  \label{fig:tlblat_UCAT} 
+  \vspace{-0.0 in}
+\end{figure}
+
+\begin{figure}[tbh]
+  \vspace{0.2in} \centering
+  \centerline{\psfig{file=GRAPHS/UCAT_tlbsize,angle=-90,width=\columnwidth}}
+
+  \caption{\small Effective On-Die TLB Size with UCAT.\normalsize}
+  \label{fig:tlbsize_UCAT} 
+  \vspace{-0.0 in}
+\end{figure}
+
 To understand the performance benefits of UCAT,
 Figure~\ref{fig:tlblat_UCAT} and Figure~\ref{fig:tlbsize_UCAT}
 illustrate relative translation latency and effective on-die TLB size
@@ -177,34 +204,6 @@ and~\ref{fig:tlbsize_UCAT} where UCAT-I increases effective TLB
 coverage by nearly 2x while improving average translation latency by
 7\%. Overall, UCAT-I improves performance by 65\% relative to the
 baseline.
-
-\begin{figure}[tp] 
-  \vspace{-0.in} \centering
-  \centerline{\psfig{file=GRAPHS/UCAT_perf,angle=-90,width=\columnwidth}}
-
-  \caption{\small UCAT Performance. \normalsize}
-  \label{fig:perf_UCAT} 
-  \vspace{0.1 in}
-\end{figure}
-
-\begin{figure}[tp] 
-  \vspace{0.1in} \centering
-  \centerline{\psfig{file=GRAPHS/UCAT_tlblat,angle=-90,width=\columnwidth}}
-
-  \caption{\small Relative Translation latency.\normalsize}
-  \label{fig:tlblat_UCAT} 
-  \vspace{-0.0 in}
-\end{figure}
-
-\begin{figure}[tp] 
-  \vspace{0.in} \centering
-  \centerline{\psfig{file=GRAPHS/UCAT_tlbsize,angle=-90,width=\columnwidth}}
-
-  \caption{\small Effective On-Die TLB Size with UCAT.\normalsize}
-  \label{fig:tlbsize_UCAT} 
-  \vspace{-0.0 in}
-\end{figure}
-
 
 \subsection{UCAT Design Overhead}
 
