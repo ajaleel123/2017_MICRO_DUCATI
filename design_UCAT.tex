@@ -139,6 +139,21 @@ than 2x (up to 4x in the latter two). Other workloads like {\em GUPS},
 performance gains. Overall, UCAT improves performance across all
 workloads by 53\%.
 
+To understand the performance benefits of UCAT,
+Figure~\ref{fig:tlblat_UCAT} and Figure~\ref{fig:tlbsize_UCAT}
+illustrate relative translation latency and effective on-die TLB size
+respectively. The effective on-die TLB size is reported as the average
+number of TLB entries in the UCAT (sampled every 10 million cycles)
+during the course of application execution.
+
+Workloads with more than 2x performance improvements observe a
+reduction in TLB miss penalty by 70\% or more. This is because these
+workloads experience an increase in on-die TLB size by 4x-64x. On
+average, UCAT improves virtual to physical address translation latency
+by 51\% (up to 86\% for {\em MCB}). The improvement in translation
+latency stems from an increase in on-chip TLB coverage by 16x (up to
+64x for {\em dmr}).
+
 \begin{figure}[tp] 
   \vspace{-0.in} \centering
   \centerline{\psfig{file=GRAPHS/UCAT_perf,angle=-90,width=\columnwidth}}
@@ -165,21 +180,6 @@ workloads by 53\%.
   \label{fig:tlbsize_UCAT} 
   \vspace{-0.0 in}
 \end{figure}
-
-To understand the performance benefits of UCAT,
-Figure~\ref{fig:tlblat_UCAT} and Figure~\ref{fig:tlbsize_UCAT}
-illustrate relative translation latency and effective on-die TLB size
-respectively. The effective on-die TLB size is reported as the average
-number of TLB entries in the UCAT (sampled every 10 million cycles)
-during the course of application execution.
-
-Workloads with more than 2x performance improvements observe a
-reduction in TLB miss penalty by 70\% or more. This is because these
-workloads experience an increase in on-die TLB size by 4x-64x. On
-average, UCAT improves virtual to physical address translation latency
-by 51\% (up to 86\% for {\em MCB}). The improvement in translation
-latency stems from an increase in on-chip TLB coverage by 16x (up to
-64x for {\em dmr}).
 
 Since UCAT decreases the effective capacity of cachelines compared to
 the separate LLC, we also investigated increase in memory accesses due
