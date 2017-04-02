@@ -79,11 +79,13 @@ shows the number of LLT misses for the evaluated workloads. We observe
 that these workloads incur frequent LLT misses when using 4KB pages.
 To make things worse, each LLT miss requires more than one memory
 access to the page table (maximum of two in some cases). Consequently,
-these workloads experience significant performance overheads due to
-TLB misses. This clearly motivates the need for reducing the number of
-memory accesses on an LLT miss in addition to improving LLT coverage.
-Before we describe our solutions to address both these problems, we
-first provide details on our experimental methodology.
+a these workloads experience significant performance overheads due to
+TLB misses. With the number of levels in the page table hierarchy
+expected to grow to 5-levels~\cite{x86_5level}, there is a need for
+reducing the number of memory accesses on an LLT miss in addition to
+improving LLT coverage. Before we describe our solutions to address
+both these problems, we first provide details on our experimental
+methodology.
 
 \begin{figure}[t]
 \vspace{0. in}

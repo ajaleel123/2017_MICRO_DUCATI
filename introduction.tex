@@ -69,7 +69,12 @@ highly sensitive to the number of LLT entries with smaller page sizes.
 On average, a two million entry LLT improves performance by 2X with a
 4KB page size. Similarly, a 256k-entry LLT improves performance by
 60\% with 64KB page size. Finally, an 8k-entry LLT improves
-performance by 10\% with 2MB page size.
+performance by 10\% with 2MB page size. Note that when application
+memory footprints grow larger than the applications under study (see
+Table~\ref{table:bench_char}), the performance sensitivity of 2MB page
+to number of LLT entries can be expected to be similar to the behavior
+of smaller page sizes.
+
 %Assuming 8-bytes of storage requirement per TLB entry, processor
 %architects would need to budge 16MB, 2MB, and 64KB of area overhead
 %for 4KB, 64KB, and 2MB pages respectively. 
