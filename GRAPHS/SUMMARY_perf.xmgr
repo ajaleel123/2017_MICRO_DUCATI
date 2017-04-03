@@ -54,7 +54,7 @@
 @timestamp rot 0
 @timestamp font 0
 @timestamp char size 1.000000
-@timestamp def "Sat Apr  1 18:11:47 2017"
+@timestamp def "Mon Apr  3 15:56:48 2017"
 @r0 off
 @link r0 to g0
 @r0 type above
@@ -255,7 +255,7 @@
 @    altyaxis  off
 @    legend on
 @    legend loctype view
-@    legend 0.8, 0.84
+@    legend 0.75, 0.84
 @    legend box color 1
 @    legend box pattern 1
 @    legend box linewidth 1.0
@@ -263,7 +263,7 @@
 @    legend box fill color 0
 @    legend box fill pattern 1
 @    legend font 0
-@    legend char size 0.800000
+@    legend char size 1.000000
 @    legend color 1
 @    legend length 4
 @    legend vgap 1

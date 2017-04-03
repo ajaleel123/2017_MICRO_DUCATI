@@ -62,35 +62,34 @@ not 2KB.}
 \subsubsection{DRAM-TLB Lookups}
 
 \noindent Unlike on-chip TLBs, all DRAM-TLB operations occur on the
-DRAM data bus at the granularity of the DRAM read/write interface.
-Thus, on an LLT miss, if implemented as a stacked-TLB, the lookup
-fetches data at the granularity of the stacked memory interface:
-32-byte cacheline (two TLB entries), and if implemented in system
-memory, the lookup fetches data at the granularity of the DDR
-interface: 64-byte cacheline (four TLB entries).
+DRAM data bus at the granularity of the DRAM interface. Thus, on an
+LLT miss, if implemented as a stacked-TLB, the lookup fetches data at
+the granularity of the stacked memory interface: 32-byte cacheline
+(two TLB entries), and if implemented in system memory, the lookup
+fetches data at the granularity of the DDR interface: 64-byte
+cacheline (four TLB entries).
 
-Reading multiple
-TLB entries enables architecting a set-associative DRAM-TLB without
-incurring additional latency or bandwidth~\cite{moin2012,loh2011}. 
-%We explored the design space of set-associative and direct-mapped
-%DRAM-TLBs. 
+Reading multiple TLB entries enables architecting a set-associative
+DRAM-TLB without incurring additional latency or
+bandwidth~\cite{moin2012,loh2011}. 
+%We explored the design space of
+%set-associative and direct-mapped DRAM-TLBs. 
 We evaluate both set-associative and direct-mapped
-designs and observe similar performance among these design points with large DRAM-TLB sizes. These
-results match the behavior of existing work on large DRAM Caches where
-conflict misses tend to be low~\cite{moin2012}. Thus, we architect a
-direct-mapped DRAM-TLB where consecutive DRAM-TLB sets map to the same
-rowbuffer in memory (to exploit DRAM row buffer locality). Adjacent
-DRAM-TLB entries fetched are also inserted into the PWC for potential
-future hits.
+designs and observe similar performance among these design points with large DRAM-TLB sizes.
+These results match the behavior of
+existing work on large DRAM Caches where conflict misses tend to be
+low~\cite{moin2012}. Thus, we architect a direct-mapped DRAM-TLB where
+consecutive DRAM-TLB sets map to the same rowbuffer in memory (to
+exploit DRAM row buffer locality). Adjacent DRAM-TLB entries fetched
+are also inserted into the PWC for potential future hits.
 
 We could further take advantage of reading multiple TLB entries with a
 single read operation. Retrieving the co-located DRAM-TLB entries on a
 DRAM-TLB read naturally enables prefetching of neighboring address
-translations. For example, prefetched entries can potentially be
-stored in an on-chip TLB prefetch buffer. This approach is similar to
-caching co-located page table entries in the page walk cache on a
-conventional page table walk. We leave the evaluation of such designs
-to future work.
+translations. For example, prefetched entries can be stored in an
+on-chip TLB prefetch buffer. This approach is similar to caching
+co-located page table entries in the PWCs on a conventional page table
+walk. We leave the evaluation of such designs to future work.
 
 
 % Similar to page walk caches, we also provision an 8-entry
@@ -194,7 +193,7 @@ determine DRAM-TLB hit or miss.
 %  \vspace{0.2 in}
 \end{figure}
 
-\begin{figure}[tbh] 
+\begin{figure}[b] 
   \vspace{0.2in} \centering
   \centerline{\psfig{file=GRAPHS/DRAMTLB_pteaccess,angle=-90,width=\columnwidth}}
 
@@ -398,12 +397,14 @@ SRAM TLBs. However, these sizes are an insignificant fraction of
 emerging multi-gigabyte stacked memory systems. For example, the
 aforementioned storage overheads correspond to 6\% (4KB pages), 0.4\%
 (64KB pages), and 0.01\% (2MB pages) storage overhead for a 16GB
-stacked memory system. Consequently, DRAM-TLBs can improve TLB
-coverage using small pages with minimal storage overhead and most
-importantly require no significant changes to the existing address
-translation architecture.
+stacked memory system. Consequently, DRAM-TLBs improve TLB coverage
+using small pages with minimal storage overhead and require no
+significant changes to the existing address translation architecture.
+Note that, like UCAT, DRAM-TLBs also require support for handling TLB
+shootdown and TLB flush requests. We discuss these design overheads in
+Section~\ref{sec:implications}.
 
-\begin{figure}[tp] 
+\begin{figure}[b] 
   \vspace{-0. in} \centering
   \centerline{\psfig{file=FIGURES/mmu_state,angle=-90,width=\columnwidth}}
 
