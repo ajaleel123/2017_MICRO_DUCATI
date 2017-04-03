@@ -74,6 +74,30 @@ perfect LLT system.
 % bar (DRAM-TLB) is lower than the second bar (UCAT) are those that
 % limited by LLT miss penalty
 
+\begin{figure}[b] 
+\vspace{0.2 in} \centering
+\centerline{\psfig{file=GRAPHS/pagesize_sensitivity2,angle=-90,width=\columnwidth}}
+
+\caption{\small Performance Sensitivity to Page Size (same legend as
+Figure~\ref{fig:summary_4k_pages_perf}). \normalsize}
+
+\label{fig:summary_pagesize} 
+\vspace{-0.1 in}
+\end{figure}
+
+\input{llc_sensitivity.tex}
+
+\subsection{DUCATI Sensitivity to LLC Size}
+
+\noindent This section presents performance sensitivity of DUCATI to
+LLC size. Table~\ref{table:LLC_sens} presents DUCATI performance using
+4KB pages for LLC sizes ranging from 2MB to 32MB. The table shows that
+on average, DUCATI improves performance across all LLC sizes studied.
+In general, performance increases with growing LLC size. For example,
+performance improves by 58\% with a 2MB LLC while performance improves
+by 78\% with a 32MB LLC. This can be explained by the fact that larger
+LLCs accommodate more translation entries to be cached in the UCAT
+structure.
 
 \subsection{DUCATI Sensitivity to Page Size}
 
@@ -93,16 +117,6 @@ using 4KB, 64KB, and 2MB pages respectively. Thus, with both small and
 large page sizes, DUCATI is able to significantly bridge gap between
 the baseline system and a perfect LLT system.
 
-\begin{figure}[tp] 
-\vspace{0. in} \centering
-\centerline{\psfig{file=GRAPHS/pagesize_sensitivity2,angle=-90,width=\columnwidth}}
-
-\caption{\small Performance Sensitivity to Page Size (same legend as
-Figure~\ref{fig:summary_4k_pages_perf}). \normalsize}
-
-\label{fig:summary_pagesize} 
-\vspace{-0. in}
-\end{figure}
 
 % \subsection{Sensitivity to Stacked DRAM Bandwidth}
 % 
