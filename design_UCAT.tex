@@ -71,21 +71,23 @@ translation, and additional information such as page protection bits,
 and possibly some ASID bits. Storing some ASID bits in the data array
 may be necessary if all the ASID bits do not fit in the existing LLC
 tag array size. In such situations, we propose to store the top bits
-of the ASID in the tag array to enable at least a partial tag match.
-\ee{It may be useful here to specify why we would want at least a partial
-match. It would make this design choice clearer even though its not 
-critical}. The bottom
-bits of the ASID (stored in the data array) are then compared before
-supplying the translation stored in the UCAT-entry. We propose to use
-16 bytes of the UCAT data array for storing the address translation
-information. 
+of the ASID in the tag array. This enables a partial tag match and
+avoids false positives when multiple programs with identical virtual
+addresses concurrently execute. Note that the bottom bits of the ASID
+(stored in the data array) must be compared for a match before
+supplying the translation stored in the UCAT-entry. We use 16 bytes of
+the UCAT data array for storing the address translation.
 
-Note that even though we only use 16-bytes to store the translation,
-we claim that UCAT improves upon the existing LLC inefficiency. This
-is because recent studies show (and this study independently verifies) that a majority of LLC entries are unused after cache
+Even though we only use 16-bytes of the 32-byte line to store the
+translation, UCAT improves upon the existing LLC inefficiency. This is
+because recent studies show (and this study independently verifies)
+that the majority of LLC entries are unused after cache
 insertion~\cite{jaleel_rrip,setdueling,wu2011,jimenez_micro2013,khan2010}.
 As such, UCAT utilizes the conventional LLC space more efficiently by
-storing TLB entries in addition to cache lines.
+storing TLB entries in addition to cache lines. Note that UCAT space
+efficiency can be improved further by compressing multiple TLB entries
+into the data array. However, we leave these optimizations for future
+work.
 
 In the UCAT design, cachelines and TLB-entries dynamically contend for
 the available UCAT space. Like the baseline LLC architecture, we
@@ -146,10 +148,7 @@ Figure~\ref{fig:tlblat_UCAT} and Figure~\ref{fig:tlbsize_UCAT}
 illustrate relative translation latency and effective on-die TLB size
 respectively. The effective on-die TLB size is reported as the average
 number of TLB entries in the UCAT (sampled every 10 million cycles)
-during the course of application execution. \ee{Hmmm...can the value 10M
-cycles for which sampling is done here effect what we see in the results
-much? Second order importance I guess, but it does make me curious when
-I read it}
+during the course of application execution.
 
 Workloads with more than 2x performance improvements observe a
 reduction in TLB miss penalty by 70\% or more. This is because these
@@ -177,7 +176,7 @@ latency stems from an increase in on-chip TLB coverage by 16x (up to
   \vspace{-0.0 in}
 \end{figure}
 
-\begin{figure}[tbh]
+\begin{figure}[b]
   \vspace{0.2in} \centering
   \centerline{\psfig{file=GRAPHS/UCAT_tlbsize,angle=-90,width=\columnwidth}}
 
@@ -218,11 +217,11 @@ bits (i.e., MESI bits) and insert TLB-entries into UCAT with the {\em
 exclusive} and {\em shared} status bits both set to valid. Since
 cachelines can either be in exclusive state or shared state and not
 both, this proposal enables distinguishing between TLB entries and
-cacheline entries at zero storage overhead. 
+cacheline entries at zero storage overhead. Besides distinguishing
+between cacheline and translation entries, UCAT also requires support
+for handling TLB shootdown and TLB flush requests. We discuss these
+design overheads in Section~\ref{sec:implications}.
 
-\ee{do you want to put a pointer here that points to the following
-section that discusses more implementation details? just so the reader
-doesn't get worried about how short this section is?}
 %<<<<<<< HEAD
 %UCAT requires additional logic to invalidate/flush TLB entries from
 %the UCAT. Targeted virtual address invalidations can be handled by
