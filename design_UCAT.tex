@@ -42,7 +42,7 @@ typically have low hit-rates and are often inefficiently
 used~\cite{jaleel_rrip,setdueling,wu2011,jimenez_micro2013,khan2010},
 the conventional LLC can used to store virtual to physical
 translations just like a TLB in addition to caching data from memory.
-Based on this insight, we re-purpose the conventional LLC as a {\em
+Based on this insight, we re-architect the conventional LLC as a {\em
 Unified Cache and TLB (UCAT)}.
 
 %EIMAN-03-21: My summary for reworking later: 
@@ -56,7 +56,7 @@ Unified Cache and TLB (UCAT)}.
 \noindent Figure~\ref{fig:UCAT}(a) illustrates a baseline system with
 separate LLT and LLC structures, while Figure~\ref{fig:UCAT}(b)
 demonstrates a system with a separate LLT and a Unified Cache and TLB
-(UCAT). In this system, the UCAT holds both cache lines and TLB
+(UCAT). In the latter system, the UCAT holds both cache lines and TLB
 entries in a single hardware structure. Figure~\ref{fig:UCAT}(c) shows
 how this is done. When a UCAT entry stores a cache line similar to
 what the baseline system does, the tag-array stores a portion of the
@@ -71,16 +71,18 @@ translation, and additional information such as page protection bits,
 and possibly some ASID bits. Storing some ASID bits in the data array
 may be necessary if all the ASID bits do not fit in the existing LLC
 tag array size. In such situations, we propose to store the top bits
-of the ASID in the tag array to enable a partial tag match. The bottom
+of the ASID in the tag array to enable at least a partial tag match.
+\ee{It may be useful here to specify why we would want at least a partial
+match. It would make this design choice clearer even though its not 
+critical}. The bottom
 bits of the ASID (stored in the data array) are then compared before
 supplying the translation stored in the UCAT-entry. We propose to use
 16 bytes of the UCAT data array for storing the address translation
-information.
+information. 
 
 Note that even though we only use 16-bytes to store the translation,
 we claim that UCAT improves upon the existing LLC inefficiency. This
-is because recent studies show (and independently verified in this
-study) that a majority of LLC entries are unused after cache
+is because recent studies show (and this study independently verifies) that a majority of LLC entries are unused after cache
 insertion~\cite{jaleel_rrip,setdueling,wu2011,jimenez_micro2013,khan2010}.
 As such, UCAT utilizes the conventional LLC space more efficiently by
 storing TLB entries in addition to cache lines.
@@ -144,11 +146,14 @@ Figure~\ref{fig:tlblat_UCAT} and Figure~\ref{fig:tlbsize_UCAT}
 illustrate relative translation latency and effective on-die TLB size
 respectively. The effective on-die TLB size is reported as the average
 number of TLB entries in the UCAT (sampled every 10 million cycles)
-during the course of application execution.
+during the course of application execution. \ee{Hmmm...can the value 10M
+cycles for which sampling is done here effect what we see in the results
+much? Second order importance I guess, but it does make me curious when
+I read it}
 
 Workloads with more than 2x performance improvements observe a
 reduction in TLB miss penalty by 70\% or more. This is because these
-workloads experience an increase in on-die TLB size by 4x-64x. On
+workloads experience an increase in on-die TLB size of 4x-64x. On
 average, UCAT improves virtual to physical address translation latency
 by 51\% (up to 86\% for {\em MCB}). The improvement in translation
 latency stems from an increase in on-chip TLB coverage by 16x (up to
@@ -215,6 +220,9 @@ cachelines can either be in exclusive state or shared state and not
 both, this proposal enables distinguishing between TLB entries and
 cacheline entries at zero storage overhead. 
 
+\ee{do you want to put a pointer here that points to the following
+section that discusses more implementation details? just so the reader
+doesn't get worried about how short this section is?}
 %<<<<<<< HEAD
 %UCAT requires additional logic to invalidate/flush TLB entries from
 %the UCAT. Targeted virtual address invalidations can be handled by
