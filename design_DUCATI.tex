@@ -8,7 +8,7 @@ we propose {\em DUCATI}, an address translation architecture that
 combines \underline{D}RAM-TLBs and \underline{UCAT-I}. While DUCATI
 can be architected with Stacked-TLBs or with SYSMEM-TLBs, we limit our
 analysis of DUCATI to Stacked-TLBs. This is because stacked memory
-technology provides better bandwidth and latency than with
+technology provides better bandwidth and latency than
 conventional DDR memory technology.
 
 \subsection{DUCATI Performance}
@@ -38,12 +38,13 @@ x-axis shows the different workloads while the y-axis illustrates
 performance. For each workload, we present the relative performance
 for DRAM-TLBs architected with stacked memory (i.e. Stacked-TLB),
 Unified Cache and TLB (UCAT) enhanced with insertion (UCAT-I), DUCATI,
-and for comparison a hypothetical Perfect LLT system\footnote{We model
+and for comparison, a hypothetical Perfect LLT system\footnote{We model
 a Perfect LLT by assuming all references to the LLT in the baseline
 system are hits}. To provide insight into the reason for performance
 improvement, Figure~\ref{fig:summary_4k_pages_lat} presents relative
 address translation latencies of the different proposals.
 
+\ee{Why does Figure 14 not have a legend?}
 Figure~\ref{fig:summary_4k_pages_perf} shows that stacked memory
 DRAM-TLBs improve average performance by 22\%, UCAT with insertion
 (UCAT-I) improves average performance by 61\%, while DUCATI combines
@@ -92,6 +93,8 @@ Overall, DUCATI improves performance by 81\% with 4KB pages, 56\% with
 using 4KB, 64KB, and 2MB pages respectively. Thus, with both small and
 large page sizes, DUCATI is able to significantly bridge gap between
 the baseline system and a perfect LLT system.
+\ee{Why does Figure 15 not have a legend?}
+
 
 \begin{figure}[tp] 
 \vspace{0. in} \centering

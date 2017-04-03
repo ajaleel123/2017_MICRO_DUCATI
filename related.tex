@@ -39,12 +39,13 @@ segments.
 \boldheadingpara{Alternate DRAM Architectures} Recent proposals extend
 the processor cache hierarchy by architecting stacked memory as a DRAM
 cache~\cite{BEAR, moin2012, unison, loh2011, jaewoong2012,
-dramcache-resilient}. DRAM caches are orthogonal to the proposals of
-this paper, and the trade-offs for architecting DRAM-TLBs are
+dramcache-resilient}. The trade-offs for architecting DRAM-TLBs are
 different from those considered in DRAM cache designs. For example,
 DRAM-TLB entries are much smaller than DRAM cache entries and as such,
 DRAM-TLBs expose different trade-offs for reading and updating
-multiple entries without incurring higher latency or bandwidth.
+multiple entries without incurring higher latency or bandwidth. 
+Overall, DRAM caches are orthogonal to the proposals of
+this paper.
 
 \boldheadingpara{Data Placement in Hybrid Memory} Application data
 placement in hybrid memory systems as well as NUMA system has been
@@ -64,8 +65,7 @@ perform well. Consequently, novel mechanisms such as highly threaded
 page walkers~\cite{power2014supporting} and intelligent page walk
 scheduling~\cite{pichaigpu} have been proposed. Our work focuses on
 improving GPU TLB coverage by allowing the GPU LLC to hold TLB
-entries. We also improve GPU TLB miss latency by architecting TLBs in
-DRAM.
+entries. Additionally, we improve GPU TLB miss latency by architecting TLBs in DRAM.
 
 \boldheadingpara{Inverted Page Tables} To reduce the number of memory
 accesses in a hierarchical page table design, some designs use

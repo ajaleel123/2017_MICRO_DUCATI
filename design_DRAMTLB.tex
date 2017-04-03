@@ -2,17 +2,17 @@
 \label{sec:stackedTLB}
 
 \noindent When the application working set exceeds the TLB coverage
-provided by UCAT (e.g., $GUPS$), UCAT does not reduce the number of
+provided by UCAT (e.g., in $GUPS$), UCAT does not reduce the number of
 memory accesses on an LLT miss. Reducing the number of memory accesses
-on an LLT miss reduces effective LLT miss latency and also improves the memory 
-access bandwidth of the system.
+on an LLT miss reduces effective LLT miss latency and also improves 
+system memory access bandwidth.
 
-To this end, we propose to increase TLB coverage and
-extend the processor TLB hierarchy by architecting {\em TLBs in DRAM
+To this end, we propose to increase TLB coverage by
+extending the processor TLB hierarchy using {\em TLBs in DRAM
 (DRAM-TLB)}. The DRAM-TLB logically sits between the on-die shared LLT
 (or UCAT) and the page tables in memory and is first consulted on an
-LLT (or UCAT) miss before walking the page table (see
-Figure~\ref{fig:stacked_tlb}).
+LLT (or UCAT) miss before walking the page table as shown in
+Figure~\ref{fig:stacked_tlb}.
 
 % \noindent Recent proposals extend the processor cache hierarchy by
 % architecting stacked memory as a high capacity hardware-managed DRAM
@@ -54,7 +54,10 @@ bits, address space identifier (ASID). To accommodate this
 information, we propose 16 bytes of storage per DRAM-TLB entry.
 Figure~\ref{fig:stacked_tlb} illustrates the layout of the DRAM-TLB in
 the DRAM array. For example, a 2KB DRAM array holds 128 DRAM-TLB
-entries per row.
+entries per row. \ee{This last sentence is actually inaccurate/incorrect.
+I believe you're trying to say a DRAM array with a 2KB row buffer size
+holds 128 DRAM-TLB entries per row. Correct? The DRAM array itself is
+not 2KB.}
 
 \subsubsection{DRAM-TLB Lookups}
 
@@ -68,10 +71,11 @@ interface: 64-byte cacheline (four TLB entries).
 
 Reading multiple
 TLB entries enables architecting a set-associative DRAM-TLB without
-incurring additional latency or bandwidth~\cite{moin2012,loh2011}. We 
-explored the design space of set-associative and direct-mapped
-DRAM-TLBs. Our evaluation of set-associative and direct-mapped
-designs yielded similar performance with large DRAM-TLB sizes. These
+incurring additional latency or bandwidth~\cite{moin2012,loh2011}. 
+%We explored the design space of set-associative and direct-mapped
+%DRAM-TLBs. 
+We evaluate both set-associative and direct-mapped
+designs and observe similar performance among these design points with large DRAM-TLB sizes. These
 results match the behavior of existing work on large DRAM Caches where
 conflict misses tend to be low~\cite{moin2012}. Thus, we architect a
 direct-mapped DRAM-TLB where consecutive DRAM-TLB sets map to the same
@@ -144,7 +148,7 @@ store the base address $BaseAddr$ for the DRAM-TLB. Given the DRAM-TLB
 set index {\em SI} of the missing virtual address, DRAM-TLB
 associativity $A$, and DRAM-TLB entry size $s$ (16 bytes in our case),
 the DRAM-TLB entry physical address is computed using combinational
-logic:
+logic: \ee{make this last sentence an active sentence}
 
 \begin{equation}
   \begin{array}{rl}
@@ -157,7 +161,7 @@ comparison is performed to determine hit or miss. On a DRAM-TLB hit,
 the missing translation is returned to the processor. However, on a
 DRAM-TLB miss, the application page table is walked to find the
 virtual to physical translation. This translation is returned to the
-processor and also inserted into the DRAM-TLB.
+processor and also inserted into the DRAM-TLB. \ee{needs to be active, who does all the above, the MMU?}
 
 \subsubsection{DRAM-TLB Example}
 
@@ -231,10 +235,10 @@ address translation latency by 12\% on average while Stacked-TLBs
 reduce address translation latency by 40\% on average. The translation
 latency reduction stems from the fact that DRAM-TLBs reduce the number
 of memory accesses on an LLT miss from 1.6 memory accesses to a single
-memory access on average (see Figure~\ref{fig:memaccess_DRAMTLB}). The
+memory access on average as shown in Figure~\ref{fig:memaccess_DRAMTLB}. The
 improved translation latency boosts performance of workloads like
 $GUPS$ and $MaxFlow$ by more than 70\% while workloads like $XSBench$,
-$dmr$, $LULESH$ and $MiniAMR$ experience more than 15\% performance
+$dmr$, $LULESH$, and $MiniAMR$ experience more than 15\% performance
 gain.
 
 % % \subsubsection{Non-Steady State Performance Behavior}
