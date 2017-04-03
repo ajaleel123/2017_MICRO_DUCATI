@@ -24,7 +24,17 @@ GPU LLT misses are serviced by sending address translation service
 
 \noindent We use an industry proprietary performance simulator to
 simulate a GPU (Table~\ref{table:method_system}) with a memory
-hierarchy based on the NVIDIA Pascal GPU system~\cite{gpu_pascal}. We
+hierarchy based on the NVIDIA Pascal GPU system~\cite{gpu_pascal}.
+\ee{There was a discussion about this for the other paper at the sysarch
+team meeting last week before I left. They were talking about how Pascal
+actually only has 32KB of L1 private cache, and its not till Volta that
+we have 128KB (correct me if i'm getting this wrong and you know 
+otherwise). Now in that case, they were talking about that because its
+to their benefit to have smaller caches, just want to make sure we're not
+being inaccurate by saying 128KB L1s for a Pascal GPU memory system. Also
+is 8MB of LLC a valid-ish number for a Pascal-like memory system? We want
+to be careful to not be told we're inflating our UCAT results by
+considering too large of an L2} We
 model 128 Streaming Multiprocessors (SM) that support 64 warps each. A
 warp scheduler selects warp instructions each cycle. The baseline GPU
 memory system consists of a multi-level cache and TLB hierarchy. The
