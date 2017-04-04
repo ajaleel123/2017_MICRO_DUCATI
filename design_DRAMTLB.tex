@@ -24,7 +24,7 @@ the page table (see Figure~\ref{fig:stacked_tlb}).
 
   \caption{\small Improving TLB coverage by embedding TLBs in DRAM
     (DRAM-TLB). A DRAM-TLB architected using commodity DRAM is called
-    SYSMEM-TLB and a DRAM-TLB architected with stacked DRAM is called
+    SysMem-TLB and a DRAM-TLB architected with stacked DRAM is called
     Stacked-TLB. \normalsize}
   \label{fig:stacked_tlb} 
   \vspace{0.1 in}
@@ -35,14 +35,14 @@ the page table (see Figure~\ref{fig:stacked_tlb}).
 \noindent DRAM-TLBs can either be architected using stacked memory or
 system memory. A DRAM-TLB architected using stacked memory is referred
 to as a {\em Stacked-TLB} while a DRAM-TLB architected using system
-memory is referred to as a {\em SYSMEM-TLB}. DRAM-TLBs are physically
+memory is referred to as a {\em SysMem-TLB}. DRAM-TLBs are physically
 placed in a large contiguous segment of memory and are entirely
 hardware-managed. As such, DRAM-TLBs do not contribute to the
 OS-visible memory space (see Figure~\ref{fig:stacked_tlb}(c)).
 
 % illustrates, DRAM-TLBs and the OS-visible
 % address space when the hybrid memory system is configured with a
-% SYSMEM-TLB or a Stacked-TLB.
+% SysMem-TLB or a Stacked-TLB.
 
 \subsubsection{DRAM-TLB Organization}
 
@@ -214,35 +214,40 @@ determine DRAM-TLB hit or miss.
 % illustrates the workloads on the x-axis and the performance relative
 % to our baseline system on the y-axis. The figure
 
-\noindent We evaluate SYSMEM-TLB and Stacked-TLB performance assuming
+\noindent We evaluate SysMem-TLB and Stacked-TLB performance assuming
 an 8-million entry DRAM TLB (32GB TLB coverage with 4KB pages).
 Figure~\ref{fig:perf_DRAMTLB} shows that DRAM-TLBs improve performance
 relative to the baseline system across all TLB-sensitive workloads. On
-average, SYSMEM-TLB improves performance by 11\% while Stacked-TLB
-improves performance by 22\%. In general, Stacked-TLBs perform better
-than SYSMEM-TLBs because they are architected with stacked memory, a
+average, SysMem-TLB improves performance by 11\% while Stacked-TLB
+improves performance by 22\%. 
+
+Figure~\ref{fig:tlblat_DRAMTLB} shows that SysMem-TLBs reduce address
+translation latency by 12\% while Stacked-TLBs reduce address
+translation latency by 40\%. In general, Stacked-TLBs perform better
+than SysMem-TLBs because they are architected with stacked memory, a
 technology that provides lower memory queuing delay due to the high
 memory bandwidth. Our studies show that the loaded stacked memory
-latency observed is 8-15x lower than system memory access latency.
+latency tends to be 8-15x lower than system memory access latency.
 
-As illustrated in Figure~\ref{fig:tlblat_DRAMTLB}, SYSMEM-TLBs reduce
-address translation latency by 12\% on average while Stacked-TLBs
-reduce address translation latency by 40\% on average. The translation
-latency reduction stems from the fact that DRAM-TLBs reduce the number
-of memory accesses on an LLT miss from 1.6 memory accesses to a single
-memory access on average as shown in Figure~\ref{fig:memaccess_DRAMTLB}. The
-improved translation latency boosts performance of workloads like
-$GUPS$ and $MaxFlow$ by more than 70\% while workloads like $XSBench$,
-$dmr$, $LULESH$, and $MiniAMR$ experience more than 15\% performance
-gain.
+DRAM-TLBs decrease address translation latency by reducing the number
+of memory accesses on an LLT miss. Figure~\ref{fig:memaccess_DRAMTLB}
+shows that the baseline system incurs 1.5 memory accesses per LLT miss
+(up to 2) on average. On the other hand, both SysMem-TLB and
+Stacked-TLB incur only 1.05 memory access per LLT miss (max of 1.21)
+on average. By reducing the number of memory acceses, DRAM-TLBs boost
+performance of TLB-sensitive workloads like $GUPS$ by 2.2$x$ and
+$MaxFlow$ by 70\%. Furthermore, workloads like $XSBench$, $dmr$,
+$LULESH$, and $MiniAMR$ experience more than 15\% performance gain.
+These results show that DRAM-TLBs successfully decrease LLT miss
+latency by reducing the number of memory accesses on an LLT miss.
 
 % % \subsubsection{Non-Steady State Performance Behavior}
 % % 
-% % \noindent Under steady state conditions, SYSMEM-TLBs are competitive
+% % \noindent Under steady state conditions, SysMem-TLBs are competitive
 % % with Stacked-TLB despite being architected using low bandwidth
 % % commodity DRAM. However, in practice workloads tend to go through
 % % phases of execution where misses occur in the DRAM-TLB. As such, we
-% % now study how SYSMEM-TLBs and Stacked-TLBs behave when they experience
+% % now study how SysMem-TLBs and Stacked-TLBs behave when they experience
 % % TLB misses.
 % % 
 % % \begin{figure}[t] 
@@ -263,21 +268,21 @@ gain.
 % % performance significantly since they do not contribute towards useful
 % % work. To understand this phenomenon,
 % % Figure~\ref{fig:hitrate_DRAMTLB} illustrates the performance
-% % behavior of SYSMEM-TLBs and Stacked-TLBs as a function of
+% % behavior of SysMem-TLBs and Stacked-TLBs as a function of
 % % hit-rate\footnote{A statistical model that samples a random number
 % % generator is used to achieve the desired DRAM-TLB hit rate.}. The
 % % x-axis shows the TLB hit rate while the y-axis shows the performance
 % % relative to the baseline system averaged across all workloads.
 % % 
 % % In steady state (i.e. when the TLB hit rate is a 100\%) both
-% % Stacked-TLB and SYSMEM-TLB perform well. However, when the hit-rate
+% % Stacked-TLB and SysMem-TLB perform well. However, when the hit-rate
 % % reduces, DRAM-TLB lookup and DRAM-TLB fill operations start consuming
 % % precious DRAM bandwidth. This additional bandwidth quickly degrades
-% % SYSMEM-TLB performance. For example, at 80\% hit rate, SYSMEM-TLB
+% % SysMem-TLB performance. For example, at 80\% hit rate, SysMem-TLB
 % % performance plunges from 38\% performance improvement to a mere 8\%
 % % performance improvement. Continuing to follow the hit-rate curve,
-% % SYSMEM-TLBs degrade performance at DRAM-TLB hit-rates below 70\%.
-% % These results show that SYSMEM-TLBs are useful only if they can
+% % SysMem-TLBs degrade performance at DRAM-TLB hit-rates below 70\%.
+% % These results show that SysMem-TLBs are useful only if they can
 % % provide near-optimal hit-rate. Unfortunately ensuring a 100\% hit-rate
 % % is impossible without future knowledge.
 % % 
@@ -286,7 +291,7 @@ gain.
 % % Following the hit-rate curve, Stacked-TLBs degrade performance only
 % % when the hit-rate drops below 30\% (which is unlikely). Consequently,
 % % this suggests that Stacked-TLBs are more suitable alternative to
-% % SYSMEM-TLBs. Hereon, we only report performance results for
+% % SysMem-TLBs. Hereon, we only report performance results for
 % % Stacked-TLBs.
 
 % <------------GRAVEYARD
@@ -390,14 +395,15 @@ baseline) coverage with 4KB, 64KB, and 2MB pages requires 1GB, 64MB,
 and 2MB of storage overhead respectively (assuming 16-byte DRAM-TLB
 entries). In general, this storage overhead is impractical for on-chip
 SRAM TLBs. However, these sizes are an insignificant fraction of
-emerging multi-gigabyte stacked memory systems. For example, the
-aforementioned storage overheads correspond to 6\% (4KB pages), 0.4\%
-(64KB pages), and 0.01\% (2MB pages) storage overhead for a 16GB
-stacked memory system. Consequently, DRAM-TLBs improve TLB coverage
-using small pages with minimal storage overhead and require no
-significant changes to the existing address translation architecture.
-Note that, like UCAT, DRAM-TLBs also require support for handling TLB
-shootdown and TLB flush requests. We discuss these design overheads in
+emerging multi-gigabyte DRAM systems. For example, the aforementioned
+storage overheads correspond to 6\% (4KB pages), 0.4\% (64KB pages),
+and 0.01\% (2MB pages) storage overhead for a 16GB stacked memory
+system. Consequently, DRAM-TLBs improve TLB coverage using small pages
+with minimal storage overhead and require no significant changes to
+the existing address translation architecture. 
+
+Like UCAT, DRAM-TLBs also require efficient support for handling TLB
+shootdown and TLB flush requests. We discuss these design issues in
 Section~\ref{sec:implications}.
 
 \begin{figure}[tp] 

@@ -15,7 +15,7 @@ hierarchies for high performance. The last-level in each hierarchy is
 architected as a single large unified structure that holds both
 instruction and data entries and is shared among all cores. For
 example, the unified last-level cache (LLC) contains hundreds of
-thousands of cache lines (e.g., 256K lines in an 8MB cache with 32B
+thousands of cache lines (e.g., 256k lines in an 8MB cache with 32B
 cache lines). Similarly, the unified last-level TLB (LLT) contains
 512-1024 TLB entries~\cite{sodani2016knights,ia_manual}.
 
@@ -34,16 +34,17 @@ granularity (e.g., 32-64 bytes).
 
 %EIMAN-03-21: verify that each LLC line can indeed hold one LLT entry.
 
-The LLT and LLC caches have similar sized tag arrays. However, since
-they provide different types of data, the LLC has a 4x-8x larger data
-array. Hence, the LLC can potentially also serve as gigantic TLB with
-as many entries as there are LLC lines. As such, given that LLCs
-typically have low hit-rates and are often inefficiently
+The LLT and LLC have similar sized tag arrays. However, since they
+provide different types of data, the LLC has a 4x-8x larger data
+array. To increase on-die LLT capacity, we observe that the LLC can
+potentially also serve as gigantic TLB with as many entries as there
+are LLC lines. Given that LLCs typically have low hit-rates and are
+often inefficiently
 used~\cite{jaleel_rrip,setdueling,wu2011,jimenez_micro2013,khan2010},
-the conventional LLC can used to store virtual to physical
-translations just like a TLB in addition to caching data from memory.
-Based on this insight, we re-architect the conventional LLC as a {\em
-Unified Cache and TLB (UCAT)}.
+the conventional LLC can be used to store virtual to physical
+translations just like a TLB (in addition to caching data from
+memory). Based on this insight, we re-architect the conventional LLC
+as a {\em Unified Cache and TLB (UCAT)}.
 
 %EIMAN-03-21: My summary for reworking later: 
 %   - both TLB and cache hierarchies involve multiple levels and many entries in the unified LL
@@ -100,7 +101,7 @@ demand, rather than utility. This can potentially create performance
 problems in TLB-sensitive workloads that frequently stream through a
 large number of cache lines and constantly discard performance critical
 UCAT TLB entries. Based on this insight, we enhance the baseline UCAT
-design by improving the utilized replacement policy. To this end, we
+design by improving the replacement policy. To this end, we
 leverage the Dynamic Re-Reference Interval Prediction (DRRIP)
 replacement policy~\cite{jaleel_rrip}. In this policy, all UCAT
 insertions follow the same re-reference prediction or insertion
@@ -186,14 +187,13 @@ latency stems from an increase in on-chip TLB coverage by 16x (up to
 \end{figure}
 
 Since UCAT decreases the effective capacity of cache lines compared to
-the separate LLC, we also investigated increase in memory accesses due
-to potential increase in UCAT cacheline misses relative to the
-baseline. Our evaluations show that on average, UCAT increases the
-number of memory accesses by 1\% (maximum 4\% for {\em XSBench}). As
-observed from the performance graphs, the additional increase in
-memory traffic has negligible performance impact. This illustrates
-that trading off conventional LLC space for TLB entries provides
-substantial performance improvements.
+the separate LLC, we investigated the increase in memory traffic
+relative to the baseline design. Our evaluations show that on average,
+UCAT increases the number of memory accesses by 1\% (maximum 4\% for
+{\em XSBench}). As observed from the performance graphs, the
+additional increase in memory traffic has negligible performance
+impact. This illustrates that trading off conventional LLC space for
+TLB entries provides substantial performance improvements.
 
 Figure~\ref{fig:perf_UCAT} also shows that intelligently managing UCAT
 by prioritizing TLB-entries over cache lines improves average UCAT
@@ -214,13 +214,13 @@ baseline.
 \noindent UCAT requires a mechanism to distinguish between cacheline
 entries and translation entries. We propose using the UCAT-entry state
 bits (i.e., MESI bits) and insert TLB-entries into UCAT with the {\em
-exclusive} and {\em shared} status bits both set to valid. Since
-cache lines can either be in exclusive state or shared state and not
-both, this proposal enables distinguishing between TLB entries and
-cacheline entries at zero storage overhead. Besides distinguishing
-between cacheline and translation entries, UCAT also requires support
-for handling TLB shootdown and TLB flush requests. We discuss these
-design overheads in Section~\ref{sec:implications}.
+exclusive} and {\em shared} status bits both set to valid. Since cache
+lines can either be in exclusive state or shared state and not both,
+this proposal enables distinguishing between TLB entries and cacheline
+entries at zero storage overhead. Besides distinguishing between
+cacheline and translation entries, UCAT also requires efficient
+support for handling TLB shootdown and TLB flush requests. We discuss
+these design issues in Section~\ref{sec:implications}.
 
 %<<<<<<< HEAD
 %UCAT requires additional logic to invalidate/flush TLB entries from

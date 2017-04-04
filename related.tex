@@ -67,20 +67,16 @@ scheduling~\cite{pichaigpu} have been proposed. Our work focuses on
 improving GPU TLB coverage by allowing the GPU LLC to hold TLB
 entries. Additionally, we improve GPU TLB miss latency by architecting TLBs in DRAM.
 
-\boldheadingpara{Inverted Page Tables} To reduce the number of memory
-accesses in a hierarchical page table design, some designs use
-inverted page tables~\cite{invertedPT,invertedPT2}. Inverted page
-tables are designed to provide translation with a single memory access
-by indexing the page table using a hash of the virtual address.
-However, since different virtual addresses might produce a similar
-hash, a collision-chain is created. Consequently, a drawback is that
-the number of memory accesses is dependent on the length of the
-collision chain. Another drawback of inverted page tables with respect
-to hierarchical page tables is that they do not allow simultaneous
-mapping of two different virtual addresses to the same physical
-address~\cite{invertedPT}. DRAM-TLBs target the same benefits of
-inverted page tables (i.e., address translation in a single memory
-access) while retaining the benefits of hierarchical page tables.
+\boldheadingpara{Alternate Page Table Implementation} To reduce memory
+accesses, some designs use {\em Inverted Page
+Tables}~\cite{invertedPT,invertedPT2} by indexing the page table using
+a hash of the virtual address. However, the number of memory accesses
+depends on the frequency of hash collisions. Inverted page tables,
+however, do not allow simultaneous mapping of two different virtual
+addresses to the same physical address~\cite{invertedPT}. DRAM-TLBs
+target the benefits of inverted page tables (i.e., address translation
+in a single memory access) while retaining the benefits of
+hierarchical page tables.
 
 % \ee{This section is pretty
 % entertaining. First of all, there is no citation so its not clear what

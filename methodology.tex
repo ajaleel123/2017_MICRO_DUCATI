@@ -84,10 +84,10 @@ PWCs~\cite{power2014supporting, pichaigpu}.
 
 \noindent We use selected CUDA-based high performance computing
 applications from CORAL~\cite{CORAL}, Mantevo~\cite{mantevo}, and
-LoneStar~\cite{lonestar} suites (see Table~\ref{table:bench_char}). We
-also CUDA versions of a graph-traversal workload
+LoneStar~\cite{lonestar} suites (see Table~\ref{table:bench_char}).
+Our study also includes a graph-traversal workload
 ($MaxFlow$~\cite{maxflow})) and a random memory access workload
-($GUPS$~\cite{gups}). The workloads are all run with large inputs to
+($GUPS$~\cite{gups}). All workloads are run with large inputs to
 stress the hybrid memory system. We collected representative program
 regions and warm up the caches, TLBs, and PWCs by executing four
 billion warp instructions. After functional warmup, we enable detailed

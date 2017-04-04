@@ -1,7 +1,7 @@
 %!TEX root=main.tex
 \section{Summary}
 
-\noindent Increasing application memory footprints and growing on-die
+\noindent Increasing application working-set sizes and growing on-die
 thread-level parallelism has made TLB performance an important
 performance bottleneck in today's systems. Even page walk caching
 mechanisms are unable to accommodate emerging application working-set
@@ -27,16 +27,16 @@ be realized with negligible changes to the existing LLC architecture.
 
 While UCAT improves performance significantly, it does not decrease
 the number of page table accesses on an LLT miss. To address this
-problem, we propose {\em DRAM-TLB}. DRAM-TLB serves as the next larger
-level in the TLB hierarchy architected in DRAM technology and can be
-arbitrarily sized to provide the desired TLB coverage. In steady
-state, DRAM-TLB can avoid multiple page table accesses and provides
-address translation using a single memory access. Consequently,
-DRAM-TLB is a low latency alternative to walking the page table on an
-LLT miss. Our studies show that DRAM-TLB architected using stacked
-memory technology improves performance by 22\% on average (up to
-2.25X). We show that DRAM-TLB requires less than 1\% the capacity of
-our baseline 16GB stacked memory system.
+problem, we propose embedding TLBs in DRAM {\em DRAM-TLB}. DRAM-TLB
+serves as the next larger level in the TLB hierarchy architected using
+DRAM technology. DRAM-TLB can be arbitrarily sized to provide the
+desired TLB coverage. In steady state, DRAM-TLB can avoid multiple
+page table accesses and provides address translation with a single
+memory access. Consequently, DRAM-TLB is a low latency alternative to
+walking the page table on an LLT miss. Our studies show that DRAM-TLB
+architected using stacked memory technology improves performance by
+22\% on average (up to 2.25X). We show that DRAM-TLB requires less
+than 1\% the capacity of our baseline 16GB stacked memory system.
 
 Finally, we propose {\em DUCATI}, an address translation architecture
 that combines the benefits of DRAM-TLBs and UCAT while requiring

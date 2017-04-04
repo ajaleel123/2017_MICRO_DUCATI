@@ -50,10 +50,12 @@ DRAM-TLBs improve average performance by 22\%, UCAT with insertion
 (UCAT-I) improves average performance by 61\%, while DUCATI combines
 the benefits of both to improve average performance by 81\%. In fact,
 workloads like $XSBench$, $dmr$, $MaxFlow$, and $MCB$ experience 4x or
-more performance improvement. The bulk of the gain for these workloads
-is improvements in on-die LLT coverage. On the other hand, $GUPS$ has
-a 2.5x performance boost primarily due to reduction in LLT miss
-penalty (i.e., the DRAM-TLB component of DUCATI). % For the medium and
+more performance improvement. Most of the performance gain for these
+workloads is due to increase in on-die LLT coverage. On the other
+hand, $GUPS$ sees a 2.5x performance boost due to reduced LLT miss
+penalty (i.e., the DRAM-TLB component of DUCATI).
+
+% For the medium and
 % low TLB-sensitive workloads, DUCATI improves performance by 6-35\%.
 
 Figure~\ref{fig:summary_4k_pages_lat} illustrates the relative address
@@ -100,9 +102,9 @@ performance across all workloads for 4KB, 64KB, and 2MB pages.
 Overall, DUCATI improves performance by 81\% with 4KB pages, 56\% with
 64K pages, and 8\% with 2MB pages. In fact, DUCATI is within 20\%,
 5\%, and 2\% the performance of an unrealistic perfect LLT system when
-using 4KB, 64KB, and 2MB pages respectively. Thus, with both small and
-large page sizes, DUCATI is able to significantly bridge gap between
-the baseline system and a perfect LLT system.
+using 4KB, 64KB, and 2MB pages respectively. Thus, DUCATI bridges the
+performance gap between the baseline system and a perfect LLT system
+regardless of page size.
 
 
 % For our 1024-entry baseline LLT, using 4KB
