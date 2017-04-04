@@ -82,23 +82,21 @@ Figure~\ref{fig:summary_4k_pages_perf}). \normalsize}
 
 \subsection{DUCATI Sensitivity to LLC Size}
 
-\noindent This section presents performance sensitivity of DUCATI to
-LLC size. Table~\ref{table:LLC_sens} presents DUCATI performance using
-4KB pages for LLC sizes ranging from 2MB to 32MB. The table shows that
-on average, DUCATI improves performance across all LLC sizes studied.
-In general, performance increases with growing LLC size. For example,
-performance improves by 61\% with a 2MB LLC while performance improves
-by 93\% with a 32MB LLC. This is because larger LLCs enable more
-translation entries to be cached in the UCAT structure.
+\noindent Table~\ref{table:LLC_sens} presents DUCATI performance
+averaged across all our workloads with 4KB pages and LLC sizes ranging
+from 2MB to 32MB. The table shows that DUCATI improves performance
+across all LLC sizes studied. In general, performance increases with
+growing LLC size. For example, performance improves by 61\% with a 2MB
+LLC while performance improves by 93\% with a 32MB LLC. This is
+because larger LLCs enable more translation entries to be cached in
+the UCAT structure. Overall, we observe that DUCATI improves
+performance regardless of the system LLC size.
 
 \subsection{DUCATI Sensitivity to Page Size}
 
-\noindent This section presents the performance of our proposals using
-64KB and 2MB page sizes. For our 1024-entry baseline LLT, using 4KB
-pages provides a TLB coverage of 4MB, using 64KB pages increases the
-TLB coverage to 64MB, and using 2MB pages increases TLB coverage to
-2GB. Note that while large page sizes improve TLB coverage,
-unrestricted use of large pages can create various performance
+\noindent We now discuss the performance of our proposals using larger
+page sizes. Note that while large page sizes improve TLB coverage,
+unrestricted use of them can create various performance
 overheads~\cite{SuperPageProblem,TwoPageSize,numa-harmful,cameo,largepagevm}.
 Nonetheless, Figure~\ref{fig:summary_pagesize} illustrates the average
 performance across all workloads for 4KB, 64KB, and 2MB pages.
@@ -108,6 +106,12 @@ Overall, DUCATI improves performance by 81\% with 4KB pages, 56\% with
 using 4KB, 64KB, and 2MB pages respectively. Thus, with both small and
 large page sizes, DUCATI is able to significantly bridge gap between
 the baseline system and a perfect LLT system.
+
+
+% For our 1024-entry baseline LLT, using 4KB
+% pages provides a TLB coverage of 4MB, using 64KB pages increases the
+% TLB coverage to 64MB, and using 2MB pages increases TLB coverage to
+% 2GB. 
 
 % \subsection{Sensitivity to Stacked DRAM Bandwidth}
 % 

@@ -7,12 +7,11 @@ memory accesses on an LLT miss. Reducing the number of memory accesses
 on an LLT miss reduces effective LLT miss latency and also improves 
 system memory access bandwidth.
 
-To this end, we propose to increase TLB coverage by
-extending the processor TLB hierarchy using {\em TLBs in DRAM
-(DRAM-TLB)}. The DRAM-TLB logically sits between the on-die shared LLT
-(or UCAT) and the page tables in memory and is first consulted on an
-LLT (or UCAT) miss before walking the page table as shown in
-Figure~\ref{fig:stacked_tlb}.
+We propose to increase TLB coverage by extending the TLB hierarchy
+using {\em TLBs in DRAM (DRAM-TLB)}. DRAM-TLB logically sits between
+the on-die shared LLT (or UCAT) and the page tables in memory.
+DRAM-TLB is first consulted on an LLT (or UCAT) miss before walking
+the page table (see Figure~\ref{fig:stacked_tlb}).
 
 % \noindent Recent proposals extend the processor cache hierarchy by
 % architecting stacked memory as a high capacity hardware-managed DRAM
@@ -28,7 +27,7 @@ Figure~\ref{fig:stacked_tlb}.
     SYSMEM-TLB and a DRAM-TLB architected with stacked DRAM is called
     Stacked-TLB. \normalsize}
   \label{fig:stacked_tlb} 
-  \vspace{-0. in}
+  \vspace{-0.1 in}
 \end{figure*}
 
 \subsection{DRAM-TLB Architecture}
