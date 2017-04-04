@@ -53,11 +53,8 @@ address, and meta data information such as valid bits, page permission
 bits, address space identifier (ASID). To accommodate this
 information, we propose 16 bytes of storage per DRAM-TLB entry.
 Figure~\ref{fig:stacked_tlb} illustrates the layout of the DRAM-TLB in
-the DRAM array. For example, a 2KB DRAM array holds 128 DRAM-TLB
-entries per row. \ee{This last sentence is actually inaccurate/incorrect.
-I believe you're trying to say a DRAM array with a 2KB row buffer size
-holds 128 DRAM-TLB entries per row. Correct? The DRAM array itself is
-not 2KB.}
+the DRAM array. For example, a 2KB DRAM row buffer holds 128 DRAM-TLB
+entries per row.
 
 \subsubsection{DRAM-TLB Lookups}
 
@@ -140,14 +137,13 @@ read-modify-write operation~\cite{hbm-spec}.
 % If the MMU is required to access more than one level of the page
 % table, we propose that the
 
-\noindent Since the DRAM-TLB is located in physical memory, the
-physical location of the DRAM-TLB entry must first be determined. We
-propose an 8-byte register in the Memory Management Unit (MMU) to
-store the base address $BaseAddr$ for the DRAM-TLB. Given the DRAM-TLB
-set index {\em SI} of the missing virtual address, DRAM-TLB
-associativity $A$, and DRAM-TLB entry size $s$ (16 bytes in our case),
-the DRAM-TLB entry physical address is computed using combinational
-logic: \ee{make this last sentence an active sentence}
+\noindent Since the DRAM-TLB is stored in physical memory, the
+physical address for the DRAM-TLB entry must be computed. We propose
+an 8-byte register in the Memory Management Unit (MMU) to store the
+base address $BaseAddr$ for the DRAM-TLB. Given the DRAM-TLB set index
+{\em SI}, DRAM-TLB associativity $A$, and DRAM-TLB entry size $s$ (16
+bytes in our case), the MMU computes the physical address for the
+DRAM-TLB entry using combinational logic:
 
 \begin{equation}
   \begin{array}{rl}
@@ -155,12 +151,12 @@ logic: \ee{make this last sentence an active sentence}
   \end{array}
 \end{equation}
 
-\noindent Once the DRAM-TLB entry is retrieved from memory, a tag
-comparison is performed to determine hit or miss. On a DRAM-TLB hit,
-the missing translation is returned to the processor. However, on a
-DRAM-TLB miss, the application page table is walked to find the
-virtual to physical translation. This translation is returned to the
-processor and also inserted into the DRAM-TLB. \ee{needs to be active, who does all the above, the MMU?}
+\noindent Once the DRAM-TLB entry is retrieved from memory, the MMU
+compares the tag to determine hit or miss. On a DRAM-TLB hit, the
+missing translation is returned to the processor. However, on a
+DRAM-TLB miss, the MMU walks the application page table to determine
+the virtual to physical translation. This translation is returned to
+the processor and also inserted into the DRAM-TLB.
 
 \subsubsection{DRAM-TLB Example}
 

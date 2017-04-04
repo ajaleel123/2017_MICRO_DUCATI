@@ -76,16 +76,12 @@ Counter (EPCTR)} can be associated with each ASID. This counter tracks
 the virtual to physical translations for an ASID in a given epoch. In
 the DUCATI framework, the DRAM-TLB and UCAT can store the EPCTR in
 addition to the physical address and page permission bits for each
-entry.\ee{this is per 
-entry in each of these structures? I've added ``for each entry'' above,
-you can remove this comment if that's correct. The next sentence tells 
-me it is correct, but just making sure.} When the
-ASID requires a TLB flush, the EPCTR can simply be incremented. Thus,
-DUCATI provides a valid translation only if the ASID and EPCTR stored
-in the TLB-entry match the current EPCTR of the ASID. Both DRAM-TLB
-and UCAT have sufficient storage space to support a 16-bit EPCTR per entry\ee{again added ``per entry''}. As
-such, the TLB flush overhead can be completely eliminated with
-negligible latency and hardware overhead.
+entry. When the ASID requires a TLB flush, the EPCTR can simply be
+incremented. Thus, DUCATI provides a valid translation only if the
+ASID and EPCTR stored in the TLB-entry match the current EPCTR of the
+ASID. Both DRAM-TLB and UCAT have sufficient storage space to support
+a 16-bit EPCTR per entry. As such, the TLB flush overhead can be
+completely eliminated with negligible latency and hardware overhead.
 
 % Though DRAM-TLB shootdowns and flush events consume bandwidth, these
 % events occur infrequently and thus we expect minimal performance
