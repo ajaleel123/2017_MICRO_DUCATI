@@ -82,14 +82,16 @@ PWCs~\cite{power2014supporting, pichaigpu}.
 
 \subsection{Workloads and Metric of Interest}
 
-\noindent Our workloads consist of a subset of CUDA-based high
-performance computing applications from the CORAL~\cite{CORAL},
-Mantevo~\cite{mantevo}, and LoneStar~\cite{lonestar} suites (see
-Table~\ref{table:bench_char}). The workloads are run with large inputs
-to stress the hybrid memory system. We collected representative
-program regions and warm up the caches, TLBs, and PWCs by executing
-four billion warp instructions. After functional warmup, we enable
-detailed timing simulation for two billion warp instructions.
+\noindent We use selected CUDA-based high performance computing
+applications from CORAL~\cite{CORAL}, Mantevo~\cite{mantevo}, and
+LoneStar~\cite{lonestar} suites (see Table~\ref{table:bench_char}). We
+also CUDA versions of a graph-traversal workload
+($MaxFlow$~\cite{maxflow})) and a random memory access workload
+($GUPS$~\cite{gups}). The workloads are all run with large inputs to
+stress the hybrid memory system. We collected representative program
+regions and warm up the caches, TLBs, and PWCs by executing four
+billion warp instructions. After functional warmup, we enable detailed
+timing simulation for two billion warp instructions.
 
 Reduction in total execution time is our primary metric for
 performance. We also compare virtual to physical address translation

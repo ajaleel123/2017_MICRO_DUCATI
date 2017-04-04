@@ -17,9 +17,9 @@ misses~\cite{spectlb}. When the memory footprint of workloads is
 extremely large, such proposals are unable to provide full TLB
 coverage and avoid TLB miss overhead. Our work focuses both on
 increasing TLB coverage and reducing TLB miss penalty by storing TLB
-entries in the conventional LLC and embedding a TLB in DRAM. The
-DRAM-TLB proposal skips the page walk entirely and in the common case
-provide address translations using a single memory access.
+entries in the conventional LLC and embedding a TLB in DRAM. DRAM-TLB
+skips the page walk entirely and in the common case provide address
+translations using a single memory access.
 
 \boldheadingpara{Large Pages and Direct Segments} Our studies show
 that the use of large pages (e.g. 2MB, 64MB, 1GB) and direct
