@@ -189,14 +189,14 @@ determine DRAM-TLB hit or miss.
 %  \vspace{0.2 in}
 \end{figure}
 
-\begin{figure}[b] 
-  \vspace{0.2in} \centering
-  \centerline{\psfig{file=GRAPHS/DRAMTLB_pteaccess,angle=-90,width=\columnwidth}}
-
-  \caption{\small Memory Accesses on an LLT miss.\normalsize}
- \label{fig:memaccess_DRAMTLB} 
-  \vspace{0.0 in}
-\end{figure}
+% \begin{figure}[b] 
+%   \vspace{0.2in} \centering
+%   \centerline{\psfig{file=GRAPHS/DRAMTLB_pteaccess,angle=-90,width=\columnwidth}}
+% 
+%   \caption{\small Memory Accesses on an LLT miss.\normalsize}
+%  \label{fig:memaccess_DRAMTLB} 
+%   \vspace{0.0 in}
+% \end{figure}
 
 \subsection{DRAM-TLB Performance}
 
@@ -373,7 +373,7 @@ gain.
 % \vspace{-0. in}
 % \end{figure}
 %------------------> GRAVEYARD
-
+\newpage
 \subsection{DRAM-TLB Design Overhead}
 
 \noindent Figure~\ref{fig:mmu_state} shows simple modifications to the
@@ -399,6 +399,16 @@ significant changes to the existing address translation architecture.
 Note that, like UCAT, DRAM-TLBs also require support for handling TLB
 shootdown and TLB flush requests. We discuss these design overheads in
 Section~\ref{sec:implications}.
+
+\begin{figure}[tp] 
+  \vspace{0.2in} \centering
+  \centerline{\psfig{file=GRAPHS/DRAMTLB_pteaccess,angle=-90,width=\columnwidth}}
+
+  \caption{\small Memory Accesses on an LLT miss.\normalsize}
+ \label{fig:memaccess_DRAMTLB} 
+  \vspace{0.0 in}
+\end{figure}
+
 
 \begin{figure}[b] 
   \vspace{-0. in} \centering
