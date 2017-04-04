@@ -89,7 +89,7 @@ efficiency can be improved further by compressing multiple TLB entries
 into the data array. However, we leave these optimizations for future
 work.
 
-In the UCAT design, cachelines and TLB-entries dynamically contend for
+In the UCAT design, cache lines and TLB-entries dynamically contend for
 the available UCAT space. Like the baseline LLC architecture, we
 leverage the existing replacement policy to manage allocating UCAT
 entries in a set. UCAT hits update replacement state while UCAT misses
@@ -98,7 +98,7 @@ utilize the baseline replacement policy to select the victim.
 The baseline UCAT replacement policy allocates entries based on
 demand, rather than utility. This can potentially create performance
 problems in TLB-sensitive workloads that frequently stream through a
-large number of cachelines and constantly discard performance critical
+large number of cache lines and constantly discard performance critical
 UCAT TLB entries. Based on this insight, we enhance the baseline UCAT
 design by improving the utilized replacement policy. To this end, we
 leverage the Dynamic Re-Reference Interval Prediction (DRRIP)
@@ -134,7 +134,7 @@ with Insertion (UCAT-I)}.
 
 \noindent Figure~\ref{fig:perf_UCAT} shows UCAT performance relative
 to the baseline system(on the y-axis) with workloads on the x-axis.
-The first bar in the figure shows UCAT performance where cachelines
+The first bar in the figure shows UCAT performance where cache lines
 and TLB-entries contend for UCAT space without any restrictions. The
 figure shows that UCAT significantly improves performance of workloads
 like {\em XSBench}, {\em dmr}, {\em MaxFlow}, and {\em MCB} by more
@@ -185,7 +185,7 @@ latency stems from an increase in on-chip TLB coverage by 16x (up to
   \vspace{-0.0 in}
 \end{figure}
 
-Since UCAT decreases the effective capacity of cachelines compared to
+Since UCAT decreases the effective capacity of cache lines compared to
 the separate LLC, we also investigated increase in memory accesses due
 to potential increase in UCAT cacheline misses relative to the
 baseline. Our evaluations show that on average, UCAT increases the
@@ -196,7 +196,7 @@ that trading off conventional LLC space for TLB entries provides
 substantial performance improvements.
 
 Figure~\ref{fig:perf_UCAT} also shows that intelligently managing UCAT
-by prioritizing TLB-entries over cachelines improves average UCAT
+by prioritizing TLB-entries over cache lines improves average UCAT
 performance by an additional 12\%. We observed that UCAT-I also has
 negligible increase in memory traffic (< 1\%) and TLB-sensitive
 workloads like {\em XSBench} and {\em dmr} experience additional
@@ -215,7 +215,7 @@ baseline.
 entries and translation entries. We propose using the UCAT-entry state
 bits (i.e., MESI bits) and insert TLB-entries into UCAT with the {\em
 exclusive} and {\em shared} status bits both set to valid. Since
-cachelines can either be in exclusive state or shared state and not
+cache lines can either be in exclusive state or shared state and not
 both, this proposal enables distinguishing between TLB entries and
 cacheline entries at zero storage overhead. Besides distinguishing
 between cacheline and translation entries, UCAT also requires support
