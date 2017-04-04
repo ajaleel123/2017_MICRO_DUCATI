@@ -99,17 +99,17 @@ utilize the baseline replacement policy to select the victim.
 The baseline UCAT replacement policy allocates entries based on
 demand, rather than utility. This can potentially create performance
 problems in TLB-sensitive workloads that frequently stream through a
-large number of cache lines and constantly discard performance critical
-UCAT TLB entries. Based on this insight, we enhance the baseline UCAT
-design by improving the replacement policy. To this end, we
-leverage the Dynamic Re-Reference Interval Prediction (DRRIP)
+large number of cache lines and constantly discard performance
+critical UCAT TLB entries. Based on this insight, we enhance the
+baseline UCAT design by improving the replacement policy. To this end,
+we leverage the Dynamic Re-Reference Interval Prediction (DRRIP)
 replacement policy~\cite{jaleel_rrip}. In this policy, all UCAT
-insertions follow the same re-reference prediction or insertion
-policy. We propose enhancing the insertion policy for TLB entries by
-inserting them with a {\em near-immediate prediction} rather than the
-default {\em far prediction}. By doing so, TLB entries reside in the
-UCAT for a longer duration. We refer to this enhancement as {\em UCAT
-with Insertion (UCAT-I)}.
+insertions follow the same insertion policy. We propose enhancing the
+insertion policy for TLB entries by inserting them with a {\em
+near-immediate prediction} rather than the default {\em far
+prediction}. By doing so, TLB entries reside in the UCAT for a longer
+duration. We refer to this enhancement as {\em UCAT with Insertion
+(UCAT-I)}.
 
 % \subsection{Static UCAT Partitioning}
 % 
