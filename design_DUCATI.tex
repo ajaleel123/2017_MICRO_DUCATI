@@ -14,7 +14,7 @@ conventional DDR memory technology.
 \subsection{DUCATI Performance}
 
 \begin{figure}[tp] 
-\vspace{-0.1 in} \centering
+\vspace{-0.0 in} \centering
 \centerline{\psfig{file=GRAPHS/SUMMARY_perf,angle=-90,width=\columnwidth}}
 
 \caption{\small Performance Summary (4KB page size).\normalsize}
@@ -23,13 +23,12 @@ conventional DDR memory technology.
 \end{figure}
 
 \begin{figure}[tp] 
-\vspace{0.07 in} \centering
+\vspace{0.1 in} \centering
 \centerline{\psfig{file=GRAPHS/SUMMARY_tlblat,angle=-90,width=\columnwidth}}
 
-\caption{\small Translation Latency (4KB page size) (same legend as
-  Figure~\ref{fig:summary_4k_pages_perf}).\normalsize}
+\caption{\small Translation Latency (4KB page size).\normalsize}
 \label{fig:summary_4k_pages_lat} 
-\vspace{-0.2 in}
+\vspace{-0. in}
 \end{figure}
 
 \noindent Figure~\ref{fig:summary_4k_pages_perf} illustrates the
@@ -43,9 +42,7 @@ model a Perfect LLT by assuming all references to the LLT in the
 baseline system are hits}. To provide insight into the reason for
 performance improvement, Figure~\ref{fig:summary_4k_pages_lat}
 presents relative address translation latencies of the different
-proposals. Note that the legend of
-Figure~\ref{fig:summary_4k_pages_lat} is the same as
-Figure~\ref{fig:summary_4k_pages_perf}.
+proposals. 
 
 Figure~\ref{fig:summary_4k_pages_perf} shows that stacked memory
 DRAM-TLBs improve average performance by 22\%, UCAT with insertion
@@ -71,11 +68,10 @@ perfect LLT system.
 \vspace{0.2 in} \centering
 \centerline{\psfig{file=GRAPHS/pagesize_sensitivity2,angle=-90,width=\columnwidth}}
 
-\caption{\small Performance Sensitivity to Page Size (same legend as
-Figure~\ref{fig:summary_4k_pages_perf}). \normalsize}
+\caption{\small Performance Sensitivity to Page Size. \normalsize}
 
 \label{fig:summary_pagesize} 
-\vspace{-0.1 in}
+\vspace{-0. in}
 \end{figure}
 
 \input{llc_sensitivity.tex}
