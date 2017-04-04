@@ -2,19 +2,19 @@
 \section{Summary}
 
 \noindent Increasing application memory footprints and growing
-thread-level parallelism on die has resurfaced TLB performance as an
-important problem. This is because existing page walk caching
-mechanisms are unable to accommodate the growing application memory
-footprint. As a result, Last-Level TLB (LLT) misses suffer long
-latency due to multiple memory accesses to the page table. When LLT
-misses are frequent, applications desire low latency for address
-translation.
+on-die thread-level parallelism has made TLB performance an
+important performance bottleneck in today's systems. Even page walk caching
+mechanisms are unable to accommodate current growing application memory
+footprints. As a result, Last-Level TLB (LLT) coverage can be very important
+to overall application performance. On the other hand LLT misses suffer long
+latency due to multiple memory accesses to the page table. As such, when LLT
+misses do happen, reducing address translation latency is necessary to maintain
+high performance.
 
-This paper accelerates virtual to physical address translation by
-improving on-die LLT coverage and LLT miss penalty. We improve on-die
-TLB coverage by proposing {\em Unified Cache and TLB (UCAT)}, a
-hardware mechanism that enables the conventional unified Last-Level
-Cache (LLC) to also hold TLB entries. UCAT increases the on-die LLT
+This paper proposes low-cost hardware mechanisms to accelerate virtual to physical address translation by improving both on-die {\em LLT coverage} and {\em LLT miss penalty}. 
+We improve on-die TLB coverage by proposing {\em Unified Cache and TLB (UCAT)}, a
+which enables the conventional unified Last-Level
+Cache (LLC) to also hold TLB entries. UCAT increases on-die LLT
 coverage by allowing as many TLB entries as there are cache lines in
 the conventional on-chip LLC. We show that UCAT improves performance
 by 60\% (up to 4x) on average across a set of memory intensive GPU
@@ -24,24 +24,23 @@ negligible changes to the existing LLC architecture.
 % This is because it still requires multiple requests to the page table
 % for retrieving the address translation.
 
-While UCAT improves performance, it does not decrease the number of
+While UCAT improves performance significantly, it does not decrease the number of
 page table accesses on an LLT miss. To address this problem, we
-propose {\em DRAM-TLB}, a hardware proposal that provides off-chip
-support to extend the coverage of the on-chip TLB hierarchy. DRAM-TLB
+propose {\em DRAM-TLB}. DRAM-TLB
 serves as the next larger level in the TLB hierarchy architected in
 DRAM technology and can be arbitrarily sized to provide the desired
 TLB coverage. In steady state, DRAM-TLB can avoid multiple page table
 accesses and provides address translation using a single stacked
 memory access. Consequently, DRAM-TLB is a low latency alternative to
 walking the page table on an LLT miss. Our studies show that DRAM-TLB
-architected using emerging stacked memory technology improves
+using stacked memory technology improves
 performance by 22\% on average (up to 2.25X). We show that DRAM-TLB
 requires less than 1\% the capacity of our baseline 16GB stacked
 memory system.
 
 Finally, we propose {\em DUCATI}, an address translation architecture
 that combines the benefits of DRAM-TLBs and UCAT. We show that DUCATI
-improves performance by 81\% (up to 4.5x). We show that DUCATI
+improves performance by 81\% (up to 4.5x). DUCATI
 requires negligible hardware change and also scales to larger page
 sizes and improves performance by 56\% and 8\% when using 64KB and 2MB
 pages respectively.
