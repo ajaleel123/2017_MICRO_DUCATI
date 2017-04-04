@@ -5,28 +5,50 @@
 \noindent Conventional on-chip TLB hierarchies are unable to fully
 cover growing application memory footprints. To make things worse,
 Last-Level TLB (LLT) misses require multiple accesses to the page
-table (despite the use of page walk caches). Consequently, LLT misses
-incur long address translation latency. This paper focuses on reducing
-the frequency and penalty of on-die LLT misses. We propose {\em
-Unified CAche and TLB (UCAT)}, a hardware mechanism that enables the
+table even with the use of page walk caches. Consequently, LLT misses
+incur long address translation latency and hamper performance. 
+This paper proposes two low-overhead hardware mechanisms for reducing
+the frequency and penalty of on-die LLT misses. The first, {\em Unified CAche and 
+TLB (UCAT)}, enables the
 conventional on-die Last-Level Cache (LLC) to store cache lines and
-TLB entries in a single unified structure. Our evaluation using GPU
-workloads shows that UCAT increases on-die TLB capacity by 32x on
-average and improves GPU performance by 65\% on average (up to 4x).
-When UCAT is unable to fully cover total application memory footprint,
-we also propose {\em DRAM-TLB}, a hardware mechanism to memoize
-virtual to physical address translations in DRAM. DRAM-TLB serves as
+TLB entries in a single unified structure and increases on-die TLB
+capacity signficantly. The second, {\em DRAM-TLB}, memoizes
+virtual to physical address translations in DRAM and reduces LLT miss penalties when UCAT is unable to fully cover total application footprint. DRAM-TLB serves as
 the next larger level in the TLB hierarchy that significantly
-increases TLB coverage relative to on-chip TLBs. We show that
-DRAM-TLBs architected using emerging stacked memory technology
-improves GPU performance by 22\% on average (up to 2.25x). Finally, we
-propose {\em DUCATI}, an address translation architecture that
-combines DRAM-TLBs and UCAT to reduce LLT miss penalty and improve
-on-die TLB coverage respectively. DUCATI improves performance by 81\%
+increases TLB coverage relative to on-chip TLBs. The combination of these
+two mechanisms, {\em DUCATI}, is an address translation architecture that improves performance by 81\%
 (up to 4.5x) while requiring minimal changes to the existing system
 design. We show that DUCATI is within 20\%, 5\%, and 2\% the
 performance of a perfect LLT system when using 4KB, 64KB, and 2MB
 pages respectively.
+
+
+
+%\noindent Conventional on-chip TLB hierarchies are unable to fully
+%cover growing application memory footprints. To make things worse,
+%Last-Level TLB (LLT) misses require multiple accesses to the page
+%table (despite the use of page walk caches). Consequently, LLT misses
+%incur long address translation latency. This paper focuses on reducing
+%the frequency and penalty of on-die LLT misses. We propose {\em
+%Unified CAche and TLB (UCAT)}, a hardware mechanism that enables the
+%conventional on-die Last-Level Cache (LLC) to store cache lines and
+%TLB entries in a single unified structure. Our evaluation using GPU
+%workloads shows that UCAT increases on-die TLB capacity by 32x on
+%average and improves GPU performance by 65\% on average (up to 4x).
+%When UCAT is unable to fully cover total application memory footprint,
+%we also propose {\em DRAM-TLB}, a hardware mechanism to memoize
+%virtual to physical address translations in DRAM. DRAM-TLB serves as
+%the next larger level in the TLB hierarchy that significantly
+%increases TLB coverage relative to on-chip TLBs. We show that
+%DRAM-TLBs architected using emerging stacked memory technology
+%improves GPU performance by 22\% on average (up to 2.25x). Finally, we
+%propose {\em DUCATI}, an address translation architecture that
+%combines DRAM-TLBs and UCAT to reduce LLT miss penalty and improve
+%on-die TLB coverage respectively. DUCATI improves performance by 81\%
+%(up to 4.5x) while requiring minimal changes to the existing system
+%design. We show that DUCATI is within 20\%, 5\%, and 2\% the
+%performance of a perfect LLT system when using 4KB, 64KB, and 2MB
+%pages respectively.
 
 \end{abstract}
 
