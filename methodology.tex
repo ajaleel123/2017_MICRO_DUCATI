@@ -24,13 +24,13 @@ GPU LLT misses are serviced by sending address translation service
 
 \noindent We use an industry proprietary performance simulator to
 simulate a GPU (Table~\ref{table:method_system}) with a memory
-hierarchy based on the NVIDIA Pascal GPU system~\cite{gpu_pascal}. We
-model 128 Streaming Multiprocessors (SM) that support 64 warps each. A
-warp scheduler selects warp instructions each cycle. The baseline GPU
-memory system consists of a multi-level cache and TLB hierarchy. The
-first-level cache and TLB are private to each SM while the last-level
-cache (LLC) and last-level TLB (LLT) are shared by all the
-SMs~\cite{SharedLLT}. All caches use 128B cache line size with 32B
+hierarchy similar to the NVIDIA Pascal GPU system~\cite{gpu_pascal}.
+We model 128 Streaming Multiprocessors (SM) that support 64 warps
+each. A warp scheduler selects warp instructions each cycle. The
+baseline GPU memory system consists of a multi-level cache and TLB
+hierarchy. The first-level cache and TLB are private to each SM while
+the last-level cache (LLC) and last-level TLB (LLT) are shared by all
+the SMs~\cite{SharedLLT}. All caches use 128B cache line size with 32B
 sectors. We assume 5 bytes of tag storage per LLC entry (including
 valid, dirty, coherence state, and replacement bits). For the UCAT
 architecture, we assume an extra 40 cycle load-to-use latency to
